@@ -12,13 +12,16 @@
 #include "stm32f446xx.h"
 #include "gpio_driver.h"
 #include "usart_driver.h"
-
-#define FLASH_SECTOR2_BASE_ADDRESS 0x08008000U
+#include "btl_functions.h"
 
 static USART_Handle_t USART1Handle;
 static USART_Handle_t USART3Handle;
 
 extern void initialise_monitor_handles(void);
+
+/*****************************************************************************************************/
+/*                                       Static Function Prototypes                                  */
+/*****************************************************************************************************/
 
 static void LED_GPIOInit(void);
 static void Button_GPIOInit(void);
@@ -26,9 +29,6 @@ static void USART1_Init(USART_Handle_t* pUSART_Handle);
 static void USART1_GPIOInit(void);
 static void USART3_Init(USART_Handle_t* pUSART_Handle);
 static void USART3_GPIOInit(void);
-static void bootloader_uart_read_data(void);
-static void bootloader_jump_to_app(void);
-__attribute__(( always_inline )) static inline void __set_MSP(uint32_t topOfMainStack);
 
 int main(void){
 
@@ -57,7 +57,7 @@ int main(void){
     USART_Enable(USART3, ENABLE);
 
     if(GPIO_ReadFromInputPin(GPIOC, GPIO_PIN_NO_13) == GPIO_PIN_RESET){
-        bootloader_uart_read_data();
+        bootloader_uart_read_data(&USART1Handle);
     }
     else{
         bootloader_jump_to_app();
@@ -76,6 +76,22 @@ int main(void){
 
     return 0;
 }
+
+/*****************************************************************************************************/
+/*                               Weak Function Overwrite Definitions                                 */
+/*****************************************************************************************************/
+
+void USART1_Handler(void){
+    USART_IRQHandling(&USART1Handle);
+}
+
+void USART3_Handler(void){
+    USART_IRQHandling(&USART3Handle);
+}
+
+/*****************************************************************************************************/
+/*                                       Static Function Definitions                                 */
+/*****************************************************************************************************/
 
 static void LED_GPIOInit(void){
 
@@ -145,11 +161,6 @@ static void USART1_GPIOInit(void){
     GPIO_Init(&USARTPins);
 }
 
-void USART1_Handler(void){
-
-    USART_IRQHandling(&USART1Handle);
-}
-
 static void USART3_Init(USART_Handle_t* pUSART_Handle){
 
     memset(pUSART_Handle, 0, sizeof(*pUSART_Handle));
@@ -186,34 +197,3 @@ static void USART3_GPIOInit(void){
     USARTPins.GPIO_PinConfig.GPIO_PinNumber = GPIO_PIN_NO_11;
     GPIO_Init(&USARTPins);
 }
-
-void USART3_Handler(void){
-
-    USART_IRQHandling(&USART3Handle);
-}
-
-static void bootloader_uart_read_data(void){
-    printf("UART read data\r\n");
-}
-
-static void bootloader_jump_to_app(void){
-
-    printf("Jump to application\r\n");
-
-    void (*app_reset_handler)(void);
-
-    uint32_t msp_value = *(volatile uint32_t *)FLASH_SECTOR2_BASE_ADDRESS;
-    __set_MSP(msp_value);
-
-    uint32_t reset_handler_address = *(volatile uint32_t *)(FLASH_SECTOR2_BASE_ADDRESS + 4);
-
-    app_reset_handler = (void*)reset_handler_address;
-
-    app_reset_handler();
-}
-
-__attribute__((always_inline)) static inline void __set_MSP(uint32_t topOfMainStack){
-
-    __asm volatile ("MSR msp, %0\n" : : "r" (topOfMainStack));
-}
-
