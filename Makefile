@@ -31,3 +31,7 @@ all:
 clean_all:
 	@cd app && $(MAKE) clean
 	@cd boot && $(MAKE) clean
+
+.PHONY : load
+load:
+	openocd -f board/st_nucleo_f4.cfg
