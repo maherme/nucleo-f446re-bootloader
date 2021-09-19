@@ -25,3 +25,8 @@ Remember you must enable semihosting in the telnet session if you compile the pr
 ```console
 arm semihosting enable
 ```
+## Memory Layout
+| Address Range |      Content                   | Size  |
+|---------------|:------------------------------:|:-----:|
+| 0x0800-0000 to 0x0800-7FFF |  Bootloader       | 32KB  |
+| 0x0800-8000 to 0x0807-FFFF |  User Application | 480KB |
