@@ -27,7 +27,7 @@
 /**
  * @fn handle_getver_cmd
  *
- * @brief function for handling the get version command.
+ * @brief function for handling the get version command, which sends to the host the bootloader version.
  *
  * @param[in] buffer is a pointer to the command frame received.
  * @param[in] pUSART_Handle is the handle structure for the UART peripheral used for receiving and
@@ -36,7 +36,19 @@
  * @return void
  */
 static void handle_getver_cmd(uint8_t* buffer, USART_Handle_t* pUSART_Handle);
-static void handle_gethelp_cmd(uint8_t* buffer);
+
+/**
+ * @fn handle_gethelp_cmd
+ *
+ * @brief function for handling the get help command, which sends to the host the supported command.
+ *
+ * @param[in] buffer is a pointer to the command frame received.
+ * @param[in] pUSART_Handle is the handle structure for the UART peripheral used for receiving and
+ *            sending commands.
+ *
+ * @return void
+ */
+static void handle_gethelp_cmd(uint8_t* buffer, USART_Handle_t* pUSART_Handle);
 static void handle_getcid_cmd(uint8_t* buffer);
 static void handle_getrdp_cmd(uint8_t* buffer);
 static void handle_go_cmd(uint8_t* buffer);
@@ -118,7 +130,7 @@ void uart_read_data(USART_Handle_t* pUSART_Handle){
                 handle_getver_cmd(rx_buffer, pUSART_Handle);
                 break;
             case BL_GET_HELP:
-                handle_gethelp_cmd(rx_buffer);
+                handle_gethelp_cmd(rx_buffer, pUSART_Handle);
                 break;
             case BL_GET_CID:
                 handle_getcid_cmd(rx_buffer);
@@ -180,7 +192,36 @@ static void handle_getver_cmd(uint8_t* buffer, USART_Handle_t* pUSART_Handle){
     }
 }
 
-static void handle_gethelp_cmd(uint8_t* buffer){
+static void handle_gethelp_cmd(uint8_t* buffer, USART_Handle_t* pUSART_Handle){
+
+    /* List of supported commands */
+    uint8_t cmd_list[] = {BL_GET_VER,
+                          BL_GET_HELP,
+                          BL_GET_CID,
+                          BL_GET_RDP_STATUS,
+                          BL_GO_TO_ADDR,
+                          BL_FLASH_ERASE,
+                          BL_MEM_WRITE,
+                          BL_EN_RW_PROTECT,
+                          BL_MEM_READ,
+                          BL_READ_SECTOR_P_STATUS,
+                          BL_OTP_READ,
+                          BL_DIS_R_W_PROTECT};
+    /* Total length of the cmd packet */
+    uint32_t cmd_packet_len = buffer[0] + 1;
+    /* Extract the CRC32 sent by the host */
+    uint32_t host_crc = *((uint32_t*)(buffer + cmd_packet_len - CRC_LEN));
+
+    printf("CMD Get Help received\r\n");
+
+    /* Verify checksum */
+    if(!verify_cmd_crc(&buffer[0], cmd_packet_len - CRC_LEN, host_crc)){
+        send_ack(pUSART_Handle, sizeof(cmd_list));
+        USART_SendData(pUSART_Handle, cmd_list, sizeof(cmd_list));
+    }
+    else{
+        send_nack(pUSART_Handle);
+    }
 }
 
 static void handle_getcid_cmd(uint8_t* buffer){
@@ -235,7 +276,7 @@ static void send_ack(USART_Handle_t* pUSART_Handle, uint8_t follow_len){
 
     ack_buf[0] = BL_ACK;
     ack_buf[1] = follow_len;
-    USART_SendData(pUSART_Handle, ack_buf, 2);
+    USART_SendData(pUSART_Handle, ack_buf, sizeof(ack_buf));
 }
 
 static void send_nack(USART_Handle_t* pUSART_Handle){
