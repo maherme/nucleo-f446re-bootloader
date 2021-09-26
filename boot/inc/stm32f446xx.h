@@ -309,6 +309,16 @@ typedef struct
     volatile uint32_t GTPR;         /* USART guard time and prescaler reg   Address offset 0x18 */
 }USART_RegDef_t;
 
+/**
+ * Peripheral register definition structure for CRC
+ */
+typedef struct
+{
+    volatile uint32_t DR;           /* CRC data register                    Address offset 0x00 */
+    volatile uint32_t IDR;          /* CRC independent data register        Address offset 0x04 */
+    volatile uint32_t CR;           /* CRC control register                 Address offset 0x08 */
+}CRC_RegDef_t;
+
 /*****************************************************************************************************/
 /*                          Bit Position Definition of Peripheral Register                           */
 /*****************************************************************************************************/
@@ -482,6 +492,11 @@ typedef struct
 #define USART_SR_LBD        8
 #define USART_SR_CTS        9
 
+/**
+ * Bit position definition CRC_CR.
+ */
+#define CRC_CR_RESET        0
+
 /*****************************************************************************************************/
 /*          Peripheral definitions (peripheral base addresses typecasted to xxx_RegDef_t)            */
 /*****************************************************************************************************/
@@ -517,6 +532,8 @@ typedef struct
 #define UART4   ((USART_RegDef_t*)UART4_BASEADDR)
 #define UART5   ((USART_RegDef_t*)UART5_BASEADDR)
 #define USART6  ((USART_RegDef_t*)USART6_BASEADDR)
+
+#define CRC     ((CRC_RegDef_t*)CRC_BASEADDR)
 
 /*****************************************************************************************************/
 /*                          Peripheral macros                                                        */
@@ -565,6 +582,11 @@ typedef struct
 #define SYSCFG_PCLK_EN()    (RCC->APB2ENR |= (1 << 14))
 
 /**
+ * Clock enable macros for CRC peripheral.
+ */
+#define CRC_PCLK_EN()       (RCC->AHB1ENR |= (1 << 12))
+
+/**
  * Clock disable macros for GPIOx peripheral.
  */
 #define GPIOA_PCLK_DI()     (RCC->AHB1ENR &= ~(1 << 0))
@@ -605,6 +627,11 @@ typedef struct
  * Clock disable macros for SYSCFG peripheral.
  */
 #define SYSCFG_PCLK_DI()    (RCC->APB2ENR &= ~(1 << 14))
+
+/**
+ * Clock disable macros for CRC peripheral.
+ */
+#define CRC_PCLK_DI()       (RCC->AHB1ENR &= ~(1 << 12))
 
 /**
  * Reset macros GPIOx peripheral.
@@ -654,6 +681,11 @@ typedef struct
 #define UART4_REG_RESET()   do{(RCC->APB1RSTR |= (1 << 19)); (RCC->APB1RSTR &= ~(1 << 19));}while(0)
 #define UART5_REG_RESET()   do{(RCC->APB1RSTR |= (1 << 20)); (RCC->APB1RSTR &= ~(1 << 20));}while(0)
 #define USART6_REG_RESET()  do{(RCC->APB2RSTR |= (1 << 5)); (RCC->APB2RSTR &= ~(1 << 5));}while(0)
+
+/**
+ * Reset macros CRC peripheral.
+ */
+#define CRC_REG_RESET()     do{(RCC->AHB1RSTR |= (1 << 12)); (RCC->AHB1RSTR &= ~(1 << 12));}while(0)
 
 /*****************************************************************************************************/
 /*                          IRQ definitions                                                          */
