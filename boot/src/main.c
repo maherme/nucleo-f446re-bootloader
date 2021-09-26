@@ -13,6 +13,7 @@
 #include "gpio_driver.h"
 #include "usart_driver.h"
 #include "btl_functions.h"
+#include "crc_driver.h"
 
 static USART_Handle_t USART1Handle;
 static USART_Handle_t USART3Handle;
@@ -36,8 +37,10 @@ int main(void){
 
     initialise_monitor_handles();
 
-    printf("Starting bootloader program!!!\n");
+    printf("Starting bootloader program!!!\r\n");
 
+    /* CRC initialization */
+    CRC_Init();
     /* LED configuration */
     LED_GPIOInit();
     /* Button configuration */
@@ -57,10 +60,10 @@ int main(void){
     USART_Enable(USART3, ENABLE);
 
     if(GPIO_ReadFromInputPin(GPIOC, GPIO_PIN_NO_13) == GPIO_PIN_RESET){
-        bootloader_uart_read_data(&USART1Handle);
+        uart_read_data(&USART1Handle);
     }
     else{
-        bootloader_jump_to_app();
+        jump_to_app();
     }
 
     for(;;){

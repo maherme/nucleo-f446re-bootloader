@@ -5,8 +5,8 @@
 *       Header file containing the prototypes of the needed functions for performing the bootloader.
 *
 * PUBLIC FUNCTIONS :
-*       void bootloader_uart_read_data(USART_Handle_t* pUSART_Handle)
-*       void bootloader_jump_to_app(void)
+*       void uart_read_data(USART_Handle_t* pUSART_Handle)
+*       void jump_to_app(void)
 *
 **/
 
@@ -15,6 +15,10 @@
 
 #include <stdint.h>
 #include "usart_driver.h"
+
+#define BL_ACK      0xA5
+#define BL_NACK     0x7F
+#define CRC_LEN     4
 
 /**
  * Starting address for the user application code in flash.
@@ -61,7 +65,7 @@ __attribute__((always_inline)) static inline void __set_MSP(uint32_t topOfMainSt
 /*****************************************************************************************************/
 
 /**
- * @fn bootloader_uart_read_data
+ * @fn uart_read_data
  *
  * @brief function for reading bootloader commands using the USART peripheral.
  *
@@ -69,15 +73,15 @@ __attribute__((always_inline)) static inline void __set_MSP(uint32_t topOfMainSt
  *
  * @return void
  */
-void bootloader_uart_read_data(USART_Handle_t* pUSART_Handle);
+void uart_read_data(USART_Handle_t* pUSART_Handle);
 
 /**
- * @fn bootloader_jump_to_app
+ * @fn jump_to_app
  *
  * @brief function for jumping to the user application code in flash.
  *
  * @return void
  */
-void bootloader_jump_to_app(void);
+void jump_to_app(void);
 
 #endif
