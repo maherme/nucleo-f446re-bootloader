@@ -62,7 +62,20 @@ static void handle_gethelp_cmd(uint8_t* buffer, USART_Handle_t* pUSART_Handle);
  * @return void
  */
 static void handle_getcid_cmd(uint8_t* buffer, USART_Handle_t* pUSART_Handle);
-static void handle_getrdp_cmd(uint8_t* buffer);
+
+/**
+ * @fn handle_getrdp_cmd
+ *
+ * @brief function for handling the get rdp command, which sends to the host the read protection
+ *        option byte.
+ *
+ * @param[in] buffer is a pointer to the command frame received.
+ * @param[in] pUSART_Handle is the handle structure for the UART peripheral used for receiving and
+ *            sending commands.
+ *
+ * @return void
+ */
+static void handle_getrdp_cmd(uint8_t* buffer, USART_Handle_t* pUSART_Handle);
 static void handle_go_cmd(uint8_t* buffer);
 static void handle_flash_erase_cmd(uint8_t* buffer);
 static void handle_mem_write_cmd(uint8_t* buffer);
@@ -148,7 +161,7 @@ void uart_read_data(USART_Handle_t* pUSART_Handle){
                 handle_getcid_cmd(rx_buffer, pUSART_Handle);
                 break;
             case BL_GET_RDP_STATUS:
-                handle_getrdp_cmd(rx_buffer);
+                handle_getrdp_cmd(rx_buffer, pUSART_Handle);
                 break;
             case BL_GO_TO_ADDR:
                 handle_go_cmd(rx_buffer);
@@ -257,7 +270,27 @@ static void handle_getcid_cmd(uint8_t* buffer, USART_Handle_t* pUSART_Handle){
     }
 }
 
-static void handle_getrdp_cmd(uint8_t* buffer){
+static void handle_getrdp_cmd(uint8_t* buffer, USART_Handle_t* pUSART_Handle){
+
+    /* Option byte register address */
+    volatile uint32_t* pOB_addr = (uint32_t*)0x1FFFC000;
+    /* RDP bytes */
+    uint8_t rdp_status = (uint8_t)(*pOB_addr >> 8);
+    /* Total length of the cmd packet */
+    uint32_t cmd_packet_len = buffer[0] + 1;
+    /* Extract the CRC32 sent by the host */
+    uint32_t host_crc = *((uint32_t*)(buffer + cmd_packet_len - CRC_LEN));
+
+    printf("CMD Get Read Protection OB received\r\n");
+
+    /* Verify checksum */
+    if(!verify_cmd_crc(&buffer[0], cmd_packet_len - CRC_LEN, host_crc)){
+        send_ack(pUSART_Handle, sizeof(rdp_status));
+        USART_SendData(pUSART_Handle, &rdp_status, sizeof(rdp_status));
+    }
+    else{
+        send_nack(pUSART_Handle);
+    }
 }
 
 static void handle_go_cmd(uint8_t* buffer){
