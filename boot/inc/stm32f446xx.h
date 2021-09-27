@@ -52,6 +52,11 @@
 #define NVIC_PR_BASEADDR    ((volatile uint32_t*)0xE000E400)
 
 /**
+ * Base address of debug peripheral.
+ */
+#define DBGMCU_BASEADDR     0xE0042000
+
+/**
  * ARM Cortex M4 processor number of priority bits implemented in priority register.
  */
 #define NO_PR_BITS_IMPLEMENTED      4
@@ -319,6 +324,17 @@ typedef struct
     volatile uint32_t CR;           /* CRC control register                 Address offset 0x08 */
 }CRC_RegDef_t;
 
+/**
+ * Peripheral register definition structure for DBG
+ */
+typedef struct
+{
+    volatile uint32_t IDCODE;       /* Debug MCU ID code register           Address offset 0x00 */
+    volatile uint32_t CR;           /* Debug MCU configuration register     Address offset 0x04 */
+    volatile uint32_t APB1_FZ;      /* Debug MCU APB1 freeze register       Address offset 0x08 */
+    volatile uint32_t APB2_FZ;      /* Debug MCU APB2 freeze register       Address offset 0x0C */
+}DBG_RegDef_t;
+
 /*****************************************************************************************************/
 /*                          Bit Position Definition of Peripheral Register                           */
 /*****************************************************************************************************/
@@ -534,6 +550,8 @@ typedef struct
 #define USART6  ((USART_RegDef_t*)USART6_BASEADDR)
 
 #define CRC     ((CRC_RegDef_t*)CRC_BASEADDR)
+
+#define DBGMCU  ((DBG_RegDef_t*)DBGMCU_BASEADDR)
 
 /*****************************************************************************************************/
 /*                          Peripheral macros                                                        */
