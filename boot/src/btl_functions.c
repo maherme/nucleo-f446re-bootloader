@@ -199,7 +199,7 @@ void uart_read_data(USART_Handle_t* pUSART_Handle){
 
 static void handle_getver_cmd(uint8_t* buffer, USART_Handle_t* pUSART_Handle){
 
-    uint8_t bl_version = 0x12;
+    uint8_t bl_version = 0x10;
     /* Total length of the cmd packet */
     uint32_t cmd_packet_len = buffer[0] + 1;
     /* Extract the CRC32 sent by the host */
@@ -209,8 +209,8 @@ static void handle_getver_cmd(uint8_t* buffer, USART_Handle_t* pUSART_Handle){
 
     /* Verify checksum */
     if(!verify_cmd_crc(&buffer[0], cmd_packet_len - CRC_LEN, host_crc)){
-        send_ack(pUSART_Handle, 1);
-        USART_SendData(pUSART_Handle, &bl_version, 1);
+        send_ack(pUSART_Handle, sizeof(bl_version));
+        USART_SendData(pUSART_Handle, &bl_version, sizeof(bl_version));
     }
     else{
         send_nack(pUSART_Handle);
