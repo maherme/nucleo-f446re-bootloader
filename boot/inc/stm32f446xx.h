@@ -319,7 +319,7 @@ typedef struct
 }USART_RegDef_t;
 
 /**
- * Peripheral register definition structure for CRC
+ * Peripheral register definition structure for CRC.
  */
 typedef struct
 {
@@ -329,7 +329,7 @@ typedef struct
 }CRC_RegDef_t;
 
 /**
- * Peripheral register definition structure for DBG
+ * Peripheral register definition structure for DBG.
  */
 typedef struct
 {
@@ -338,6 +338,19 @@ typedef struct
     volatile uint32_t APB1_FZ;      /* Debug MCU APB1 freeze register       Address offset 0x08 */
     volatile uint32_t APB2_FZ;      /* Debug MCU APB2 freeze register       Address offset 0x0C */
 }DBG_RegDef_t;
+
+/**
+ * Peripheral register definition structure for FLASH Interface.
+ */
+typedef struct
+{
+    volatile uint32_t ACR;          /* Flash access control register        Address offset 0x00 */
+    volatile uint32_t KEYR;         /* Flash key register                   Address offset 0x04 */
+    volatile uint32_t OPTKEYR;      /* Flash option key register            Address offset 0x08 */
+    volatile uint32_t SR;           /* Flash status register                Address offset 0x0C */
+    volatile uint32_t CR;           /* Flash control register               Address offset 0x10 */
+    volatile uint32_t OPTCR;        /* Flash option control register        Address offset 0x14 */
+}FLASHINTR_RegDef_t;
 
 /*****************************************************************************************************/
 /*                          Bit Position Definition of Peripheral Register                           */
@@ -517,45 +530,105 @@ typedef struct
  */
 #define CRC_CR_RESET        0
 
+/**
+ * Bit position definition FLASH_ACR.
+ */
+#define FLASH_ACR_LATENCY   0
+#define FLASH_ACR_PRFTEN    8
+#define FLASH_ACR_ICEN      9
+#define FLASH_ACR_DCEN      10
+#define FLASH_ACR_ICRST     11
+#define FLASH_ACR_DCRST     12
+
+/**
+ * Bit position definition FLASH_KEYR.
+ */
+#define FLASH_KEYR          0
+
+/**
+ * Bit position definition FLASH_OPTKEYR.
+ */
+#define FLASH_OPTKEYR       0
+
+/**
+ * Bit position definition FLASH_SR.
+ */
+#define FLASH_SR_EOP        0
+#define FLASH_SR_OPERR      1
+#define FLASH_SR_WRPERR     4
+#define FLASH_SR_PGAERR     5
+#define FLASH_SR_PGPERR     6
+#define FLASH_SR_PGSERR     7
+#define FLASH_SR_RDERR      8
+#define FLASH_SR_BSY        16
+
+/**
+ * Bit position definition FLASH_CR.
+ */
+#define FLASH_CR_PG         0
+#define FLASH_CR_SER        1
+#define FLASH_CR_MER        2
+#define FLASH_CR_SNB        3
+#define FLASH_CR_PSIZE      8
+#define FLASH_CR_STRT       16
+#define FLASH_CR_EOPIE      24
+#define FLASH_CR_ERRIE      25
+#define FLASH_CR_LOCK       31
+
+/**
+ * Bit position definition FLASH_OPTCR.
+ */
+#define FLASH_OPTCR_OPTLOCK     0
+#define FLASH_OPTCR_OPTSTRT     1
+#define FLASH_OPTCR_BOR_LEV     2
+#define FLASH_OPTCR_WDG_SW      5
+#define FLASH_OPTCR_NRST_STOP   6
+#define FLASH_OPTCR_NRST_STDBY  7
+#define FLASH_OPTCR_RDP         8
+#define FLASH_OPTCR_NWRP        16
+#define FLASH_OPTCR_SPRMOD      31
+
 /*****************************************************************************************************/
 /*          Peripheral definitions (peripheral base addresses typecasted to xxx_RegDef_t)            */
 /*****************************************************************************************************/
 
-#define GPIOA   ((GPIO_RegDef_t*)GPIOA_BASEADDR)
-#define GPIOB   ((GPIO_RegDef_t*)GPIOB_BASEADDR)
-#define GPIOC   ((GPIO_RegDef_t*)GPIOC_BASEADDR)
-#define GPIOD   ((GPIO_RegDef_t*)GPIOD_BASEADDR)
-#define GPIOE   ((GPIO_RegDef_t*)GPIOE_BASEADDR)
-#define GPIOF   ((GPIO_RegDef_t*)GPIOF_BASEADDR)
-#define GPIOG   ((GPIO_RegDef_t*)GPIOG_BASEADDR)
-#define GPIOH   ((GPIO_RegDef_t*)GPIOH_BASEADDR)
-#define GPIOI   ((GPIO_RegDef_t*)GPIOI_BASEADDR)
+#define GPIOA       ((GPIO_RegDef_t*)GPIOA_BASEADDR)
+#define GPIOB       ((GPIO_RegDef_t*)GPIOB_BASEADDR)
+#define GPIOC       ((GPIO_RegDef_t*)GPIOC_BASEADDR)
+#define GPIOD       ((GPIO_RegDef_t*)GPIOD_BASEADDR)
+#define GPIOE       ((GPIO_RegDef_t*)GPIOE_BASEADDR)
+#define GPIOF       ((GPIO_RegDef_t*)GPIOF_BASEADDR)
+#define GPIOG       ((GPIO_RegDef_t*)GPIOG_BASEADDR)
+#define GPIOH       ((GPIO_RegDef_t*)GPIOH_BASEADDR)
+#define GPIOI       ((GPIO_RegDef_t*)GPIOI_BASEADDR)
 
-#define RCC     ((RCC_RegDef_t*)RCC_BASEADDR)
+#define RCC         ((RCC_RegDef_t*)RCC_BASEADDR)
 
-#define EXTI    ((EXTI_RegDef_t*)EXTI_BASEADDR)
+#define EXTI        ((EXTI_RegDef_t*)EXTI_BASEADDR)
 
-#define SYSCFG  ((SYSCFG_RegDef_t*)SYSCFG_BASEADDR)
+#define SYSCFG      ((SYSCFG_RegDef_t*)SYSCFG_BASEADDR)
 
-#define SPI1    ((SPI_RegDef_t*)SPI1_BASEADDR)
-#define SPI2    ((SPI_RegDef_t*)SPI2_I2S2_BASEADDR)
-#define SPI3    ((SPI_RegDef_t*)SPI3_I2S3_BASEADDR)
-#define SPI4    ((SPI_RegDef_t*)SPI4_BASEADDR)
+#define SPI1        ((SPI_RegDef_t*)SPI1_BASEADDR)
+#define SPI2        ((SPI_RegDef_t*)SPI2_I2S2_BASEADDR)
+#define SPI3        ((SPI_RegDef_t*)SPI3_I2S3_BASEADDR)
+#define SPI4        ((SPI_RegDef_t*)SPI4_BASEADDR)
 
-#define I2C1    ((I2C_RegDef_t*)I2C1_BASEADDR)
-#define I2C2    ((I2C_RegDef_t*)I2C2_BASEADDR)
-#define I2C3    ((I2C_RegDef_t*)I2C3_BASEADDR)
+#define I2C1        ((I2C_RegDef_t*)I2C1_BASEADDR)
+#define I2C2        ((I2C_RegDef_t*)I2C2_BASEADDR)
+#define I2C3        ((I2C_RegDef_t*)I2C3_BASEADDR)
 
-#define USART1  ((USART_RegDef_t*)USART1_BASEADDR)
-#define USART2  ((USART_RegDef_t*)USART2_BASEADDR)
-#define USART3  ((USART_RegDef_t*)USART3_BASEADDR)
-#define UART4   ((USART_RegDef_t*)UART4_BASEADDR)
-#define UART5   ((USART_RegDef_t*)UART5_BASEADDR)
-#define USART6  ((USART_RegDef_t*)USART6_BASEADDR)
+#define USART1      ((USART_RegDef_t*)USART1_BASEADDR)
+#define USART2      ((USART_RegDef_t*)USART2_BASEADDR)
+#define USART3      ((USART_RegDef_t*)USART3_BASEADDR)
+#define UART4       ((USART_RegDef_t*)UART4_BASEADDR)
+#define UART5       ((USART_RegDef_t*)UART5_BASEADDR)
+#define USART6      ((USART_RegDef_t*)USART6_BASEADDR)
 
-#define CRC     ((CRC_RegDef_t*)CRC_BASEADDR)
+#define CRC         ((CRC_RegDef_t*)CRC_BASEADDR)
 
-#define DBGMCU  ((DBG_RegDef_t*)DBGMCU_BASEADDR)
+#define DBGMCU      ((DBG_RegDef_t*)DBGMCU_BASEADDR)
+
+#define FLASHINTR   ((FLASHINTR_RegDef_t*)FLASHINTR_BASEADDR)
 
 /*****************************************************************************************************/
 /*                          Peripheral macros                                                        */

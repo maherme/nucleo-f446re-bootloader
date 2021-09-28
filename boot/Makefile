@@ -13,6 +13,7 @@ OBJS1 = $(OBJ_DIR)/main.o \
 		$(OBJ_DIR)/rcc_driver.o \
 		$(OBJ_DIR)/usart_driver.o \
 		$(OBJ_DIR)/crc_driver.o \
+		$(OBJ_DIR)/flash_driver.o \
 		$(OBJ_DIR)/btl_functions.o
 OBJS2 = $(OBJ_DIR)/main.o \
 		$(OBJ_DIR)/startup.o \
@@ -20,6 +21,7 @@ OBJS2 = $(OBJ_DIR)/main.o \
 		$(OBJ_DIR)/rcc_driver.o \
 		$(OBJ_DIR)/usart_driver.o \
 		$(OBJ_DIR)/crc_driver.o \
+		$(OBJ_DIR)/flash_driver.o \
 		$(OBJ_DIR)/btl_functions.o
 CC = arm-none-eabi-gcc
 OBJCOPY = arm-none-eabi-objcopy
