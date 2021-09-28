@@ -20,6 +20,9 @@
 #define BL_NACK     0x7F
 #define CRC_LEN     4
 
+#define ADDR_VALID      0x00
+#define ADDR_INVALID    0x01
+
 /**
  * Starting address for the user application code in flash.
  */

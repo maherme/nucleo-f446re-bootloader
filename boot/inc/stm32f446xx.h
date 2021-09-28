@@ -66,13 +66,17 @@
 /*****************************************************************************************************/
 
 /**
- * Base addresses of memories.
+ * Base and end addresses of memories.
  */
 #define FLASH_BASEADDR      0x08000000U         /* Base address of flash memory, size 512KB */
-#define SRAM1_BASEADDR      0x20000000U         /* Base address of system RAM first block, size 116KB */
+#define FLASH_ENDADDR       0x081FFFFFU         /* End address of the total flash memory */
+#define SRAM1_BASEADDR      0x20000000U         /* Base address of system RAM first block, size 112KB */
+#define SRAM1_ENDADDR       0x2001BFFFU         /* End address of the total SRAM1 memory */
 #define SRAM2_BASEADDR      0x2001C000U         /* Base address of system RAM second block, size 16KB */
-#define SRAM                SRAM1_BASEADDR
+#define SRAM2_ENDADDR       0x2001FFFFU         /* End address of the total SRAM2 memory */
+#define SRAM                SRAM1_BASEADDR      /* Base address of the SRAM memory, size 128KB */
 #define ROM                 0x1FFF0000U         /* Base address of system memory or ROM, size 30KB */
+#define BKPSRAM_ENDADDR     0x40024FFFU         /* End address of the total backup SRAM, size 4KB */
 
 /**
  * Base addresses of AHBx and APBx Bus Peripheral.
