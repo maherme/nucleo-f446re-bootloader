@@ -373,7 +373,7 @@ static void handle_flash_erase_cmd(uint8_t* buffer, USART_Handle_t* pUSART_Handl
     if(!verify_cmd_crc(&buffer[0], cmd_packet_len - CRC_LEN, host_crc)){
         send_ack(pUSART_Handle, sizeof(erase_status));
         /* Erase selected sector */
-        erase_status = Flash_EraseSector(buffer[2]);
+        erase_status = Flash_Erase(buffer[2], buffer[3]);
         /* Send the flash erase result to the host */
         USART_SendData(pUSART_Handle, &erase_status, sizeof(erase_status));
     }
