@@ -552,6 +552,11 @@ static uint8_t Flash_Write(uint32_t address, uint8_t* buffer, uint8_t length){
     uint8_t i = 0;
     uint8_t ret = 1;
 
+    /* Verify address range is allowed for bootloader */
+    if((verify_address(address) != 1) || (verify_address(address + length) != 1)){
+        return 1;
+    }
+
     /* Check no flash memory operation is ongoing */
     if(Flash_Busy() == 1){
         return 1;
