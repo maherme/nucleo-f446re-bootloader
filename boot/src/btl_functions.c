@@ -163,6 +163,18 @@ static void send_ack(USART_Handle_t* pUSART_Handle, uint8_t follow_len);
 static void send_nack(USART_Handle_t* pUSART_Handle);
 
 /**
+ * @fn verify_address
+ *
+ * @brief function to verify is an address is suitable for a bootloader action (jump, program...).
+ *
+ * @param[in] address is the flash address to be verified.
+ *
+ * @return 0 if address is not allowed for bootloader.
+ *         1 if address is allowed for bootloader.
+ */
+static uint8_t verify_address(uint32_t address);
+
+/**
  * @fn Flash_Erase
  *
  * @brief function to erase the FLASH memory.
@@ -377,10 +389,7 @@ static void handle_go_cmd(uint8_t* buffer, USART_Handle_t* pUSART_Handle){
         /* Get the address to jump */
         go_addr = *((uint32_t*)&buffer[2]);
         /* Check if the address to jump is valid */
-        if((go_addr >= SRAM1_BASEADDR && go_addr <= SRAM1_ENDADDR) ||
-           (go_addr >= SRAM2_BASEADDR && go_addr <= SRAM2_ENDADDR) ||
-           (go_addr >= FLASH_BASEADDR && go_addr <= FLASH_ENDADDR) ||
-           (go_addr >= BKPSRAM_BASEADDR && go_addr <= BKPSRAM_ENDADDR)){
+        if(verify_address(go_addr) == 1){
             /* Send the address to jump is valid to the host */
             addr_check = ADDR_VALID;
             USART_SendData(pUSART_Handle, &addr_check, sizeof(addr_check));
@@ -490,6 +499,18 @@ static void send_nack(USART_Handle_t* pUSART_Handle){
     uint8_t nack = BL_NACK;
 
     USART_SendData(pUSART_Handle, &nack, 1);
+}
+
+static uint8_t verify_address(uint32_t address){
+
+    if((address >= SRAM1_BASEADDR && address <= SRAM1_ENDADDR) ||
+       (address >= SRAM2_BASEADDR && address <= SRAM2_ENDADDR) ||
+       (address >= FLASH_BASEADDR && address <= FLASH_ENDADDR) ||
+       (address >= BKPSRAM_BASEADDR && address <= BKPSRAM_ENDADDR)){
+        return 1;
+    }
+
+    return 0;
 }
 
 static uint8_t Flash_Erase(uint8_t sector, uint8_t num_sectors){
