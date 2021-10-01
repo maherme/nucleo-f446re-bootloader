@@ -175,7 +175,7 @@ static void send_nack(USART_Handle_t* pUSART_Handle);
 static uint8_t verify_address(uint32_t address);
 
 /**
- * @fn Flash_Erase
+ * @fn flash_erase
  *
  * @brief function to erase the FLASH memory.
  *
@@ -185,10 +185,10 @@ static uint8_t verify_address(uint32_t address);
  * @return 0 is sucess.
  *         1 is fail.
  */
-static uint8_t Flash_Erase(uint8_t sector, uint8_t num_sectors);
+static uint8_t flash_erase(uint8_t sector, uint8_t num_sectors);
 
 /**
- * @fn Flash_Write
+ * @fn flash_write
  *
  * @brief function to program a flash memory section byte by byte.
  *
@@ -199,7 +199,7 @@ static uint8_t Flash_Erase(uint8_t sector, uint8_t num_sectors);
  * @return 0 is sucess.
  *         1 is fail.
  */
-static uint8_t Flash_Write(uint32_t address, uint8_t* buffer, uint8_t length);
+static uint8_t flash_write(uint32_t address, uint8_t* buffer, uint8_t length);
 
 /*****************************************************************************************************/
 /*                                       Public API Definitions                                      */
@@ -422,7 +422,7 @@ static void handle_flash_erase_cmd(uint8_t* buffer, USART_Handle_t* pUSART_Handl
     if(!verify_cmd_crc(&buffer[0], cmd_packet_len - CRC_LEN, host_crc)){
         send_ack(pUSART_Handle, sizeof(erase_status));
         /* Erase selected sector */
-        erase_status = Flash_Erase(buffer[2], buffer[3]);
+        erase_status = flash_erase(buffer[2], buffer[3]);
         /* Send the flash erase result to the host */
         USART_SendData(pUSART_Handle, &erase_status, sizeof(erase_status));
     }
@@ -445,7 +445,7 @@ static void handle_mem_write_cmd(uint8_t* buffer, USART_Handle_t* pUSART_Handle)
     if(!verify_cmd_crc(&buffer[0], cmd_packet_len - CRC_LEN, host_crc)){
         send_ack(pUSART_Handle, sizeof(write_status));
         /* Write selected memory address */
-        write_status = Flash_Write(*(uint32_t*)(&buffer[2]), &buffer[7], buffer[6]);
+        write_status = flash_write(*(uint32_t*)(&buffer[2]), &buffer[7], buffer[6]);
         /* Send the flash erase result to the host */
         USART_SendData(pUSART_Handle, &write_status, sizeof(write_status));
     }
@@ -513,7 +513,7 @@ static uint8_t verify_address(uint32_t address){
     return 0;
 }
 
-static uint8_t Flash_Erase(uint8_t sector, uint8_t num_sectors){
+static uint8_t flash_erase(uint8_t sector, uint8_t num_sectors){
 
     uint8_t ret = 1;
     uint8_t i = 0;
@@ -547,7 +547,7 @@ static uint8_t Flash_Erase(uint8_t sector, uint8_t num_sectors){
     return ret;
 }
 
-static uint8_t Flash_Write(uint32_t address, uint8_t* buffer, uint8_t length){
+static uint8_t flash_write(uint32_t address, uint8_t* buffer, uint8_t length){
 
     uint8_t i = 0;
     uint8_t ret = 1;
