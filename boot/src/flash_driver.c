@@ -29,8 +29,7 @@
  * @return 0 is sucess.
  *         1 is fail.
  */
-uint8_t Flash_EraseSector(uint8_t sector);
-
+static uint8_t Flash_EraseSector(uint8_t sector);
 
 /*****************************************************************************************************/
 /*                                       Public API Definitions                                      */

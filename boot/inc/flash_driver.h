@@ -5,7 +5,7 @@
 *       Header file containing the prototypes of the APIs for configuring the FLASH peripheral.
 *
 * PUBLIC FUNCTIONS :
-*       uint8_t Flash_EraseSector(uint8_t sector, uint8_t num_sectors)
+*       uint8_t Flash_Erase(uint8_t sector, uint8_t num_sectors)
 *
 **/
 
