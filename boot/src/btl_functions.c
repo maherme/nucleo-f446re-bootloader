@@ -95,7 +95,7 @@ static void handle_go_cmd(uint8_t* buffer, USART_Handle_t* pUSART_Handle);
 /**
  * @fn handle_flash_erase_cmd
  *
- * @brief function for handling the flash erase command, which order to the bootloader erase an 
+ * @brief function for handling the flash erase command, which order to the bootloader to erase an
  *        specific sector of the flash or a mass erase.
  *
  * @param[in] buffer is a pointer to the command frame received.
@@ -105,7 +105,20 @@ static void handle_go_cmd(uint8_t* buffer, USART_Handle_t* pUSART_Handle);
  * @return void
  */
 static void handle_flash_erase_cmd(uint8_t* buffer, USART_Handle_t* pUSART_Handle);
-static void handle_mem_write_cmd(uint8_t* buffer);
+
+/**
+ * @fn handle_mem_write_cmd
+ *
+ * @brief function for handling the memory write command, which order to the bootloader to write an
+ *        specific memory address of the flash.
+ *
+ * @param[in] buffer is a pointer to the command frame received.
+ * @param[in] pUSART_Handle is the handle structure for the UART peripheral used for receiving and
+ *            sending commands.
+ *
+ * @return void
+ */
+static void handle_mem_write_cmd(uint8_t* buffer, USART_Handle_t* pUSART_Handle);
 static void handle_en_rw_protect(uint8_t* buffer);
 static void handle_mem_read(uint8_t* buffer);
 static void handle_read_sector_protection_status(uint8_t* buffer);
@@ -148,6 +161,33 @@ static void send_ack(USART_Handle_t* pUSART_Handle, uint8_t follow_len);
  * @return void
  */
 static void send_nack(USART_Handle_t* pUSART_Handle);
+
+/**
+ * @fn Flash_Erase
+ *
+ * @brief function to erase the FLASH memory.
+ *
+ * @param[in] sector is the selected sector of the flash to start the erase, 0xFF means mass erase.
+ * @param[in] num_sectors is the number of consecutive sectors of the flash to be erased.
+ *
+ * @return 0 is sucess.
+ *         1 is fail.
+ */
+static uint8_t Flash_Erase(uint8_t sector, uint8_t num_sectors);
+
+/**
+ * @fn Flash_Write
+ *
+ * @brief function to program a flash memory section byte by byte.
+ *
+ * @param[in] address is the starting memory address of the flash to start the programming.
+ * @param[in] buffer is an byte array with the data to be programmed.
+ * @param[in] length is the number of data to be programmed.
+ *
+ * @return 0 is sucess.
+ *         1 is fail.
+ */
+static uint8_t Flash_Write(uint32_t address, uint8_t* buffer, uint8_t length);
 
 /*****************************************************************************************************/
 /*                                       Public API Definitions                                      */
@@ -197,7 +237,7 @@ void uart_read_data(USART_Handle_t* pUSART_Handle){
                 handle_flash_erase_cmd(rx_buffer, pUSART_Handle);
                 break;
             case BL_MEM_WRITE:
-                handle_mem_write_cmd(rx_buffer);
+                handle_mem_write_cmd(rx_buffer, pUSART_Handle);
                 break;
             case BL_EN_RW_PROTECT:
                 handle_en_rw_protect(rx_buffer);
@@ -382,7 +422,27 @@ static void handle_flash_erase_cmd(uint8_t* buffer, USART_Handle_t* pUSART_Handl
     }
 }
 
-static void handle_mem_write_cmd(uint8_t* buffer){
+static void handle_mem_write_cmd(uint8_t* buffer, USART_Handle_t* pUSART_Handle){
+
+    uint8_t write_status = 0;
+    /* Total length of the cmd packet */
+    uint32_t cmd_packet_len = buffer[0] + 1;
+    /* Extract the CRC32 sent by the host */
+    uint32_t host_crc = *((uint32_t*)(buffer + cmd_packet_len - CRC_LEN));
+
+    printf("CMD Flash Write received\r\n");
+
+    /* Verify checksum */
+    if(!verify_cmd_crc(&buffer[0], cmd_packet_len - CRC_LEN, host_crc)){
+        send_ack(pUSART_Handle, sizeof(write_status));
+        /* Write selected memory address */
+        write_status = Flash_Write(*(uint32_t*)(&buffer[2]), &buffer[7], buffer[6]);
+        /* Send the flash erase result to the host */
+        USART_SendData(pUSART_Handle, &write_status, sizeof(write_status));
+    }
+    else{
+        send_nack(pUSART_Handle);
+    }
 }
 
 static void handle_en_rw_protect(uint8_t* buffer){
@@ -430,4 +490,64 @@ static void send_nack(USART_Handle_t* pUSART_Handle){
     uint8_t nack = BL_NACK;
 
     USART_SendData(pUSART_Handle, &nack, 1);
+}
+
+static uint8_t Flash_Erase(uint8_t sector, uint8_t num_sectors){
+
+    uint8_t ret = 1;
+    uint8_t i = 0;
+
+    /* Check arguments are valid */
+    if((num_sectors == 0) || ((sector != 0xFF) && ((sector + num_sectors) > MAX_NUM_SECTOR))){
+        return 1;
+    }
+
+    /* Check no flash memory operation is ongoing */
+    if(Flash_Busy() == 1){
+        return 1;
+    }
+
+    /* Check the PSIZE bit in FLASH CR according to the supply voltage */
+    Flash_SetPSIZE(FLASH_PSIZE_WORD);
+
+    /* Check for a mass erase request */
+    if(sector == 0xFF){
+        ret = Flash_EraseSector(0xFF);
+    }
+    else{
+        for(i = sector; i < (sector + num_sectors); i++){
+            ret = Flash_EraseSector(i);
+            if(ret != 0){
+                break;
+            }
+        }
+    }
+
+    return ret;
+}
+
+static uint8_t Flash_Write(uint32_t address, uint8_t* buffer, uint8_t length){
+
+    uint8_t i = 0;
+    uint8_t ret = 1;
+
+    /* Check no flash memory operation is ongoing */
+    if(Flash_Busy() == 1){
+        return 1;
+    }
+
+    /* Unlock flash control register */
+    Flash_Unlock();
+
+    for(i = 0; i < length; i++){
+        ret = Flash_WriteMemoryByte(address + i, buffer[i]);
+        if(ret != 0){
+            break;
+        }
+    }
+
+    /* Lock Flash Control Register */
+    Flash_Lock();
+
+    return 0;
 }
