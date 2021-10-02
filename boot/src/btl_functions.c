@@ -471,9 +471,14 @@ static void handle_dis_rw_protect(uint8_t* buffer){
 
 static uint8_t verify_cmd_crc(uint8_t* pData, uint32_t length, uint32_t crc_host){
 
+    uint32_t i = 0;
     uint32_t crc_value = 0xFF;
+    uint32_t data_temp = 0;
 
-    crc_value = CRC_Calculate((uint32_t*)pData, length);
+    for(i = 0; i < length; i++){
+        data_temp = pData[i];
+        crc_value = CRC_Calculate(&data_temp, 1);
+    }
 
     if(crc_value == crc_host){
         printf("CRC cmd NOK\r\n");
@@ -575,5 +580,5 @@ static uint8_t flash_write(uint32_t address, uint8_t* buffer, uint8_t length){
     /* Lock Flash Control Register */
     Flash_Lock();
 
-    return 0;
+    return ret;
 }
