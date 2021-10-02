@@ -27,11 +27,13 @@ LDFLAGS_SH = -mcpu=$(MACH) -mthumb -mfloat-abi=soft --specs=rdimon.specs -T $(LN
 $(TARGET1) : $(OBJS1)
 	@mkdir -p $(BLD_DIR)
 	$(CC) $(LDFLAGS) $(OBJS1) -o $(BLD_DIR)/$(BIN_NAME).elf
+	$(OBJCOPY) -O binary $(BLD_DIR)/$(BIN_NAME).elf $(BLD_DIR)/$(BIN_NAME).bin
 	$(OBJCOPY) -O ihex $(BLD_DIR)/$(BIN_NAME).elf $(TARGET1)
 
 $(TARGET2) : $(OBJS2)
 	@mkdir -p $(BLD_DIR)
 	$(CC) $(LDFLAGS_SH) $(OBJS2) -o $(BLD_DIR)/$(BIN_NAME)_sh.elf
+	$(OBJCOPY) -O binary $(BLD_DIR)/$(BIN_NAME)_sh.elf $(BLD_DIR)/$(BIN_NAME)_sh.bin
 	$(OBJCOPY) -O ihex $(BLD_DIR)/$(BIN_NAME)_sh.elf $(TARGET2)
 
 $(OBJ_DIR)/%.o : $(SRC_DIR)/%.c
