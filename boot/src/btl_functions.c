@@ -20,6 +20,7 @@
 #include "usart_driver.h"
 #include "crc_driver.h"
 #include "flash_driver.h"
+#include "gpio_driver.h"
 
 /*****************************************************************************************************/
 /*                                       Static Function Prototypes                                  */
@@ -421,8 +422,12 @@ static void handle_flash_erase_cmd(uint8_t* buffer, USART_Handle_t* pUSART_Handl
     /* Verify checksum */
     if(!verify_cmd_crc(&buffer[0], cmd_packet_len - CRC_LEN, host_crc)){
         send_ack(pUSART_Handle, sizeof(erase_status));
+        /* Set LED pin to notify bootloader operation ongoing */
+        GPIO_WriteToOutputPin(GPIOA, GPIO_PIN_NO_5, ENABLE);
         /* Erase selected sector */
         erase_status = flash_erase(buffer[2], buffer[3]);
+        /* Unset LED pin to notify bootloader operation finish */
+        GPIO_WriteToOutputPin(GPIOA, GPIO_PIN_NO_5, DISABLE);
         /* Send the flash erase result to the host */
         USART_SendData(pUSART_Handle, &erase_status, sizeof(erase_status));
     }
@@ -444,8 +449,12 @@ static void handle_mem_write_cmd(uint8_t* buffer, USART_Handle_t* pUSART_Handle)
     /* Verify checksum */
     if(!verify_cmd_crc(&buffer[0], cmd_packet_len - CRC_LEN, host_crc)){
         send_ack(pUSART_Handle, sizeof(write_status));
+        /* Set LED pin to notify bootloader operation ongoing */
+        GPIO_WriteToOutputPin(GPIOA, GPIO_PIN_NO_5, ENABLE);
         /* Write selected memory address */
         write_status = flash_write(*(uint32_t*)(&buffer[2]), &buffer[7], buffer[6]);
+        /* Unset LED pin to notify bootloader operation finish */
+        GPIO_WriteToOutputPin(GPIOA, GPIO_PIN_NO_5, DISABLE);
         /* Send the flash erase result to the host */
         USART_SendData(pUSART_Handle, &write_status, sizeof(write_status));
     }

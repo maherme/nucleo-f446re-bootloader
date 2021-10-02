@@ -33,8 +33,6 @@ static void USART3_GPIOInit(void);
 
 int main(void){
 
-    uint32_t count = 0;
-
     initialise_monitor_handles();
 
     printf("Starting bootloader program!!!\r\n");
@@ -64,17 +62,6 @@ int main(void){
     }
     else{
         jump_to_app();
-    }
-
-    for(;;){
-        if(count > 250000){
-            /* Blink LED */
-            GPIO_ToggleOutputPin(GPIOA, GPIO_PIN_NO_5);
-            count = 0;
-        }
-        else{
-            count++;
-        }
     }
 
     return 0;
