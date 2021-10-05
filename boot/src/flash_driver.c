@@ -12,8 +12,11 @@
 *       uint8_t Flash_WriteMemoryDoubleWord(uint32_t address, uint64_t data)
 *       void    Flash_Unlock(void)
 *       void    Flash_Lock(void)
+*       void    Flash_OPTUnlock(void)
+*       void    Flash_OPTLock(void)
 *       void    Flash_SetPSIZE(flash_psize_t psize)
 *       uint8_t Flash_Busy(void)
+*       void    Flash_GetOBCfg(OPT_Cfg_t* OPTCfg)
 *
 * NOTES :
 *       For further information about functions refer to the corresponding header file.
@@ -186,6 +189,19 @@ void Flash_Lock(void){
     FLASHINTR->CR |= (1 << FLASH_CR_LOCK);
 }
 
+void Flash_OPTUnlock(void){
+
+    /* Write KEY1 and KEY2 in Flash Option Key Register */
+    FLASHINTR->OPTKEYR = 0x08192A3B;
+    FLASHINTR->OPTKEYR = 0x4C5D6E7F;
+}
+
+void Flash_OPTLock(void){
+
+    /* Set Lock bit in Flash Option Control Register */
+    FLASHINTR->OPTCR |= (1 << FLASH_OPTCR_OPTLOCK);
+}
+
 void Flash_SetPSIZE(flash_psize_t psize){
 
     /* Set PSIZE bits in the Flash Control Register */
@@ -200,4 +216,23 @@ uint8_t Flash_Busy(void){
     }
 
     return 0;
+}
+
+void Flash_GetOBCfg(OPT_Cfg_t* OPTCfg){
+
+    /* Unlock Option Byte Flash area */
+    Flash_OPTUnlock();
+
+    /* Get Option Byte configuration */
+    /* Get Not Write Protect byte */
+    OPTCfg->nWRP = (uint16_t)((FLASHINTR->OPTCR & (0xFFFF << FLASH_OPTCR_NWRP)) >> 16);
+    /*Get Read Protect byte */
+    OPTCfg->RDP = (uint8_t)((FLASHINTR->OPTCR & (0xFF << FLASH_OPTCR_RDP)) >> 8);
+    /* Get User Option bits */
+    OPTCfg->user = (uint8_t)(FLASHINTR->OPTCR & 0xE0);
+    /* Get BOR bits */
+    OPTCfg->BOR = (uint8_t)(FLASHINTR->OPTCR & 0x0C);
+
+    /* Lock Option Byte Flash area */
+    Flash_OPTLock();
 }

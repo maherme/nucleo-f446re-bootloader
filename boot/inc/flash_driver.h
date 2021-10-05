@@ -12,7 +12,11 @@
 *       uint8_t Flash_WriteMemoryDoubleWord(uint32_t address, uint64_t data)
 *       void    Flash_Unlock(void)
 *       void    Flash_Lock(void)
+*       void    Flash_OPTUnlock(void)
+*       void    Flash_OPTLock(void)
 *       void    Flash_SetPSIZE(flash_psize_t psize)
+*       uint8_t Flash_Busy(void)
+*       void    Flash_GetOBCfg(OPT_Cfg_t* OPTCfg)
 *
 **/
 
@@ -33,6 +37,16 @@ typedef enum{
     FLASH_PSIZE_WORD        = 0x02, /* Supply voltage from 2.7V to 3.6V */
     FLASH_PSIZE_DOUBLEWORD  = 0x03  /* Supply voltage from 2.7V to 3.6V with external Vpp 8V to 9V */
 }flash_psize_t;
+
+/**
+ * Configuration Option structure.
+ */
+typedef struct{
+    uint16_t nWRP;   /* Not Write Protect */
+    uint8_t  RDP;    /* Read Protect */
+    uint8_t  user;   /* User configuration */
+    uint8_t  BOR;    /* BOR reset level */
+}OPT_Cfg_t;
 
 /*****************************************************************************************************/
 /*                                       APIs Supported                                              */
@@ -130,6 +144,24 @@ void Flash_Unlock(void);
 void Flash_Lock(void);
 
 /**
+ * @fn Flash_OPTUnlock
+ *
+ * @brief function to unlock the flash programming/erase option byte protection.
+ *
+ * @return void.
+ */
+void Flash_OPTUnlock(void);
+
+/**
+ * @fn Flash_OPTLock
+ *
+ * @brief function to lock up the flash programming/erase option byte protection.
+ *
+ * @return void.
+ */
+void Flash_OPTLock(void);
+
+/**
  * @fn Flash_SetPSIZE
  *
  * @brief function to set the PSIZE according to the supply voltage.
@@ -151,5 +183,16 @@ void Flash_SetPSIZE(flash_psize_t psize);
  *         1 if Flash is busy.
  */
 uint8_t Flash_Busy(void);
+
+/**
+ * @fn Flash_GetOBCfg
+ *
+ * @brief function for getting the Option Byte configuration.
+ *
+ * @param[out] OPTCfg is a pointer to the struct for storing the OB configuration.
+ *
+ * @return void.
+ */
+void Flash_GetOBCfg(OPT_Cfg_t* OPTCfg);
 
 #endif
