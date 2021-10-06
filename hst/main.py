@@ -29,6 +29,7 @@ class MainApp(QMainWindow):
         self.btn_grp_cnt.btn_connect.clicked.connect(self.slot_connect)
         self.btn_grp_cmd.btn_cmd_ver.clicked.connect(self.slot_version)
         self.btn_grp_cmd.btn_cmd_help.clicked.connect(self.slot_help)
+        self.btn_grp_cmd.btn_cmd_cid.clicked.connect(self.slot_cid)
 
     def slot_connect(self):
         if boot_serial.connect_serial(self.btn_grp_cnt.usb_list.currentText()):
@@ -45,6 +46,14 @@ class MainApp(QMainWindow):
         str_cmp.append('Commands Supported:\n')
         for x in value:
             str_cmp.append('\n' + hex(x))
+        self.display.lab_display.setText(''.join(str_cmp))
+
+    def slot_cid(self):
+        value = boot_cmd.cmd_cid()
+        str_cmp = []
+        str_cmp.append('Chip Identifier: ')
+        ci = (value[1] << 8 )+ value[0]
+        str_cmp.append(hex(ci))
         self.display.lab_display.setText(''.join(str_cmp))
 
 class CntBtnGrp(QGroupBox):
