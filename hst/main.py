@@ -2,6 +2,7 @@ import sys
 from PyQt5.QtWidgets import *
 from PyQt5.QtCore import *
 from PyQt5.QtGui import *
+from PyQt5 import QtCore
 import boot_serial
 import boot_cmd
 
@@ -21,7 +22,11 @@ class MainApp(QMainWindow):
         self.btn_grp_cmd = CmdBtnGrp("Commands:")
         grid.addWidget(self.btn_grp_cmd, 1, 0)
         self.display = Display("Display:")
-        grid.addWidget(self.display, 1, 1)
+        self.erase_menu = EraseMenu("Erase Menu:")
+        self.stack_lay = QStackedLayout()
+        self.stack_lay.addWidget(self.display)
+        self.stack_lay.addWidget(self.erase_menu)
+        grid.addLayout(self.stack_lay, 1, 1, 1, 2)
         widget.setLayout(grid)
         self.setCentralWidget(widget)
 
@@ -32,6 +37,10 @@ class MainApp(QMainWindow):
         self.btn_grp_cmd.btn_cmd_cid.clicked.connect(self.slot_cid)
         self.btn_grp_cmd.btn_cmd_rdp.clicked.connect(self.slot_rdp)
         self.btn_grp_cmd.btn_cmd_go.clicked.connect(self.slot_go)
+        self.btn_grp_cmd.btn_cmd_erase.clicked.connect(self.slot_erase)
+        self.erase_menu.btn_cancel.clicked.connect(self.slot_cancel_erase)
+        self.erase_menu.check_mass_erase.stateChanged.connect(self.slot_mass_erase)
+        self.erase_menu.btn_ok.clicked.connect(self.slot_ok_erase)
 
     def slot_connect(self):
         if boot_serial.connect_serial(self.btn_grp_cnt.usb_list.currentText()):
@@ -72,6 +81,67 @@ class MainApp(QMainWindow):
                 self.display.lab_display.setText(''.join(str_cmp))
             else:
                 self.display.lab_display.setText('ERROR: Invalid Address')
+
+    def slot_erase(self):
+        self.btn_grp_cmd.setEnabled(False)
+        self.stack_lay.setCurrentIndex(1)
+
+    def slot_mass_erase(self, state):
+        if(QtCore.Qt.Checked == state):
+            self.erase_menu.spin_sector.setEnabled(False)
+            self.erase_menu.spin_num_sector.setEnabled(False)
+        else:
+            self.erase_menu.spin_sector.setEnabled(True)
+            self.erase_menu.spin_num_sector.setEnabled(True)
+
+    def slot_cancel_erase(self):
+        self.stack_lay.setCurrentIndex(0)
+        self.btn_grp_cmd.setEnabled(True)
+
+    def slot_ok_erase(self):
+        if self.erase_menu.check_mass_erase.isChecked():
+            msg_mass_erase = QMessageBox()
+            msg_mass_erase.setWindowTitle("Warning Message")
+            msg_mass_erase.setIcon(QMessageBox.Warning)
+            msg_mass_erase.setText("A Mass Erase Will Be Done!!!")
+            msg_mass_erase.setInformativeText("Are you sure to continue?")
+            msg_mass_erase.setStandardButtons(QMessageBox.Ok | QMessageBox.Cancel)
+            msg_mass_erase.buttonClicked.connect(self.slot_mass_erase_ok)
+            msg_mass_erase.exec_()
+        else:
+            sector = self.erase_menu.spin_sector.value()
+            offset = self.erase_menu.spin_num_sector.value()
+            if((sector + offset) > 8):
+                msg_error_erase = QMessageBox()
+                msg_error_erase.setWindowTitle("Error Message")
+                msg_error_erase.setIcon(QMessageBox.Critical)
+                msg_error_erase.setText("Invalid Number of Sectors")
+                msg_error_erase.setStandardButtons(QMessageBox.Ok)
+                msg_error_erase.exec_()
+            else:
+                msg_mass_erase = QMessageBox()
+                msg_mass_erase.setWindowTitle("Information Message")
+                msg_mass_erase.setIcon(QMessageBox.Information)
+                if(offset == 1):
+                    msg_mass_erase.setText("Sector " + str(sector) + " will be erased")
+                else:
+                    msg_mass_erase.setText("Sectors from " + str(sector) + " to " + str(sector + offset - 1) + " will be erased")
+                msg_mass_erase.setInformativeText("Are you sure to continue?")
+                msg_mass_erase.setStandardButtons(QMessageBox.Ok | QMessageBox.Cancel)
+                msg_mass_erase.buttonClicked.connect(self.slot_sector_erase_ok)
+                msg_mass_erase.exec_()
+
+    def slot_mass_erase_ok(self, i):
+        if(i.text() == 'OK'):
+            print('mass_erase')
+        else:
+            pass
+
+    def slot_sector_erase_ok(self, i):
+        if(i.text() == 'OK'):
+            print('sector erase')
+        else:
+            pass
 
 class CntBtnGrp(QGroupBox):
 
@@ -125,6 +195,39 @@ class Display(QGroupBox):
 
         vbox = QVBoxLayout()
         vbox.addWidget(self.lab_display)
+        vbox.addStretch(1)
+        self.setLayout(vbox)
+
+class EraseMenu(QGroupBox):
+
+    def __init__(self, name):
+        super(EraseMenu, self).__init__(name)
+
+        self.check_mass_erase = QCheckBox("Mass Erase")
+        self.label1 = QLabel("Starting Sector to Erase:")
+        self.spin_sector = QSpinBox()
+        self.spin_sector.setFixedWidth(60)
+        self.spin_sector.setRange(0, 7)
+        self.label2 = QLabel("Number of Consecutive Sectors to Erase:")
+        self.spin_num_sector = QSpinBox()
+        self.spin_num_sector.setRange(1, 8)
+        self.spin_num_sector.setFixedWidth(60)
+        self.btn_ok = QPushButton("OK")
+        self.btn_ok.setFixedWidth(120)
+        self.btn_cancel = QPushButton("Cancel")
+        self.btn_cancel.setFixedWidth(120)
+
+        vbox = QVBoxLayout()
+        hbox = QHBoxLayout()
+        vbox.addWidget(self.check_mass_erase)
+        vbox.addWidget(self.label1)
+        vbox.addWidget(self.spin_sector)
+        vbox.addWidget(self.label2)
+        vbox.addWidget(self.spin_num_sector)
+        hbox.addWidget(self.btn_ok)
+        hbox.addWidget(self.btn_cancel)
+        hbox.addStretch(1)
+        vbox.addLayout(hbox)
         vbox.addStretch(1)
         self.setLayout(vbox)
 
