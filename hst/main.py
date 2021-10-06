@@ -1,3 +1,4 @@
+import sys
 from PyQt5.QtWidgets import *
 from PyQt5.QtCore import *
 from PyQt5.QtGui import *
@@ -5,93 +6,96 @@ import boot_serial
 import boot_cmd
 
 class MainApp(QMainWindow):
-    def __init__(self, parent=None, *args):
-        super(MainApp, self).__init__(parent=parent)
+    def __init__(self, parent=None):
+        super(MainApp, self).__init__(parent)
 
-        self.setFixedSize(500, 400)
         self.setWindowTitle("Bootloader Host Application")
+        self.setFixedSize(500, 500)
 
-        # Input Widgets
-        self.btn_connect = QPushButton("Connect", self)
-        self.btn_connect.setGeometry(10, 10, 80, 30)
-        self.btn_connect.clicked.connect(self.slot_connect)
+        widget = QWidget()
 
-        self.usb_list = QComboBox(self)
-        self.usb_list.setGeometry(100, 10, 150, 30)
-        self.usb_list.addItems(boot_serial.serial_ports())
+        grid = QGridLayout()
+        self.btn_grp_cnt = CntBtnGrp("Connection:")
+        grid.addWidget(self.btn_grp_cnt, 0, 0, 1, 2)
+        self.btn_grp_cmd = CmdBtnGrp("Commands:")
+        grid.addWidget(self.btn_grp_cmd, 1, 0)
+        self.display = Display("Display:")
+        grid.addWidget(self.display, 1, 1)
+        widget.setLayout(grid)
+        self.setCentralWidget(widget)
 
-        self.btn_cmd_ver = QPushButton("Get Version", self)
-        self.btn_cmd_ver.setGeometry(10, 50, 150, 30)
-        self.btn_cmd_ver.clicked.connect(self.slot_version)
+        # Connections
+        self.btn_grp_cnt.btn_connect.clicked.connect(self.slot_connect)
+        self.btn_grp_cmd.btn_cmd_ver.clicked.connect(self.slot_version)
 
-        self.btn_cmd_help = QPushButton("Get Help", self)
-        self.btn_cmd_help.setGeometry(10, 90, 150, 30)
-        self.btn_cmd_help.clicked.connect(self.slot_help)
-
-        self.btn_cmd_cid = QPushButton("Get CID", self)
-        self.btn_cmd_cid.setGeometry(10, 130, 150, 30)
-        self.btn_cmd_cid.clicked.connect(self.slot_cid)
-
-        self.btn_cmd_rdp = QPushButton("Get RDP", self)
-        self.btn_cmd_rdp.setGeometry(10, 170, 150, 30)
-        self.btn_cmd_rdp.clicked.connect(self.slot_rdp)
-
-        self.btn_cmd_go = QPushButton("Go Addr",self)
-        self.btn_cmd_go.setGeometry(10, 210, 150, 30)
-        self.btn_cmd_go.clicked.connect(self.slot_go)
-
-        self.btn_cmd_erase = QPushButton("Erase", self)
-        self.btn_cmd_erase.setGeometry(10, 250, 150, 30)
-        self.btn_cmd_erase.clicked.connect(self.slot_erase)
-
-        self.btn_cmd_write = QPushButton("Write", self)
-        self.btn_cmd_write.setGeometry(10, 290, 150, 30)
-        self.btn_cmd_write.clicked.connect(self.slot_write)
-
-        self.btn_cmd_read_sector_status = QPushButton("Read Sector Status", self)
-        self.btn_cmd_read_sector_status.setGeometry(10, 330, 150, 30)
-        self.btn_cmd_read_sector_status.clicked.connect(self.slot_read_sector_status)
-
-        # Frame for displays
-        self.frame = QFrame(self)
-        self.frame.setGeometry(170, 50, 320, 340)
-        self.frame.setFrameShape(QFrame.StyledPanel | QFrame.Sunken)
-
-        # Displays
-        self.frame.show_ver = QLabel(self)
-        self.frame.show_ver.setGeometry(180, 55, 300, 330)
-        self.frame.show_ver.setAlignment(Qt.AlignTop | Qt.AlignLeft)
-
-    # Slots
     def slot_connect(self):
-        boot_serial.connect_serial(self.usb_list.currentText())
+        if boot_serial.connect_serial(self.btn_grp_cnt.usb_list.currentText()):
+            self.btn_grp_cmd.setEnabled(True)
+        else:
+            pass
 
     def slot_version(self):
-        self.frame.show_ver.setText('Bootloader Version: ' + hex(boot_cmd.cmd_ver()))
+        print('Bootloader Version: ' + hex(boot_cmd.cmd_ver()))
+        self.display.lab_display.setText('Bootloader Version: ' + hex(boot_cmd.cmd_ver()))
 
-    def slot_help(self):
-        pass
+class CntBtnGrp(QGroupBox):
 
-    def slot_cid(self):
-        pass
+    def __init__(self, name):
+        super(CntBtnGrp, self).__init__(name)
 
-    def slot_rdp(self):
-        pass
+        self.btn_connect = QPushButton("Connect")
+        self.usb_list = QComboBox()
+        self.usb_list.addItems(boot_serial.serial_ports())
 
-    def slot_go(self):
-        pass
+        hbox = QHBoxLayout()
+        hbox.addWidget(self.btn_connect)
+        hbox.addWidget(self.usb_list)
+        hbox.addStretch(1)
+        self.setLayout(hbox)
 
-    def slot_erase(self):
-        pass
+class CmdBtnGrp(QGroupBox):
 
-    def slot_write(self):
-        pass
+    def __init__(self, name):
+        super(CmdBtnGrp, self).__init__(name)
 
-    def slot_read_sector_status(self):
-        pass
+        self.btn_cmd_ver = QPushButton("Get Version")
+        self.btn_cmd_help = QPushButton("Get Help")
+        self.btn_cmd_cid = QPushButton("Get CID")
+        self.btn_cmd_rdp = QPushButton("Get RDP")
+        self.btn_cmd_go = QPushButton("Go Addr")
+        self.btn_cmd_erase = QPushButton("Erase")
+        self.btn_cmd_write = QPushButton("Write")
+        self.btn_cmd_read_sector_status = QPushButton("Read Sector Status")
+        self.setEnabled(False)
+
+        vbox = QVBoxLayout()
+        vbox.addWidget(self.btn_cmd_ver)
+        vbox.addWidget(self.btn_cmd_help)
+        vbox.addWidget(self.btn_cmd_cid)
+        vbox.addWidget(self.btn_cmd_rdp)
+        vbox.addWidget(self.btn_cmd_go)
+        vbox.addWidget(self.btn_cmd_erase)
+        vbox.addWidget(self.btn_cmd_write)
+        vbox.addWidget(self.btn_cmd_read_sector_status)
+        vbox.addStretch(1)
+        self.setLayout(vbox)
+
+class Display(QGroupBox):
+
+    def __init__(self, name):
+        super(Display, self).__init__(name)
+
+        self.lab_display = QLabel()
+        self.lab_display.setAlignment(Qt.AlignTop | Qt.AlignLeft)
+
+        vbox = QVBoxLayout()
+        vbox.addWidget(self.lab_display)
+        vbox.addStretch(1)
+        self.setLayout(vbox)
+
 
 if __name__ == '__main__':
-    app = QApplication([])
+    app = QApplication(sys.argv)
     window = MainApp()
     window.show()
-    app.exec_()
+    sys.exit(app.exec_())
