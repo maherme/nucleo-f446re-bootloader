@@ -31,6 +31,7 @@ class MainApp(QMainWindow):
         self.btn_grp_cmd.btn_cmd_help.clicked.connect(self.slot_help)
         self.btn_grp_cmd.btn_cmd_cid.clicked.connect(self.slot_cid)
         self.btn_grp_cmd.btn_cmd_rdp.clicked.connect(self.slot_rdp)
+        self.btn_grp_cmd.btn_cmd_go.clicked.connect(self.slot_go)
 
     def slot_connect(self):
         if boot_serial.connect_serial(self.btn_grp_cnt.usb_list.currentText()):
@@ -53,12 +54,24 @@ class MainApp(QMainWindow):
         value = boot_cmd.cmd_cid()
         str_cmp = []
         str_cmp.append('Chip Identifier: ')
-        ci = (value[1] << 8 )+ value[0]
+        ci = (value[1] << 8 ) + value[0]
         str_cmp.append(hex(ci))
         self.display.lab_display.setText(''.join(str_cmp))
 
     def slot_rdp(self):
         self.display.lab_display.setText('Read Protection Opt Lvl: ' + hex(boot_cmd.cmd_rdp()[0]))
+
+    def slot_go(self):
+        text, ok = QInputDialog().getText(self, 'Enter address to jump:', 'Address (hex format):', QLineEdit.Normal, '0x08008346')
+        if ok and text:
+            ret = boot_cmd.cmd_go(text)
+            if ret[0] == 0:
+                str_cmp = []
+                str_cmp.append('Jump to address: ')
+                str_cmp.append(text)
+                self.display.lab_display.setText(''.join(str_cmp))
+            else:
+                self.display.lab_display.setText('ERROR: Invalid Address')
 
 class CntBtnGrp(QGroupBox):
 
@@ -114,7 +127,6 @@ class Display(QGroupBox):
         vbox.addWidget(self.lab_display)
         vbox.addStretch(1)
         self.setLayout(vbox)
-
 
 if __name__ == '__main__':
     app = QApplication(sys.argv)
