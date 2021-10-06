@@ -1,7 +1,9 @@
 import boot_serial
 
-CMD_GET_VER     = 0x51
-CMD_GET_VER_LEN = 6
+CMD_GET_VER         = 0x51
+CMD_GET_VER_LEN     = 6
+CMD_GET_HELP        = 0x52
+CMD_GET_HELP_LEN    = 6
 
 def word_to_byte(addr, index, lowerfirst):
     return (addr >> (8 * (index - 1)) & 0x000000FF)
@@ -38,7 +40,32 @@ def cmd_ver():
 
     ack = boot_serial.read_serial(2)
 
-    ver = boot_serial.read_serial(1)
-    value = bytearray(ver)
+    recv = boot_serial.read_serial(1)
+    value = bytearray(recv)
 
     return value[0]
+
+def cmd_help():
+
+    data_buf = []
+
+    data_buf.append(CMD_GET_HELP_LEN - 1)
+    data_buf.append(CMD_GET_HELP)
+    crc32 = get_crc(data_buf, CMD_GET_HELP_LEN - 4)
+    crc32 = crc32 & 0xFFFFFFFF
+    data_buf.append(word_to_byte(crc32, 1, 1))
+    data_buf.append(word_to_byte(crc32, 2, 1))
+    data_buf.append(word_to_byte(crc32, 3, 1))
+    data_buf.append(word_to_byte(crc32, 4, 1))
+
+    boot_serial.write_serial(data_buf[0])
+    for i in data_buf[1:CMD_GET_HELP_LEN]:
+        boot_serial.write_serial(i)
+
+    ack = boot_serial.read_serial(2)
+    len_recv = (bytearray(ack))[1]
+
+    recv = boot_serial.read_serial(len_recv)
+    value = bytearray(recv)
+
+    return value

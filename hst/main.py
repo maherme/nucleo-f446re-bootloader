@@ -6,6 +6,7 @@ import boot_serial
 import boot_cmd
 
 class MainApp(QMainWindow):
+
     def __init__(self, parent=None):
         super(MainApp, self).__init__(parent)
 
@@ -27,6 +28,7 @@ class MainApp(QMainWindow):
         # Connections
         self.btn_grp_cnt.btn_connect.clicked.connect(self.slot_connect)
         self.btn_grp_cmd.btn_cmd_ver.clicked.connect(self.slot_version)
+        self.btn_grp_cmd.btn_cmd_help.clicked.connect(self.slot_help)
 
     def slot_connect(self):
         if boot_serial.connect_serial(self.btn_grp_cnt.usb_list.currentText()):
@@ -35,8 +37,15 @@ class MainApp(QMainWindow):
             pass
 
     def slot_version(self):
-        print('Bootloader Version: ' + hex(boot_cmd.cmd_ver()))
         self.display.lab_display.setText('Bootloader Version: ' + hex(boot_cmd.cmd_ver()))
+
+    def slot_help(self):
+        value = boot_cmd.cmd_help()
+        str_cmp = []
+        str_cmp.append('Commands Supported:\n')
+        for x in value:
+            str_cmp.append('\n' + hex(x))
+        self.display.lab_display.setText(''.join(str_cmp))
 
 class CntBtnGrp(QGroupBox):
 
