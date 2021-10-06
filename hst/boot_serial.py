@@ -29,13 +29,11 @@ def connect_serial(port):
     try:
         ser = serial.Serial(port,115200,timeout=2)
     except:
-        print("\n   Oops! That was not a valid port")
         return 0
 
     if ser.is_open:
-        print("\n   Port Open Success")
+        pass
     else:
-        print("\n   Port Open Failed")
         return 0
 
     return 1
