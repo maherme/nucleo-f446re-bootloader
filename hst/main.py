@@ -30,6 +30,7 @@ class MainApp(QMainWindow):
         self.btn_grp_cmd.btn_cmd_ver.clicked.connect(self.slot_version)
         self.btn_grp_cmd.btn_cmd_help.clicked.connect(self.slot_help)
         self.btn_grp_cmd.btn_cmd_cid.clicked.connect(self.slot_cid)
+        self.btn_grp_cmd.btn_cmd_rdp.clicked.connect(self.slot_rdp)
 
     def slot_connect(self):
         if boot_serial.connect_serial(self.btn_grp_cnt.usb_list.currentText()):
@@ -38,7 +39,7 @@ class MainApp(QMainWindow):
             pass
 
     def slot_version(self):
-        self.display.lab_display.setText('Bootloader Version: ' + hex(boot_cmd.cmd_ver()))
+        self.display.lab_display.setText('Bootloader Version: ' + hex(boot_cmd.cmd_ver()[0]))
 
     def slot_help(self):
         value = boot_cmd.cmd_help()
@@ -55,6 +56,9 @@ class MainApp(QMainWindow):
         ci = (value[1] << 8 )+ value[0]
         str_cmp.append(hex(ci))
         self.display.lab_display.setText(''.join(str_cmp))
+
+    def slot_rdp(self):
+        self.display.lab_display.setText('Read Protection Opt Lvl: ' + hex(boot_cmd.cmd_rdp()[0]))
 
 class CntBtnGrp(QGroupBox):
 
