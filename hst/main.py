@@ -1,4 +1,5 @@
 import sys
+import os
 from PyQt5.QtWidgets import *
 from PyQt5.QtCore import *
 from PyQt5.QtGui import *
@@ -41,6 +42,7 @@ class MainApp(QMainWindow):
         self.erase_menu.btn_cancel.clicked.connect(self.slot_cancel_erase)
         self.erase_menu.check_mass_erase.stateChanged.connect(self.slot_mass_erase)
         self.erase_menu.btn_ok.clicked.connect(self.slot_ok_erase)
+        self.btn_grp_cmd.btn_cmd_write.clicked.connect(self.slot_write)
 
     def slot_connect(self):
         if boot_serial.connect_serial(self.btn_grp_cnt.usb_list.currentText()):
@@ -119,17 +121,17 @@ class MainApp(QMainWindow):
                 msg_error_erase.setStandardButtons(QMessageBox.Ok)
                 msg_error_erase.exec_()
             else:
-                msg_mass_erase = QMessageBox()
-                msg_mass_erase.setWindowTitle("Information Message")
-                msg_mass_erase.setIcon(QMessageBox.Information)
+                msg_sector_erase = QMessageBox()
+                msg_sector_erase.setWindowTitle("Information Message")
+                msg_sector_erase.setIcon(QMessageBox.Information)
                 if(offset == 1):
-                    msg_mass_erase.setText("Sector " + str(sector) + " will be erased")
+                    msg_sector_erase.setText("Sector " + str(sector) + " will be erased")
                 else:
-                    msg_mass_erase.setText("Sectors from " + str(sector) + " to " + str(sector + offset - 1) + " will be erased")
-                msg_mass_erase.setInformativeText("Are you sure to continue?")
-                msg_mass_erase.setStandardButtons(QMessageBox.Ok | QMessageBox.Cancel)
-                msg_mass_erase.buttonClicked.connect(self.slot_sector_erase_ok)
-                msg_mass_erase.exec_()
+                    msg_sector_erase.setText("Sectors from " + str(sector) + " to " + str(sector + offset - 1) + " will be erased")
+                msg_sector_erase.setInformativeText("Are you sure to continue?")
+                msg_sector_erase.setStandardButtons(QMessageBox.Ok | QMessageBox.Cancel)
+                msg_sector_erase.buttonClicked.connect(self.slot_sector_erase_ok)
+                msg_sector_erase.exec_()
 
     def slot_mass_erase_ok(self, i):
         if(i.text() == 'OK'):
@@ -142,6 +144,17 @@ class MainApp(QMainWindow):
             boot_cmd.cmd_erase(self.erase_menu.spin_sector.value(), self.erase_menu.spin_num_sector.value())
         else:
             pass
+
+    def slot_write(self):
+        options = QFileDialog.Options()
+        options |= QFileDialog.DontUseNativeDialog
+        dlg = QFileDialog()
+        fname = dlg.getOpenFileName(None, 'Select Binary File', './', filter = '*.bin', options = options)
+        if fname[0]:
+            size = os.path.getsize(fname[0])
+            address, ok = QInputDialog().getText(self, 'Enter Starting Address to Write:', 'Address (hex format):', QLineEdit.Normal, '0x08008000')
+            if ok and address:
+                boot_cmd.cmd_write(fname[0], size, int(address, 16))
 
 class CntBtnGrp(QGroupBox):
 
