@@ -133,13 +133,13 @@ class MainApp(QMainWindow):
 
     def slot_mass_erase_ok(self, i):
         if(i.text() == 'OK'):
-            print('mass_erase')
+            boot_cmd.cmd_erase(0xFF, 0)
         else:
             pass
 
     def slot_sector_erase_ok(self, i):
         if(i.text() == 'OK'):
-            print('sector erase')
+            boot_cmd.cmd_erase(self.erase_menu.spin_sector.value(), self.erase_menu.spin_num_sector.value())
         else:
             pass
 

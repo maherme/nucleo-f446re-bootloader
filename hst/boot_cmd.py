@@ -10,13 +10,15 @@ CMD_GET_RDP         = 0x54
 CMD_GET_RDP_LEN     = 6
 CMD_GO              = 0x55
 CMD_GO_LEN          = 10
+CMD_ERASE           = 0x56
+CMD_ERASE_LEN       = 8
 
 def word_to_byte(addr, index, lowerfirst):
     return (addr >> (8 * (index - 1)) & 0x000000FF)
 
 def get_crc(buff, length):
 
-    crc = 0xffffffff
+    crc = 0xFFFFFFFF
 
     for data in buff[0:length]:
         crc = crc ^ data
@@ -147,6 +149,33 @@ def cmd_go(addr):
 
     boot_serial.write_serial(data_buf[0])
     for i in data_buf[1:CMD_GO_LEN]:
+        boot_serial.write_serial(i)
+
+    ack = boot_serial.read_serial(2)
+    len_recv = (bytearray(ack))[1]
+
+    recv = boot_serial.read_serial(len_recv)
+    value = bytearray(recv)
+
+    return value
+
+def cmd_erase(sector, num_sectors):
+
+    data_buf = []
+
+    data_buf.append(CMD_ERASE_LEN - 1)
+    data_buf.append(CMD_ERASE)
+    data_buf.append(sector)
+    data_buf.append(num_sectors)
+    crc32 = get_crc(data_buf, CMD_ERASE - 4)
+    crc32 = crc32 & 0xFFFFFFFF
+    data_buf.append(word_to_byte(crc32, 1, 1))
+    data_buf.append(word_to_byte(crc32, 2, 1))
+    data_buf.append(word_to_byte(crc32, 3, 1))
+    data_buf.append(word_to_byte(crc32, 4, 1))
+
+    boot_serial.write_serial(data_buf[0])
+    for i in data_buf[1:CMD_ERASE_LEN]:
         boot_serial.write_serial(i)
 
     ack = boot_serial.read_serial(2)
