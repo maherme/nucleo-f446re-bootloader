@@ -194,57 +194,38 @@ def cmd_erase(sector, num_sectors):
 
     return value
 
-def cmd_write(file_name, file_size, address):
+def cmd_write(len_to_read, address, bin_file):
 
     data_buf = []
-    bytes_remaining = 0
-    bytes_to_sent = 0
-    len_to_read = 0
-
-    bytes_remaining = file_size - bytes_to_sent
-
-    bin_file = open(file_name,'rb')
 
     boot_serial.purge_serial()
 
-    while(bytes_remaining):
-        if(bytes_remaining >= 128):
-            len_to_read = 128
-        else:
-            len_to_read = bytes_remaining
+    cmd_total_len = CMD_WRITE_LEN + len_to_read
 
-        cmd_total_len = CMD_WRITE_LEN + len_to_read
+    data_buf.append(cmd_total_len - 1)
+    data_buf.append(CMD_WRITE)
+    data_buf.append(word_to_byte(address, 1, 1))
+    data_buf.append(word_to_byte(address, 2, 1))
+    data_buf.append(word_to_byte(address, 3, 1))
+    data_buf.append(word_to_byte(address, 4, 1))
+    data_buf.append(len_to_read)
 
-        data_buf.append(cmd_total_len - 1)
-        data_buf.append(CMD_WRITE)
-        data_buf.append(word_to_byte(address, 1, 1))
-        data_buf.append(word_to_byte(address, 2, 1))
-        data_buf.append(word_to_byte(address, 3, 1))
-        data_buf.append(word_to_byte(address, 4, 1))
-        data_buf.append(len_to_read)
+    for _ in range(len_to_read):
+        file_read_value = bytearray(bin_file.read(1))
+        data_buf.append(int(file_read_value[0]))
 
-        for _ in range(len_to_read):
-            file_read_value = bytearray(bin_file.read(1))
-            data_buf.append(int(file_read_value[0]))
+    crc32 = get_crc(data_buf, cmd_total_len - 4)
+    data_buf.append(word_to_byte(crc32, 1, 1))
+    data_buf.append(word_to_byte(crc32, 2, 1))
+    data_buf.append(word_to_byte(crc32, 3, 1))
+    data_buf.append(word_to_byte(crc32, 4, 1))
 
-        crc32 = get_crc(data_buf, cmd_total_len - 4)
-        data_buf.append(word_to_byte(crc32, 1, 1))
-        data_buf.append(word_to_byte(crc32, 2, 1))
-        data_buf.append(word_to_byte(crc32, 3, 1))
-        data_buf.append(word_to_byte(crc32, 4, 1))
+    boot_serial.write_serial(data_buf[0])
+    for i in data_buf[1:cmd_total_len]:
+        boot_serial.write_serial(i)
 
-        boot_serial.write_serial(data_buf[0])
-        for i in data_buf[1:cmd_total_len]:
-            boot_serial.write_serial(i)
+    ack = boot_serial.read_serial(2)
+    ack = bytearray(ack)
+    len_recv = (bytearray(ack))[1]
 
-        ack = boot_serial.read_serial(2)
-        ack = bytearray(ack)
-        len_recv = (bytearray(ack))[1]
-
-        recv = boot_serial.read_serial(len_recv)
-
-        address += len_to_read
-        bytes_to_sent += len_to_read
-        bytes_remaining = file_size - bytes_to_sent
-
-        data_buf.clear()
+    recv = boot_serial.read_serial(len_recv)

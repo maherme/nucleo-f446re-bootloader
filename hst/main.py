@@ -7,13 +7,16 @@ from PyQt5 import QtCore
 import boot_serial
 import boot_cmd
 
-class MainApp(QMainWindow):
+file_name = ""
+file_size = 0
+address = 0
 
+class MainApp(QMainWindow):
     def __init__(self, parent=None):
         super(MainApp, self).__init__(parent)
 
         self.setWindowTitle("Bootloader Host Application")
-        self.setFixedSize(500, 500)
+        #self.setFixedSize(500, 500)
 
         widget = QWidget()
 
@@ -24,9 +27,11 @@ class MainApp(QMainWindow):
         grid.addWidget(self.btn_grp_cmd, 1, 0)
         self.display = Display("Display:")
         self.erase_menu = EraseMenu("Erase Menu:")
+        self.write_display = WriteDisplay("Write Memory:")
         self.stack_lay = QStackedLayout()
         self.stack_lay.addWidget(self.display)
         self.stack_lay.addWidget(self.erase_menu)
+        self.stack_lay.addWidget(self.write_display)
         grid.addLayout(self.stack_lay, 1, 1, 1, 2)
         widget.setLayout(grid)
         self.setCentralWidget(widget)
@@ -43,6 +48,7 @@ class MainApp(QMainWindow):
         self.erase_menu.check_mass_erase.stateChanged.connect(self.slot_mass_erase)
         self.erase_menu.btn_ok.clicked.connect(self.slot_ok_erase)
         self.btn_grp_cmd.btn_cmd_write.clicked.connect(self.slot_write)
+        self.write_display.btn_start.clicked.connect(self.slot_write_start)
 
     def slot_connect(self):
         if boot_serial.connect_serial(self.btn_grp_cnt.usb_list.currentText()):
@@ -51,9 +57,11 @@ class MainApp(QMainWindow):
             pass
 
     def slot_version(self):
+        self.stack_lay.setCurrentIndex(0)
         self.display.lab_display.setText('Bootloader Version: ' + hex(boot_cmd.cmd_ver()[0]))
 
     def slot_help(self):
+        self.stack_lay.setCurrentIndex(0)
         value = boot_cmd.cmd_help()
         str_cmp = []
         str_cmp.append('Commands Supported:\n')
@@ -62,6 +70,7 @@ class MainApp(QMainWindow):
         self.display.lab_display.setText(''.join(str_cmp))
 
     def slot_cid(self):
+        self.stack_lay.setCurrentIndex(0)
         value = boot_cmd.cmd_cid()
         str_cmp = []
         str_cmp.append('Chip Identifier: ')
@@ -70,9 +79,11 @@ class MainApp(QMainWindow):
         self.display.lab_display.setText(''.join(str_cmp))
 
     def slot_rdp(self):
+        self.stack_lay.setCurrentIndex(0)
         self.display.lab_display.setText('Read Protection Opt Lvl: ' + hex(boot_cmd.cmd_rdp()[0]))
 
     def slot_go(self):
+        self.stack_lay.setCurrentIndex(0)
         text, ok = QInputDialog().getText(self, 'Enter address to jump:', 'Address (hex format):', QLineEdit.Normal, '0x08008346')
         if ok and text:
             ret = boot_cmd.cmd_go(text)
@@ -146,18 +157,50 @@ class MainApp(QMainWindow):
             pass
 
     def slot_write(self):
+        global file_name
+        global file_size
+        global address
+
+        self.stack_lay.setCurrentIndex(2)
         options = QFileDialog.Options()
         options |= QFileDialog.DontUseNativeDialog
         dlg = QFileDialog()
-        fname = dlg.getOpenFileName(None, 'Select Binary File', './', filter = '*.bin', options = options)
-        if fname[0]:
-            size = os.path.getsize(fname[0])
+        file_name, _filter = dlg.getOpenFileName(None, 'Select Binary File', './', filter = '*.bin', options = options)
+        if file_name:
+            file_size = os.path.getsize(file_name)
             address, ok = QInputDialog().getText(self, 'Enter Starting Address to Write:', 'Address (hex format):', QLineEdit.Normal, '0x08008000')
             if ok and address:
-                boot_cmd.cmd_write(fname[0], size, int(address, 16))
+                self.write_display.lab_file.setText("File: " + file_name)
+                self.write_display.lab_size.setText("Size: " + str(file_size) + " Bytes")
+                self.write_display.lab_addr.setText("Starting Address: " + address)
+
+    def slot_write_start(self):
+        global address
+
+        address_flash = int(address, 16)
+        bytes_remaining = 0
+        bytes_to_sent = 0
+        len_to_read = 0
+
+        bytes_remaining = file_size - bytes_to_sent
+
+        bin_file = open(file_name,'rb')
+
+        while(bytes_remaining):
+            if(bytes_remaining >= 128):
+                len_to_read = 128
+            else:
+                len_to_read = bytes_remaining
+
+            boot_cmd.cmd_write(len_to_read, address_flash, bin_file)
+
+            address_flash += len_to_read
+            bytes_to_sent += len_to_read
+            bytes_remaining = file_size - bytes_to_sent
+
+            self.write_display.pbar.setValue((bytes_to_sent/file_size)*100)
 
 class CntBtnGrp(QGroupBox):
-
     def __init__(self, name):
         super(CntBtnGrp, self).__init__(name)
 
@@ -172,7 +215,6 @@ class CntBtnGrp(QGroupBox):
         self.setLayout(hbox)
 
 class CmdBtnGrp(QGroupBox):
-
     def __init__(self, name):
         super(CmdBtnGrp, self).__init__(name)
 
@@ -199,7 +241,6 @@ class CmdBtnGrp(QGroupBox):
         self.setLayout(vbox)
 
 class Display(QGroupBox):
-
     def __init__(self, name):
         super(Display, self).__init__(name)
 
@@ -212,7 +253,6 @@ class Display(QGroupBox):
         self.setLayout(vbox)
 
 class EraseMenu(QGroupBox):
-
     def __init__(self, name):
         super(EraseMenu, self).__init__(name)
 
@@ -241,6 +281,30 @@ class EraseMenu(QGroupBox):
         hbox.addWidget(self.btn_cancel)
         hbox.addStretch(1)
         vbox.addLayout(hbox)
+        vbox.addStretch(1)
+        self.setLayout(vbox)
+
+class WriteDisplay(QGroupBox):
+    def __init__(self, name):
+        super(WriteDisplay, self).__init__(name)
+
+        self.lab_file = QLabel("File:")
+        self.lab_size = QLabel("Size:")
+        self.lab_addr = QLabel("Starting Address:")
+        self.lab_pbar = QLabel("Progress:")
+        self.pbar = QProgressBar()
+        self.pbar.setMaximum(100)
+        self.pbar.setFixedWidth(600)
+        self.btn_start = QPushButton("Start")
+        self.btn_start.setFixedWidth(120)
+
+        vbox = QVBoxLayout()
+        vbox.addWidget(self.lab_file)
+        vbox.addWidget(self.lab_size)
+        vbox.addWidget(self.lab_addr)
+        vbox.addWidget(self.lab_pbar)
+        vbox.addWidget(self.pbar)
+        vbox.addWidget(self.btn_start)
         vbox.addStretch(1)
         self.setLayout(vbox)
 
