@@ -10,6 +10,7 @@ import boot_cmd
 file_name = ""
 file_size = 0
 address = 0
+protection_mode = ["Write Protection", "Read/Write Protection","No protection"]
 
 class MainApp(QMainWindow):
     def __init__(self, parent=None):
@@ -49,6 +50,7 @@ class MainApp(QMainWindow):
         self.erase_menu.btn_ok.clicked.connect(self.slot_ok_erase)
         self.btn_grp_cmd.btn_cmd_write.clicked.connect(self.slot_write)
         self.write_display.btn_start.clicked.connect(self.slot_write_start)
+        self.btn_grp_cmd.btn_cmd_read_sector_status.clicked.connect(self.slot_read_sector_st)
 
     def slot_connect(self):
         if boot_serial.connect_serial(self.btn_grp_cnt.usb_list.currentText()):
@@ -199,6 +201,30 @@ class MainApp(QMainWindow):
             bytes_remaining = file_size - bytes_to_sent
 
             self.write_display.pbar.setValue((bytes_to_sent/file_size)*100)
+
+    def slot_read_sector_st(self):
+        self.stack_lay.setCurrentIndex(0)
+        value = boot_cmd.cmd_read_sector_st()
+
+        if(value[1] & (1 << 7)):
+            self.display.lab_display.setText('Flash Protection Mode: Read/Write Protection (PCROP)\n')
+        else:
+            self.display.lab_display.setText('Flash Protection Mode: Write Protection\n')
+
+        for x in range(8):
+            self.display.lab_display.setText(self.display.lab_display.text() + "\nSector " + str(x) + ":\t" + protect_type(value, x))
+
+def protect_type(status, n):
+    if(status[1] & (1 << 7)):
+        if(status[0] & (1 << n)):
+            return protection_mode[1]
+        else:
+            return protection_mode[2]
+    else:
+        if(status[0] & (1 << n)):
+            return protection_mode[2]
+        else:
+            return protection_mode[0]
 
 class CntBtnGrp(QGroupBox):
     def __init__(self, name):

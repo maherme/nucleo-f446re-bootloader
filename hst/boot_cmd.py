@@ -1,19 +1,21 @@
 import boot_serial
 
-CMD_GET_VER         = 0x51
-CMD_GET_VER_LEN     = 6
-CMD_GET_HELP        = 0x52
-CMD_GET_HELP_LEN    = 6
-CMD_GET_CID         = 0x53
-CMD_GET_CID_LEN     = 6
-CMD_GET_RDP         = 0x54
-CMD_GET_RDP_LEN     = 6
-CMD_GO              = 0x55
-CMD_GO_LEN          = 10
-CMD_ERASE           = 0x56
-CMD_ERASE_LEN       = 8
-CMD_WRITE           = 0x57
-CMD_WRITE_LEN       = 11
+CMD_GET_VER             = 0x51
+CMD_GET_VER_LEN         = 6
+CMD_GET_HELP            = 0x52
+CMD_GET_HELP_LEN        = 6
+CMD_GET_CID             = 0x53
+CMD_GET_CID_LEN         = 6
+CMD_GET_RDP             = 0x54
+CMD_GET_RDP_LEN         = 6
+CMD_GO                  = 0x55
+CMD_GO_LEN              = 10
+CMD_ERASE               = 0x56
+CMD_ERASE_LEN           = 8
+CMD_WRITE               = 0x57
+CMD_WRITE_LEN           = 11
+CMD_READ_SECTOR_ST      = 0x5A
+CMD_READ_SECTOR_ST_LEN  = 6
 
 def word_to_byte(addr, index, lowerfirst):
     return (addr >> (8 * (index - 1)) & 0x000000FF)
@@ -229,3 +231,30 @@ def cmd_write(len_to_read, address, bin_file):
     len_recv = (bytearray(ack))[1]
 
     recv = boot_serial.read_serial(len_recv)
+
+def cmd_read_sector_st():
+
+    data_buf = []
+
+    boot_serial.purge_serial()
+
+    data_buf.append(CMD_READ_SECTOR_ST_LEN - 1)
+    data_buf.append(CMD_READ_SECTOR_ST)
+    crc32 = get_crc(data_buf, CMD_READ_SECTOR_ST_LEN - 4)
+    data_buf.append(word_to_byte(crc32, 1, 1))
+    data_buf.append(word_to_byte(crc32, 2, 1))
+    data_buf.append(word_to_byte(crc32, 3, 1))
+    data_buf.append(word_to_byte(crc32, 4, 1))
+
+    boot_serial.write_serial(data_buf[0])
+    for i in data_buf[1:CMD_READ_SECTOR_ST_LEN]:
+        boot_serial.write_serial(i)
+
+    ack = boot_serial.read_serial(2)
+    ack = bytearray(ack)
+    len_recv = (bytearray(ack))[1]
+
+    recv = boot_serial.read_serial(len_recv)
+    value = bytearray(recv)
+
+    return value
