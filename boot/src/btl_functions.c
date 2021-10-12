@@ -120,7 +120,20 @@ static void handle_flash_erase_cmd(uint8_t* buffer, USART_Handle_t* pUSART_Handl
  * @return void
  */
 static void handle_mem_write_cmd(uint8_t* buffer, USART_Handle_t* pUSART_Handle);
-static void handle_en_rw_protect(uint8_t* buffer);
+
+/**
+ * @fn handle_en_rw_protect
+ *
+ * @brief function for handling the enable read/write protection command, which order to the bootloader
+ *        to enable the read/write protection to a flash sector.
+ *
+ * @param[in] buffer is a pointer to the command frame received.
+ * @param[in] pUSART_Handle is the handle structure for the UART peripheral used for receiving and
+ *            sending commands.
+ *
+ * @return void
+ */
+static void handle_en_rw_protect(uint8_t* buffer, USART_Handle_t* pUSART_Handle);
 static void handle_mem_read(uint8_t* buffer);
 
 /**
@@ -266,7 +279,7 @@ void uart_read_data(USART_Handle_t* pUSART_Handle){
                 handle_mem_write_cmd(rx_buffer, pUSART_Handle);
                 break;
             case BL_EN_RW_PROTECT:
-                handle_en_rw_protect(rx_buffer);
+                handle_en_rw_protect(rx_buffer, pUSART_Handle);
                 break;
             case BL_MEM_READ:
                 handle_mem_read(rx_buffer);
@@ -476,7 +489,27 @@ static void handle_mem_write_cmd(uint8_t* buffer, USART_Handle_t* pUSART_Handle)
     }
 }
 
-static void handle_en_rw_protect(uint8_t* buffer){
+static void handle_en_rw_protect(uint8_t* buffer, USART_Handle_t* pUSART_Handle){
+
+    uint8_t rw_status = 0;
+    /* Total length of the cmd packet */
+    uint32_t cmd_packet_len = buffer[0] + 1;
+    /* Extract the CRC32 sent by the host */
+    uint32_t host_crc = *((uint32_t*)(buffer + cmd_packet_len - CRC_LEN));
+
+    printf("CMD Enable Read/Write Protection received\r\n");
+
+    /* Verify checksum */
+    if(!verify_cmd_crc(&buffer[0], cmd_packet_len - CRC_LEN, host_crc)){
+        send_ack(pUSART_Handle, sizeof(rw_status));
+        /* Enable the read/write protection of flash memory */
+        rw_status = Flash_EnRWProtection(buffer[2], buffer[3]);
+        /* Send the enable r/w protect result to the host */
+        USART_SendData(pUSART_Handle, &rw_status, sizeof(rw_status));
+    }
+    else{
+        send_nack(pUSART_Handle);
+    }
 }
 
 static void handle_mem_read(uint8_t* buffer){

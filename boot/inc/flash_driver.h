@@ -10,6 +10,7 @@
 *       uint8_t Flash_WriteMemoryHalfWord(uint32_t address, uint16_t data)
 *       uint8_t Flash_WriteMemoryWord(uint32_t address, uint32_t data)
 *       uint8_t Flash_WriteMemoryDoubleWord(uint32_t address, uint64_t data)
+*       uint8_t Flash_EnRWProtection(uint8_t sectors, uint8_t protection_mode)
 *       void    Flash_Unlock(void)
 *       void    Flash_Lock(void)
 *       void    Flash_OPTUnlock(void)
@@ -59,7 +60,7 @@ typedef struct{
  *
  * @param[in] sector is the selected sector of the flash to be erased, 0xFF means mass erase.
  *
- * @return 0 is sucess.
+ * @return 0 is success.
  *         1 is fail.
  */
 uint8_t Flash_EraseSector(uint8_t sector);
@@ -72,7 +73,7 @@ uint8_t Flash_EraseSector(uint8_t sector);
  * @param[in] address is the memory address to be programmed.
  * @param[in] data is the data to be stored in address.
  *
- * @return 0 is sucess.
+ * @return 0 is success.
  *         1 is fail.
  *
  * @note this function must be used when the device voltage range is from 1.7V to 3.6V.
@@ -87,7 +88,7 @@ uint8_t Flash_WriteMemoryByte(uint32_t address, uint8_t data);
  * @param[in] address is the memory address to be programmed.
  * @param[in] data is the data to be stored in address.
  *
- * @return 0 is sucess.
+ * @return 0 is success.
  *         1 is fail.
  *
  * @note this function must be used when the device voltage range is from 2.1V to 3.6V.
@@ -102,7 +103,7 @@ uint8_t Flash_WriteMemoryHalfWord(uint32_t address, uint16_t data);
  * @param[in] address is the memory address to be programmed.
  * @param[in] data is the data to be stored in address.
  *
- * @return 0 is sucess.
+ * @return 0 is success.
  *         1 is fail.
  *
  * @note this function must be used when the device voltage range is from 2.7V to 3.6V.
@@ -117,13 +118,26 @@ uint8_t Flash_WriteMemoryWord(uint32_t address, uint32_t data);
  * @param[in] address is the memory address to be programmed.
  * @param[in] data is the data to be stored in address.
  *
- * @return 0 is sucess.
+ * @return 0 is success.
  *         1 is fail.
  *
  * @note this function must be used when the device voltage range is from 2.7V to 3.6V
  *       with external Vpp in the range 8V to 9V.
  */
 uint8_t Flash_WriteMemoryDoubleWord(uint32_t address, uint64_t data);
+
+/**
+ * @fn Flash_EnRWProtection
+ *
+ * @brief function to enable the read/write protection of flash sectors.
+ *
+ * @param[in] sectors is the value of the nWRP byte to set in the OPTCR register.
+ * @param[in] protection_mode is 1 for write or 2 for read/write.
+ *
+ * @return 0 is success.
+ *         1 is fail.
+ */
+uint8_t Flash_EnRWProtection(uint8_t sectors, uint8_t protection_mode);
 
 /**
  * @fn Flash_Unlock
