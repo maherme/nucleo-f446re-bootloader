@@ -150,7 +150,20 @@ static void handle_mem_read(uint8_t* buffer);
  */
 static void handle_read_sector_protection_status(uint8_t* buffer, USART_Handle_t* pUSART_Handle);
 static void handle_read_otp(uint8_t* buffer);
-static void handle_dis_rw_protect(uint8_t* buffer);
+
+/**
+ * @fn handle_dis_rw_protect
+ *
+ * @brief function for handling the disable read/write protection command, which order to the bootloader
+ *        to disable the read/write protection for all the flash sectors.
+ *
+ * @param[in] buffer is a pointer to the command frame received.
+ * @param[in] pUSART_Handle is the handle structure for the UART peripheral used for receiving and
+ *            sending commands.
+ *
+ * @return void
+ */
+static void handle_dis_rw_protect(uint8_t* buffer, USART_Handle_t* pUSART_Handle);
 
 /**
  * @fn verify_cmd_crc
@@ -291,7 +304,7 @@ void uart_read_data(USART_Handle_t* pUSART_Handle){
                 handle_read_otp(rx_buffer);
                 break;
             case BL_DIS_R_W_PROTECT:
-                handle_dis_rw_protect(rx_buffer);
+                handle_dis_rw_protect(rx_buffer, pUSART_Handle);
                 break;
              default:
                 break;
@@ -544,7 +557,27 @@ static void handle_read_sector_protection_status(uint8_t* buffer, USART_Handle_t
 static void handle_read_otp(uint8_t* buffer){
 }
 
-static void handle_dis_rw_protect(uint8_t* buffer){
+static void handle_dis_rw_protect(uint8_t* buffer, USART_Handle_t* pUSART_Handle){
+
+    uint8_t rw_status = 0;
+    /* Total length of the cmd packet */
+    uint32_t cmd_packet_len = buffer[0] + 1;
+    /* Extract the CRC32 sent by the host */
+    uint32_t host_crc = *((uint32_t*)(buffer + cmd_packet_len - CRC_LEN));
+
+    printf("CMD Disable Read/Write Protection received\r\n");
+
+    /* Verify checksum */
+    if(!verify_cmd_crc(&buffer[0], cmd_packet_len - CRC_LEN, host_crc)){
+        send_ack(pUSART_Handle, sizeof(rw_status));
+        /* Disable the read/write protection of flash memory */
+        rw_status = Flash_DisRWProtection();
+        /* Send the enable r/w protect result to the host */
+        USART_SendData(pUSART_Handle, &rw_status, sizeof(rw_status));
+    }
+    else{
+        send_nack(pUSART_Handle);
+    }
 }
 
 static uint8_t verify_cmd_crc(uint8_t* pData, uint32_t length, uint32_t crc_host){

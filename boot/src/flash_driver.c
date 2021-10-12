@@ -11,6 +11,7 @@
 *       uint8_t Flash_WriteMemoryWord(uint32_t address, uint32_t data)
 *       uint8_t Flash_WriteMemoryDoubleWord(uint32_t address, uint64_t data)
 *       uint8_t Flash_EnRWProtection(uint8_t sectors, uint8_t protection_mode)
+*       uint8_t Flash_DisRWProtection(void)
 *       void    Flash_Unlock(void)
 *       void    Flash_Lock(void)
 *       void    Flash_OPTUnlock(void)
@@ -232,6 +233,34 @@ uint8_t Flash_EnRWProtection(uint8_t sectors, uint8_t protection_mode){
     else{
         return 1;
     }
+
+    return 0;
+}
+
+uint8_t Flash_DisRWProtection(void){
+
+    /* Check no flash memory operation is ongoing */
+    if(FLASHINTR->SR & (1 << FLASH_SR_BSY)){
+        return 1;
+    }
+
+    /* Unlock Flash to perform erase operation */
+    Flash_Unlock();
+
+    /* Set read/write protection on sectors */
+    /* Reset SPRMOD bit in OPTCR register */
+    FLASHINTR->OPTCR &= ~(1 << FLASH_OPTCR_SPRMOD);
+    /* Set nWRP byte in OPTCR register (1 is disabled) */
+    FLASHINTR->OPTCR |= (0xFF << FLASH_OPTCR_NWRP);
+
+    /* Set the STRT bit in Flash Control Register */
+    FLASHINTR->CR |= (1 << FLASH_CR_STRT);
+
+    /* Wait for flash memory operation is finished */
+    while(FLASHINTR->SR & (1 << FLASH_SR_BSY));
+
+    /* Lock Flash Control Register */
+    Flash_Lock();
 
     return 0;
 }

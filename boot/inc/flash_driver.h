@@ -11,6 +11,7 @@
 *       uint8_t Flash_WriteMemoryWord(uint32_t address, uint32_t data)
 *       uint8_t Flash_WriteMemoryDoubleWord(uint32_t address, uint64_t data)
 *       uint8_t Flash_EnRWProtection(uint8_t sectors, uint8_t protection_mode)
+*       uint8_t Flash_DisRWProtection(void)
 *       void    Flash_Unlock(void)
 *       void    Flash_Lock(void)
 *       void    Flash_OPTUnlock(void)
@@ -138,6 +139,16 @@ uint8_t Flash_WriteMemoryDoubleWord(uint32_t address, uint64_t data);
  *         1 is fail.
  */
 uint8_t Flash_EnRWProtection(uint8_t sectors, uint8_t protection_mode);
+
+/**
+ * @fn Flash_DisRWProtection
+ *
+ * @brief function to disable the read/write protection of flash sectors.
+ *
+ * @return 0 is success.
+ *         1 is fail.
+ */
+uint8_t Flash_DisRWProtection(void);
 
 /**
  * @fn Flash_Unlock
