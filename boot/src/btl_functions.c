@@ -1,17 +1,15 @@
-/*****************************************************************************************************
-* FILENAME :        btl_functions.c
+/**
+* @file btl_functions.c
 *
-* DESCRIPTION :
-*       File containing the needed functions for performing the bootloader.
+* @brief File containing the needed functions for performing the bootloader.
 *
-* PUBLIC FUNCTIONS :
-*       void uart_read_data(USART_Handle_t* pUSART_Handle)
-*       void jump_to_app(void)
+* Public Functions:
+*       - void uart_read_data(USART_Handle_t* pUSART_Handle)
+*       - void jump_to_app(void)
 *
-* NOTES :
+* @note
 *       For further information about functions refer to the corresponding header file.
-*
-**/
+*/
 
 #include <stdint.h>
 #include <string.h>
@@ -27,217 +25,171 @@
 /*****************************************************************************************************/
 
 /**
- * @fn handle_getver_cmd
- *
- * @brief function for handling the get version command, which sends to the host the bootloader version.
- *
- * @param[in] buffer is a pointer to the command frame received.
- * @param[in] pUSART_Handle is the handle structure for the UART peripheral used for receiving and
+ * @brief Function for handling the get version command, which sends to the host the bootloader version.
+ * @param[in] buffer: is a pointer to the command frame received.
+ * @param[in] pUSART_Handle: is the handle structure for the UART peripheral used for receiving and
  *            sending commands.
- *
  * @return void
  */
 static void handle_getver_cmd(uint8_t* buffer, USART_Handle_t* pUSART_Handle);
 
 /**
- * @fn handle_gethelp_cmd
- *
- * @brief function for handling the get help command, which sends to the host the supported command.
- *
+ * @brief Function for handling the get help command, which sends to the host the supported command.
  * @param[in] buffer is a pointer to the command frame received.
  * @param[in] pUSART_Handle is the handle structure for the UART peripheral used for receiving and
  *            sending commands.
- *
  * @return void
  */
 static void handle_gethelp_cmd(uint8_t* buffer, USART_Handle_t* pUSART_Handle);
 
 /**
- * @fn handle_getcid_cmd
- *
- * @brief function for handling the get cid command, which sends to the host the chip identifier.
- *
+ * @brief Function for handling the get cid command, which sends to the host the chip identifier.
  * @param[in] buffer is a pointer to the command frame received.
  * @param[in] pUSART_Handle is the handle structure for the UART peripheral used for receiving and
  *            sending commands.
- *
  * @return void
  */
 static void handle_getcid_cmd(uint8_t* buffer, USART_Handle_t* pUSART_Handle);
 
 /**
- * @fn handle_getrdp_cmd
- *
- * @brief function for handling the get rdp command, which sends to the host the read protection
+ * @brief Function for handling the get rdp command, which sends to the host the read protection
  *        option byte.
- *
  * @param[in] buffer is a pointer to the command frame received.
  * @param[in] pUSART_Handle is the handle structure for the UART peripheral used for receiving and
  *            sending commands.
- *
  * @return void
  */
 static void handle_getrdp_cmd(uint8_t* buffer, USART_Handle_t* pUSART_Handle);
 
 /**
- * @fn handle_go_cmd
- *
- * @brief function for handling the go to address command, which order to the bootloader jump to
+ * @brief Function for handling the go to address command, which order to the bootloader jump to
  *        an specific memory address.
- *
  * @param[in] buffer is a pointer to the command frame received.
  * @param[in] pUSART_Handle is the handle structure for the UART peripheral used for receiving and
  *            sending commands.
- *
  * @return void
  */
 static void handle_go_cmd(uint8_t* buffer, USART_Handle_t* pUSART_Handle);
 
 /**
- * @fn handle_flash_erase_cmd
- *
- * @brief function for handling the flash erase command, which order to the bootloader to erase an
+ * @brief Function for handling the flash erase command, which order to the bootloader to erase an
  *        specific sector of the flash or a mass erase.
- *
  * @param[in] buffer is a pointer to the command frame received.
  * @param[in] pUSART_Handle is the handle structure for the UART peripheral used for receiving and
  *            sending commands.
- *
  * @return void
  */
 static void handle_flash_erase_cmd(uint8_t* buffer, USART_Handle_t* pUSART_Handle);
 
 /**
- * @fn handle_mem_write_cmd
- *
- * @brief function for handling the memory write command, which order to the bootloader to write an
+ * @brief Function for handling the memory write command, which order to the bootloader to write an
  *        specific memory address of the flash.
- *
  * @param[in] buffer is a pointer to the command frame received.
  * @param[in] pUSART_Handle is the handle structure for the UART peripheral used for receiving and
  *            sending commands.
- *
  * @return void
  */
 static void handle_mem_write_cmd(uint8_t* buffer, USART_Handle_t* pUSART_Handle);
 
 /**
- * @fn handle_en_rw_protect
- *
- * @brief function for handling the enable read/write protection command, which order to the bootloader
+ * @brief Function for handling the enable read/write protection command, which order to the bootloader
  *        to enable the read/write protection to a flash sector.
- *
  * @param[in] buffer is a pointer to the command frame received.
  * @param[in] pUSART_Handle is the handle structure for the UART peripheral used for receiving and
  *            sending commands.
- *
  * @return void
  */
 static void handle_en_rw_protect(uint8_t* buffer, USART_Handle_t* pUSART_Handle);
-static void handle_mem_read(uint8_t* buffer);
 
 /**
- * @fn handle_read_sector_protection_status
- *
- * @brief function for handling the read sector protection status command, which order to the bootloader
- *        to send the Option Byte configuration.
- *
+ * @brief Function for handling the read flash memory command, which order to the bootloader to read a
+ *        flash memory address section.
  * @param[in] buffer is a pointer to the command frame received.
  * @param[in] pUSART_Handle is the handle structure for the UART peripheral used for receiving and
  *            sending commands.
- *
+ * @return void
+ */
+static void handle_mem_read(uint8_t* buffer, USART_Handle_t* pUSART_Handle);
+
+/**
+ * @brief Function for handling the read sector protection status command, which order to the bootloader
+ *        to send the Option Byte configuration.
+ * @param[in] buffer is a pointer to the command frame received.
+ * @param[in] pUSART_Handle is the handle structure for the UART peripheral used for receiving and
+ *            sending commands.
  * @return void
  */
 static void handle_read_sector_protection_status(uint8_t* buffer, USART_Handle_t* pUSART_Handle);
-static void handle_read_otp(uint8_t* buffer);
 
 /**
- * @fn handle_dis_rw_protect
- *
- * @brief function for handling the disable read/write protection command, which order to the bootloader
- *        to disable the read/write protection for all the flash sectors.
- *
+ * @brief Function for handling the read OTP flash address command, which order to the bootloader to read
+ *        an OTP flash address.
  * @param[in] buffer is a pointer to the command frame received.
  * @param[in] pUSART_Handle is the handle structure for the UART peripheral used for receiving and
  *            sending commands.
- *
+ * @return void
+ */
+static void handle_read_otp(uint8_t* buffer, USART_Handle_t* pUSART_Handle);
+
+/**
+ * @brief Function for handling the disable read/write protection command, which order to the bootloader
+ *        to disable the read/write protection for all the flash sectors.
+ * @param[in] buffer is a pointer to the command frame received.
+ * @param[in] pUSART_Handle is the handle structure for the UART peripheral used for receiving and
+ *            sending commands.
  * @return void
  */
 static void handle_dis_rw_protect(uint8_t* buffer, USART_Handle_t* pUSART_Handle);
 
 /**
- * @fn verify_cmd_crc
- *
- * @brief function for checking if the CRC received in the command frame is correct.
- *
+ * @brief Function for checking if the CRC received in the command frame is correct.
  * @param[in] pData is a pointer to the data frame received (command).
  * @param[in] length is the length of the data frame received without the CRC.
  * @param[in] crc_host is the CRC received in the data frame with the command sent by the host.
- *
  * @return 0 if crc received is OK.
- *         1 if crc received in NOK.
+ * @return 1 if crc received in NOK.
  */
 static uint8_t verify_cmd_crc(uint8_t* pData, uint32_t length, uint32_t crc_host);
 
 /**
- * @fn send_ack
- *
- * @brief function for sending an ACK to the host.
- *
+ * @brief Function for sending an ACK to the host.
  * @param[in] pUSART_Handle is the handle structure for the USART peripheral used for sending the ACK.
  * @param[in] follow_len is the length of the reply to the received command.
- *
  * @return void
  */
 static void send_ack(USART_Handle_t* pUSART_Handle, uint8_t follow_len);
 
 /**
- * @fn send_nack
- *
- * @brief function for sending an NACK to the host.
- *
+ * @brief Function for sending an NACK to the host.
  * @param[in] pUSART_Handle is the handle structure for the USART peripheral used for sending the NACK.
- *
  * @return void
  */
 static void send_nack(USART_Handle_t* pUSART_Handle);
 
 /**
- * @fn verify_address
- *
- * @brief function to verify is an address is suitable for a bootloader action (jump, program...).
- *
+ * @brief Function to verify is an address is suitable for a bootloader action (jump, program...).
  * @param[in] address is the flash address to be verified.
- *
  * @return 0 if address is not allowed for bootloader.
- *         1 if address is allowed for bootloader.
+ * @return 1 if address is allowed for bootloader.
  */
 static uint8_t verify_address(uint32_t address);
 
 /**
- * @fn flash_erase
- *
- * @brief function to erase the FLASH memory.
- *
+ * @brief Function to erase the FLASH memory.
  * @param[in] sector is the selected sector of the flash to start the erase, 0xFF means mass erase.
  * @param[in] num_sectors is the number of consecutive sectors of the flash to be erased.
- *
- * @return 0 is sucess.
- *         1 is fail.
+ * @return 0 if success.
+ * @return 1 if fail.
  */
 static uint8_t flash_erase(uint8_t sector, uint8_t num_sectors);
 
 /**
- * @fn flash_write
- *
- * @brief function to program a flash memory section byte by byte.
- *
+ * @brief Function to program a flash memory section byte by byte.
  * @param[in] address is the starting memory address of the flash to start the programming.
  * @param[in] buffer is an byte array with the data to be programmed.
  * @param[in] length is the number of data to be programmed.
- *
- * @return 0 is sucess.
- *         1 is fail.
+ * @return 0 if success.
+ * @return 1 if fail.
  */
 static uint8_t flash_write(uint32_t address, uint8_t* buffer, uint8_t length);
 
@@ -295,13 +247,13 @@ void uart_read_data(USART_Handle_t* pUSART_Handle){
                 handle_en_rw_protect(rx_buffer, pUSART_Handle);
                 break;
             case BL_MEM_READ:
-                handle_mem_read(rx_buffer);
+                handle_mem_read(rx_buffer, pUSART_Handle);
                 break;
             case BL_READ_SECTOR_P_STATUS:
                 handle_read_sector_protection_status(rx_buffer, pUSART_Handle);
                 break;
             case BL_OTP_READ:
-                handle_read_otp(rx_buffer);
+                handle_read_otp(rx_buffer, pUSART_Handle);
                 break;
             case BL_DIS_R_W_PROTECT:
                 handle_dis_rw_protect(rx_buffer, pUSART_Handle);
@@ -525,7 +477,7 @@ static void handle_en_rw_protect(uint8_t* buffer, USART_Handle_t* pUSART_Handle)
     }
 }
 
-static void handle_mem_read(uint8_t* buffer){
+static void handle_mem_read(uint8_t* buffer, USART_Handle_t* pUSART_Handle){
 }
 
 static void handle_read_sector_protection_status(uint8_t* buffer, USART_Handle_t* pUSART_Handle){
@@ -554,7 +506,7 @@ static void handle_read_sector_protection_status(uint8_t* buffer, USART_Handle_t
 
 }
 
-static void handle_read_otp(uint8_t* buffer){
+static void handle_read_otp(uint8_t* buffer, USART_Handle_t* pUSART_Handle){
 }
 
 static void handle_dis_rw_protect(uint8_t* buffer, USART_Handle_t* pUSART_Handle){

@@ -1,10 +1,8 @@
-/*****************************************************************************************************
-* FILENAME :        main.c
+/**
+* @file main.c
 *
-* DESCRIPTION :
-*       File containing the main function.
-*
-**/
+* @briefjFile containing the main function.
+*/
 
 #include <stdio.h>
 #include <stdint.h>

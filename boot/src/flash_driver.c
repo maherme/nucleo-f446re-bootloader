@@ -1,28 +1,26 @@
-/*****************************************************************************************************
-* FILENAME :        flash_driver.c
+/**
+* @file flash_driver.c
 *
-* DESCRIPTION :
-*       File containing the APIs for configuring the FLASH peripheral.
+* @brief File containing the APIs for configuring the FLASH peripheral.
 *
-* PUBLIC FUNCTIONS :
-*       uint8_t Flash_Erase(uint8_t sector, uint8_t num_sectors)
-*       uint8_t Flash_WriteMemoryByte(uint32_t address, uint8_t data)
-*       uint8_t Flash_WriteMemoryHalfWord(uint32_t address, uint16_t data)
-*       uint8_t Flash_WriteMemoryWord(uint32_t address, uint32_t data)
-*       uint8_t Flash_WriteMemoryDoubleWord(uint32_t address, uint64_t data)
-*       uint8_t Flash_EnRWProtection(uint8_t sectors, uint8_t protection_mode)
-*       uint8_t Flash_DisRWProtection(void)
-*       void    Flash_Unlock(void)
-*       void    Flash_Lock(void)
-*       void    Flash_OPTUnlock(void)
-*       void    Flash_OPTLock(void)
-*       void    Flash_SetPSIZE(flash_psize_t psize)
-*       uint8_t Flash_Busy(void)
-*       void    Flash_GetOBCfg(OPT_Cfg_t* OPTCfg)
+* Public Functions:
+*       - uint8_t Flash_EraseSector(uint8_t sector)
+*       - uint8_t Flash_WriteMemoryByte(uint32_t address, uint8_t data)
+*       - uint8_t Flash_WriteMemoryHalfWord(uint32_t address, uint16_t data)
+*       - uint8_t Flash_WriteMemoryWord(uint32_t address, uint32_t data)
+*       - uint8_t Flash_WriteMemoryDoubleWord(uint32_t address, uint64_t data)
+*       - uint8_t Flash_EnRWProtection(uint8_t sectors, uint8_t protection_mode)
+*       - uint8_t Flash_DisRWProtection(void)
+*       - void    Flash_Unlock(void)
+*       - void    Flash_Lock(void)
+*       - void    Flash_OPTUnlock(void)
+*       - void    Flash_OPTLock(void)
+*       - void    Flash_SetPSIZE(flash_psize_t psize)
+*       - uint8_t Flash_Busy(void)
+*       - void    Flash_GetOBCfg(OPT_Cfg_t* OPTCfg)
 *
-* NOTES :
+* @note
 *       For further information about functions refer to the corresponding header file.
-*
 **/
 
 #include <stdint.h>

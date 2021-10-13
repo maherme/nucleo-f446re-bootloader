@@ -1,21 +1,19 @@
-/*****************************************************************************************************
-* FILENAME :        startup.c
+/**
+* @file startup.c
 *
-* DESCRIPTION :
-*       File containing the interrupt vector table and initialize process of the microcontroller.
+* @brief File containing the interrupt vector table and initialize process of the microcontroller.
 *
-* NOTES :
+* @note
 *       These file is for the specific STM32F446xx microcontroller.
-*
-**/
+*/
 
 #include <stdint.h>
 
-#define SRAM_START      0x20000000U
-#define SRAM_SIZE       (128U * 1024U) /* memory of 128Kb */
-#define SRAM_END        ((SRAM_START) + (SRAM_SIZE))
+#define SRAM_START      0x20000000U                     /**< SRAM start address */
+#define SRAM_SIZE       (128U * 1024U)                  /**< Size of SRAM memory of 128Kb */
+#define SRAM_END        ((SRAM_START) + (SRAM_SIZE))    /**< SRAM end address */
 
-#define STACK_START     SRAM_END
+#define STACK_START     SRAM_END                        /**< Strack start address */
 
 extern uint32_t _etext;
 extern uint32_t _sdata;
