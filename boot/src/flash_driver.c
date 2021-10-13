@@ -187,7 +187,7 @@ uint8_t Flash_EnRWProtection(uint8_t sectors, uint8_t protection_mode){
         }
 
         /* Unlock Flash to perform erase operation */
-        Flash_Unlock();
+        Flash_OPTUnlock();
 
         /* Set write protection on sectors */
         /* Reset SPRMOD bit in OPTCR register */
@@ -202,7 +202,7 @@ uint8_t Flash_EnRWProtection(uint8_t sectors, uint8_t protection_mode){
         while(FLASHINTR->SR & (1 << FLASH_SR_BSY));
 
         /* Lock Flash Control Register */
-        Flash_Lock();
+        Flash_OPTLock();
     }
     else if(protection_mode == 2){
         /* Check no flash memory operation is ongoing */
@@ -211,7 +211,7 @@ uint8_t Flash_EnRWProtection(uint8_t sectors, uint8_t protection_mode){
         }
 
         /* Unlock Flash to perform erase operation */
-        Flash_Unlock();
+        Flash_OPTUnlock();
 
         /* Set read/write protection on sectors */
         /* Set SPRMOD bit in OPTCR register */
@@ -228,7 +228,7 @@ uint8_t Flash_EnRWProtection(uint8_t sectors, uint8_t protection_mode){
         while(FLASHINTR->SR & (1 << FLASH_SR_BSY));
 
         /* Lock Flash Control Register */
-        Flash_Lock();
+        Flash_OPTLock();
     }
     else{
         return 1;
@@ -245,7 +245,7 @@ uint8_t Flash_DisRWProtection(void){
     }
 
     /* Unlock Flash to perform erase operation */
-    Flash_Unlock();
+    Flash_OPTUnlock();
 
     /* Set read/write protection on sectors */
     /* Reset SPRMOD bit in OPTCR register */
@@ -260,7 +260,7 @@ uint8_t Flash_DisRWProtection(void){
     while(FLASHINTR->SR & (1 << FLASH_SR_BSY));
 
     /* Lock Flash Control Register */
-    Flash_Lock();
+    Flash_OPTLock();
 
     return 0;
 }
