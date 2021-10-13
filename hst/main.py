@@ -29,10 +29,12 @@ class MainApp(QMainWindow):
         self.display = Display("Display:")
         self.erase_menu = EraseMenu("Erase Menu:")
         self.write_display = WriteDisplay("Write Memory:")
+        self.rw_prot_display = RWProtectDisplay("Read/Write Protection Menu:")
         self.stack_lay = QStackedLayout()
         self.stack_lay.addWidget(self.display)
         self.stack_lay.addWidget(self.erase_menu)
         self.stack_lay.addWidget(self.write_display)
+        self.stack_lay.addWidget(self.rw_prot_display)
         grid.addLayout(self.stack_lay, 1, 1, 1, 2)
         widget.setLayout(grid)
         self.setCentralWidget(widget)
@@ -51,6 +53,9 @@ class MainApp(QMainWindow):
         self.btn_grp_cmd.btn_cmd_write.clicked.connect(self.slot_write)
         self.write_display.btn_start.clicked.connect(self.slot_write_start)
         self.btn_grp_cmd.btn_cmd_read_sector_status.clicked.connect(self.slot_read_sector_st)
+        self.btn_grp_cmd.btn_cmd_rw_protect.clicked.connect(self.slot_rw_protect)
+        self.rw_prot_display.check_dis_protect.stateChanged.connect(self.slot_rw_disable)
+        self.rw_prot_display.btn_write_protect.clicked.connect(self.slot_rw_protect_write)
 
     def slot_connect(self):
         if boot_serial.connect_serial(self.btn_grp_cnt.usb_list.currentText()):
@@ -214,6 +219,60 @@ class MainApp(QMainWindow):
         for x in range(8):
             self.display.lab_display.setText(self.display.lab_display.text() + "\nSector " + str(x) + ":\t" + protect_type(value, x))
 
+    def slot_rw_protect(self):
+        self.stack_lay.setCurrentIndex(3)
+
+    def slot_rw_disable(self, state):
+        if(QtCore.Qt.Checked == state):
+            self.rw_prot_display.check_sprmod.setEnabled(False)
+            self.rw_prot_display.check_sector0.setEnabled(False)
+            self.rw_prot_display.check_sector1.setEnabled(False)
+            self.rw_prot_display.check_sector2.setEnabled(False)
+            self.rw_prot_display.check_sector3.setEnabled(False)
+            self.rw_prot_display.check_sector4.setEnabled(False)
+            self.rw_prot_display.check_sector5.setEnabled(False)
+            self.rw_prot_display.check_sector6.setEnabled(False)
+            self.rw_prot_display.check_sector7.setEnabled(False)
+        else:
+            self.rw_prot_display.check_sprmod.setEnabled(True)
+            self.rw_prot_display.check_sector0.setEnabled(True)
+            self.rw_prot_display.check_sector1.setEnabled(True)
+            self.rw_prot_display.check_sector2.setEnabled(True)
+            self.rw_prot_display.check_sector3.setEnabled(True)
+            self.rw_prot_display.check_sector4.setEnabled(True)
+            self.rw_prot_display.check_sector5.setEnabled(True)
+            self.rw_prot_display.check_sector6.setEnabled(True)
+            self.rw_prot_display.check_sector7.setEnabled(True)
+
+    def slot_rw_protect_write(self):
+        mode = 1
+        sectors = 0
+
+        if self.rw_prot_display.check_dis_protect.isChecked():
+            boot_cmd.cmd_dis_rw_protect()
+        else:
+            if self.rw_prot_display.check_sprmod.isChecked():
+                mode = 2
+
+            if self.rw_prot_display.check_sector0.isChecked():
+                sectors |= 0x01
+            if self.rw_prot_display.check_sector1.isChecked():
+                sectors |= 0x02
+            if self.rw_prot_display.check_sector2.isChecked():
+                sectors |= 0x04
+            if self.rw_prot_display.check_sector3.isChecked():
+                sectors |= 0x08
+            if self.rw_prot_display.check_sector4.isChecked():
+                sectors |= 0x10
+            if self.rw_prot_display.check_sector5.isChecked():
+                sectors |= 0x20
+            if self.rw_prot_display.check_sector6.isChecked():
+                sectors |= 0x40
+            if self.rw_prot_display.check_sector7.isChecked():
+                sectors |= 0x80
+
+            boot_cmd.cmd_en_rw_protect(sectors, mode)
+
 def protect_type(status, n):
     if(status[1] & (1 << 7)):
         if(status[0] & (1 << n)):
@@ -252,6 +311,7 @@ class CmdBtnGrp(QGroupBox):
         self.btn_cmd_erase = QPushButton("Erase")
         self.btn_cmd_write = QPushButton("Write")
         self.btn_cmd_read_sector_status = QPushButton("Read Sector Status")
+        self.btn_cmd_rw_protect = QPushButton("R/W Protection")
         self.setEnabled(False)
 
         vbox = QVBoxLayout()
@@ -263,6 +323,7 @@ class CmdBtnGrp(QGroupBox):
         vbox.addWidget(self.btn_cmd_erase)
         vbox.addWidget(self.btn_cmd_write)
         vbox.addWidget(self.btn_cmd_read_sector_status)
+        vbox.addWidget(self.btn_cmd_rw_protect)
         vbox.addStretch(1)
         self.setLayout(vbox)
 
@@ -331,6 +392,40 @@ class WriteDisplay(QGroupBox):
         vbox.addWidget(self.lab_pbar)
         vbox.addWidget(self.pbar)
         vbox.addWidget(self.btn_start)
+        vbox.addStretch(1)
+        self.setLayout(vbox)
+
+class RWProtectDisplay(QGroupBox):
+    def __init__(self, name):
+        super(RWProtectDisplay, self).__init__(name)
+
+        self.check_dis_protect = QCheckBox("Disable R/W Protection for All Sectors")
+        self.check_sprmod = QCheckBox("Set SPRMOD Bit in OPTCR Flash Register (Set for R/W Protection)")
+        self.lab_info = QLabel("Select Sectors to Apply Protection:")
+        self.check_sector0 = QCheckBox("Sector 0")
+        self.check_sector1 = QCheckBox("Sector 1")
+        self.check_sector2 = QCheckBox("Sector 2")
+        self.check_sector3 = QCheckBox("Sector 3")
+        self.check_sector4 = QCheckBox("Sector 4")
+        self.check_sector5 = QCheckBox("Sector 5")
+        self.check_sector6 = QCheckBox("Sector 6")
+        self.check_sector7 = QCheckBox("Sector 7")
+        self.btn_write_protect = QPushButton("Write")
+        self.btn_write_protect.setFixedWidth(120)
+
+        vbox = QVBoxLayout()
+        vbox.addWidget(self.check_dis_protect)
+        vbox.addWidget(self.check_sprmod)
+        vbox.addWidget(self.lab_info)
+        vbox.addWidget(self.check_sector0)
+        vbox.addWidget(self.check_sector1)
+        vbox.addWidget(self.check_sector2)
+        vbox.addWidget(self.check_sector3)
+        vbox.addWidget(self.check_sector4)
+        vbox.addWidget(self.check_sector5)
+        vbox.addWidget(self.check_sector6)
+        vbox.addWidget(self.check_sector7)
+        vbox.addWidget(self.btn_write_protect)
         vbox.addStretch(1)
         self.setLayout(vbox)
 
