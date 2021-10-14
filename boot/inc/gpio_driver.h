@@ -28,22 +28,38 @@
  * @brief GPIO pin possible number.
  * @{
  */
-#define GPIO_PIN_NO_0       0   /**< Pin Number 0 */
-#define GPIO_PIN_NO_1       1   /**< Pin Number 1 */
-#define GPIO_PIN_NO_2       2   /**< Pin Number 2 */
-#define GPIO_PIN_NO_3       3   /**< Pin Number 3 */
-#define GPIO_PIN_NO_4       4   /**< Pin Number 4 */
-#define GPIO_PIN_NO_5       5   /**< Pin Number 5 */
-#define GPIO_PIN_NO_6       6   /**< Pin Number 6 */
-#define GPIO_PIN_NO_7       7   /**< Pin Number 7 */
-#define GPIO_PIN_NO_8       8   /**< Pin Number 8 */
-#define GPIO_PIN_NO_9       9   /**< Pin Number 9 */
-#define GPIO_PIN_NO_10      10  /**< Pin Number 10 */
-#define GPIO_PIN_NO_11      11  /**< Pin Number 11 */
-#define GPIO_PIN_NO_12      12  /**< Pin Number 12 */
-#define GPIO_PIN_NO_13      13  /**< Pin Number 13 */
-#define GPIO_PIN_NO_14      14  /**< Pin Number 14 */
-#define GPIO_PIN_NO_15      15  /**< Pin Number 15 */
+/** @brief GPIO pin number 0 */
+#define GPIO_PIN_NO_0       0
+/** @brief GPIO pin number 1 */
+#define GPIO_PIN_NO_1       1
+/** @brief GPIO pin number 2 */
+#define GPIO_PIN_NO_2       2
+/** @brief GPIO pin number 3 */
+#define GPIO_PIN_NO_3       3
+/** @brief GPIO pin number 4 */
+#define GPIO_PIN_NO_4       4
+/** @brief GPIO pin number 5 */
+#define GPIO_PIN_NO_5       5
+/** @brief GPIO pin number 6 */
+#define GPIO_PIN_NO_6       6
+/** @brief GPIO pin number 7 */
+#define GPIO_PIN_NO_7       7
+/** @brief GPIO pin number 8 */
+#define GPIO_PIN_NO_8       8
+/** @brief GPIO pin number 9 */
+#define GPIO_PIN_NO_9       9
+/** @brief GPIO pin number 10 */
+#define GPIO_PIN_NO_10      10
+/** @brief GPIO pin number 11 */
+#define GPIO_PIN_NO_11      11
+/** @brief GPIO pin number 12 */
+#define GPIO_PIN_NO_12      12
+/** @brief GPIO pin number 13 */
+#define GPIO_PIN_NO_13      13
+/** @brief GPIO pin number 14 */
+#define GPIO_PIN_NO_14      14
+/** @brief GPIO pin number 15 */
+#define GPIO_PIN_NO_15      15
 /** @} */
 
 /**
@@ -51,13 +67,20 @@
  * @brief GPIO pin possible modes.
  * @{
  */
-#define GPIO_MODE_IN        0   /**< Input direction mode */
-#define GPIO_MODE_OUT       1   /**< General purpose output mode */
-#define GPIO_MODE_ALTFN     2   /**< Alternate function mode */
-#define GPIO_MODE_ANALOG    3   /**< Analog mode */
-#define GPIO_MODE_IT_FT     4   /**< Interrupt falling edge trigger */
-#define GPIO_MODE_IT_RT     5   /**< Interrupt rising edge trigger */
-#define GPIO_MODE_IT_RFT    6   /**< Interrupt rising and falling edge trigger */
+/** @brief Input direction mode */
+#define GPIO_MODE_IN        0
+/** @brief General purpose output mode */
+#define GPIO_MODE_OUT       1
+/** @brief Alternate function mode */
+#define GPIO_MODE_ALTFN     2
+/** @brief Analog mode */
+#define GPIO_MODE_ANALOG    3
+/** @brief Interrupt falling edge trigger */
+#define GPIO_MODE_IT_FT     4
+/** @brief Interrupt rising edge trigger */
+#define GPIO_MODE_IT_RT     5
+/** @brief Interrupt rising and falling edge trigger */
+#define GPIO_MODE_IT_RFT    6
 /** @} */
 
 /**
@@ -65,8 +88,10 @@
  * @brief GPIO pin possible output types.
  * @{
  */
-#define GPIO_OP_TYPE_PP     0   /**< Output push-pull */
-#define GPIO_OP_TYPE_OD     1   /**< Output open-drain */
+/** @brief Output push-pull configuration */
+#define GPIO_OP_TYPE_PP     0
+/** @brief Output open-drain configuration */
+#define GPIO_OP_TYPE_OD     1
 /** @} */
 
 /**
@@ -74,20 +99,27 @@
  * @brief GPIO pin possible output speed.
  * @{
  */
-#define GPIO_SPEED_LOW      0   /**< Low Speed */
-#define GPIO_SPEED_MEDIUM   1   /**< Medium Speed */
-#define GPIO_SPEED_FAST     2   /**< Fast Speed */
-#define GPIO_SPEED_HIGH     3   /**< High Speed */
+/** @brief Low Speed */
+#define GPIO_SPEED_LOW      0
+/** @brief Medium Speed */
+#define GPIO_SPEED_MEDIUM   1
+/** @brief Fast Speed */
+#define GPIO_SPEED_FAST     2
+/** @brief High Speed */
+#define GPIO_SPEED_HIGH     3
 /** @} */
 
 /**
  * @name GPIO_PIN_PULL
- * @brief GPIO pin pull-up / pull-down configuration.
+ * @brief GPIO pin pull-up/pull-down configuration.
  * @{
  */
-#define GPIO_NO_PULL        0   /**< No pull-up, pull-down */
-#define GPIO_PIN_PU         1   /**< Pull-up */
-#define GPIO_PIN_PD         2   /**< Pull-down */
+/** @brief No pull-up/pull-down. */
+#define GPIO_NO_PULL        0
+/** @brief Pull-up. */
+#define GPIO_PIN_PU         1
+/** @brief Pull-down. */
+#define GPIO_PIN_PD         2
 /** @} */
 
 /**
@@ -95,11 +127,11 @@
  */
 typedef struct
 {
-    uint8_t GPIO_PinNumber;         /**< Possible values from @GPIO_PIN_NO */
-    uint8_t GPIO_PinMode;           /**< Possible values from @GPIO_PIN_MODES */
-    uint8_t GPIO_PinSpeed;          /**< Possible values from @GPIO_PIN_SPEED */
-    uint8_t GPIO_PinPuPdControl;    /**< Possible values from @GPIO_PIN_PULL */
-    uint8_t GPIO_PinOPType;         /**< Possible values from @GPIO_PIN_OPTYPE */
+    uint8_t GPIO_PinNumber;         /**< Possible values from GPIO_PIN_NO */
+    uint8_t GPIO_PinMode;           /**< Possible values from GPIO_PIN_MODES */
+    uint8_t GPIO_PinSpeed;          /**< Possible values from GPIO_PIN_SPEED */
+    uint8_t GPIO_PinPuPdControl;    /**< Possible values from GPIO_PIN_PULL */
+    uint8_t GPIO_PinOPType;         /**< Possible values from GPIO_PIN_OPTYPE */
     uint8_t GPIO_PinAltFunMode;     /**< Possible values for alternate functionality */
 }GPIO_PinConfig_t;
 

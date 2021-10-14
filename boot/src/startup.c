@@ -9,11 +9,14 @@
 
 #include <stdint.h>
 
-#define SRAM_START      0x20000000U                     /**< SRAM start address */
-#define SRAM_SIZE       (128U * 1024U)                  /**< Size of SRAM memory of 128Kb */
+/** @brief SRAM start address */
+#define SRAM_START      0x20000000U
+/** @brief Size of SRAM memory (128 KB) */
+#define SRAM_SIZE       (128U * 1024U)
+/** @brief SRAM end address */
 #define SRAM_END        ((SRAM_START) + (SRAM_SIZE))    /**< SRAM end address */
-
-#define STACK_START     SRAM_END                        /**< Strack start address */
+/** @brief Stack start address */
+#define STACK_START     SRAM_END
 
 extern uint32_t _etext;
 extern uint32_t _sdata;

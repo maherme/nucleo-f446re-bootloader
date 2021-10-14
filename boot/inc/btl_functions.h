@@ -14,17 +14,17 @@
 #include <stdint.h>
 #include "usart_driver.h"
 
-/** ACK value used for communicating with the host */
+/** @brief ACK value used for communicating with the host */
 #define BL_ACK      0xA5
-/** NACK value used for communicating with the host */
+/** @brief NACK value used for communicating with the host */
 #define BL_NACK     0x7F
-/** Length of the CRC used for communicating with the host */
+/** @brief Length of the CRC used for communicating with the host */
 #define CRC_LEN     4
-/** Valid Flash address flag */
+/** @brief Valid Flash address flag */
 #define ADDR_VALID      0x00
-/** Invalid Flash address flag */
+/** @brief Invalid Flash address flag */
 #define ADDR_INVALID    0x01
-/** Starting address for the user application code in flash. */
+/** @brief Starting address for the user application code in flash. */
 #define FLASH_SECTOR2_BASE_ADDRESS 0x08008000U
 
 /**

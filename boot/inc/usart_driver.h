@@ -32,8 +32,11 @@
  * @brief USART possible device mode.
  * @{
  */
+/** @brief Mode transmission only. */
 #define USART_MODE_ONLY_TX      0
+/** @brief Mode reception only. */
 #define USART_MODE_ONLY_RX      1
+/** @brief Mode transmission and reception. */
 #define USART_MODE_TXRX         2
 /** @} */
 
@@ -42,18 +45,18 @@
  * @brief USART possible options for baudrate.
  * @{
  */
-#define USART_STD_BAUD_1200     1200
-#define USART_STD_BAUD_2400     2400
-#define USART_STD_BAUD_9600     9600
-#define USART_STD_BAUD_19200    19200
-#define USART_STD_BAUD_38400    38400
-#define USART_STD_BAUD_57600    57600
-#define USART_STD_BAUD_115200   115200
-#define USART_STD_BAUD_230400   230400
-#define USART_STD_BAUD_460800   460800
-#define USART_STD_BAUD_921600   921600
-#define USART_STD_BAUD_2M       2000000
-#define USART_STD_BAUD_3M       3000000
+#define USART_STD_BAUD_1200     1200        /**< @brief Baudrate 1200 */
+#define USART_STD_BAUD_2400     2400        /**< @brief Baudrate 2400 */
+#define USART_STD_BAUD_9600     9600        /**< @brief Baudrate 9600 */
+#define USART_STD_BAUD_19200    19200       /**< @brief Baudrate 19200 */
+#define USART_STD_BAUD_38400    38400       /**< @brief Baudrate 38400 */
+#define USART_STD_BAUD_57600    57600       /**< @brief Baudrate 57600 */
+#define USART_STD_BAUD_115200   115200      /**< @brief Baudrate 115200 */
+#define USART_STD_BAUD_230400   230400      /**< @brief Baudrate 230400 */
+#define USART_STD_BAUD_460800   460800      /**< @brief Baudrate 460800 */
+#define USART_STD_BAUD_921600   921600      /**< @brief Baudrate 921600 */
+#define USART_STD_BAUD_2M       2000000     /**< @brief Baudrate 2M */
+#define USART_STD_BAUD_3M       3000000     /**< @brief Baudrate 3M */
 /** @} */
 
 /**
@@ -61,9 +64,9 @@
  * @brief USART possible options for parity control.
  * @{
  */
-#define USART_PARITY_DISABLE    0
-#define USART_PARITY_EN_EVEN    1
-#define USART_PARITY_EN_ODD     2
+#define USART_PARITY_DISABLE    0   /**< @brief Partity control disabled */
+#define USART_PARITY_EN_EVEN    1   /**< @brief Even parity control enabled */
+#define USART_PARITY_EN_ODD     2   /**< @brief Odd parity control enabled */
 /** @} */
 
 /**
@@ -71,8 +74,8 @@
  * @brief USART possible options for word length.
  * @{
  */
-#define USART_WORDLEN_8BITS     0
-#define USART_WORDLEN_9BITS     1
+#define USART_WORDLEN_8BITS     0   /**< @brief Word length of 8 bits */
+#define USART_WORDLEN_9BITS     1   /**< @brief Word length of 9 bits */
 /** @} */
 
 /**
@@ -80,10 +83,10 @@
  * @brief USART possible options for number of stop bits.
  * @{
  */
-#define USART_STOPBITS_1        0
-#define USART_STOPBITS_0_5      1
-#define USART_STOPBITS_2        2
-#define USART_STOPBITS_1_5      3
+#define USART_STOPBITS_1        0   /**< @brief Number stop bits 1 */
+#define USART_STOPBITS_0_5      1   /**< @brief Number stop bits 1/2 */
+#define USART_STOPBITS_2        2   /**< @brief Number stop bits 2 */
+#define USART_STOPBITS_1_5      3   /**< @brief Number stop bits 3/2 */
 /** @} */
 
 /**
@@ -91,19 +94,19 @@
  * @brief USART possible options for hardware flow control.
  * @{
  */
-#define USART_HW_FLOW_CTRL_NONE     0
-#define USART_HW_FLOW_CTRL_CTS      1
-#define USART_HW_FLOW_CTRL_RTS      2
-#define USART_HW_FLOW_CTRL_CTS_RTS  3
+#define USART_HW_FLOW_CTRL_NONE     0   /**< @brief Flow control disabled */
+#define USART_HW_FLOW_CTRL_CTS      1   /**< @brief Clear to send flow control enabled */
+#define USART_HW_FLOW_CTRL_RTS      2   /**< @brief Ready to send flow control enabled */
+#define USART_HW_FLOW_CTRL_CTS_RTS  3   /**< @brief CTS and RTS flow control enabled */
 /** @} */
 
 /**
  * @name USART related status flags definitions.
  * @{
  */
-#define USART_FLAG_TXE      (1 << USART_SR_TXE)
-#define USART_FLAG_TC       (1 << USART_SR_TC)
-#define USART_FLAG_RXNE     (1 << USART_SR_RXNE)
+#define USART_FLAG_TXE      (1 << USART_SR_TXE)     /**< @brief TXE of USART status register */
+#define USART_FLAG_TC       (1 << USART_SR_TC)      /**< @brief TC of USART status register */
+#define USART_FLAG_RXNE     (1 << USART_SR_RXNE)    /**< @brief RXNE of USART status register */
 /** @} */
 
 /**
@@ -111,23 +114,23 @@
  * @brief USART possible application states.
  * @{
  */
-#define USART_READY         0
-#define USART_BUSY_IN_RX    1
-#define USART_BUSY_IN_TX    2
+#define USART_READY         0   /**< @brief USART ready */
+#define USART_BUSY_IN_RX    1   /**< @brief USART busy in reception */
+#define USART_BUSY_IN_TX    2   /**< @brief USART busy in transmission */
 /** @} */
 
 /**
  * @name USART possible application events
  * @{
  */
-#define USART_EVENT_TX_CMPLT    0
-#define USART_EVENT_RX_CMPLT    1
-#define USART_EVENT_CTS         2
-#define USART_EVENT_IDLE        3
-#define USART_EVENT_ORE         4
-#define USART_ERROR_FE          5
-#define USART_ERROR_NF          6
-#define USART_ERROR_ORE         7
+#define USART_EVENT_TX_CMPLT    0   /**< @brief Transmission completed event */
+#define USART_EVENT_RX_CMPLT    1   /**< @brief Reception completed event */
+#define USART_EVENT_CTS         2   /**< @brief Clear to send event */
+#define USART_EVENT_IDLE        3   /**< @brief IDLE event */
+#define USART_EVENT_PE          4   /**< @brief Parity error event */
+#define USART_ERROR_FE          5   /**< @brief Framing error event */
+#define USART_ERROR_NF          6   /**< @brief Noise detected flag event */
+#define USART_ERROR_ORE         7   /**< @brief Overrun error event */
 /** @} */
 
 /**
@@ -135,12 +138,12 @@
  */
 typedef struct
 {
-    uint8_t USART_Mode;             /**< Possible values from @USART_DEVICE_MODE */
-    uint32_t USART_Baud;            /**< Possible values from @USART_BAUD */
-    uint8_t USART_NoOfStopBits;     /**< Possible values from @USART_NUM_STOP_BITS */
-    uint8_t USART_WordLength;       /**< Possible values from @USART_WORD_LENGTH */
-    uint8_t USART_ParityControl;    /**< Possible values from @USART_PARITY_CTL */
-    uint8_t USART_HWFlowControl;    /**< Possible values from @USART_HW_FLOW_CTL */
+    uint8_t USART_Mode;             /**< Possible values from USART_DEVICE_MODE */
+    uint32_t USART_Baud;            /**< Possible values from USART_BAUD */
+    uint8_t USART_NoOfStopBits;     /**< Possible values from USART_NUM_STOP_BITS */
+    uint8_t USART_WordLength;       /**< Possible values from USART_WORD_LENGTH */
+    uint8_t USART_ParityControl;    /**< Possible values from USART_PARITY_CTL */
+    uint8_t USART_HWFlowControl;    /**< Possible values from USART_HW_FLOW_CTL */
 }USART_Config_t;
 
 /**
@@ -209,7 +212,7 @@ void USART_ReceiveData(USART_Handle_t* pUSART_Handle, uint8_t* pRxBuffer, uint32
  * @param[in] pUSART_Handle handle structure for the USART peripheral.
  * @param[in] pTxBuffer buffer with the data to send.
  * @param[in] len length of the data to send.
- * @return @USART_APP_STATE.
+ * @return USART_APP_STATE.
  */
 uint8_t USART_SendDataIT(USART_Handle_t* pUSART_Handle, uint8_t* pTxBuffer, uint32_t len);
 
@@ -218,13 +221,13 @@ uint8_t USART_SendDataIT(USART_Handle_t* pUSART_Handle, uint8_t* pTxBuffer, uint
  * @param[in] pUSART_Handle handle structure for the USART peripheral.
  * @param[out] pRxBuffer buffer to store the received data.
  * @param[in] len length of the data to receive.
- * @return @USART_APP_STATE.
+ * @return USART_APP_STATE.
  */
 uint8_t USART_ReceiveDataIT(USART_Handle_t* pUSART_Handle, uint8_t* pRxBuffer, uint32_t len);
 
 /**
  * @brief Function to set the baud rate of the USART peripheral.
- * @param[in] pUSART_Handle handle structure for the USART peripheral.
+ * @param[in] pUSARTx structure for managing registers of the USART peripheral.
  * @param[in] baudrate possible values of baud rate.
  * @return void
  */

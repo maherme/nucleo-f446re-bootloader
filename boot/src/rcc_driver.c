@@ -16,8 +16,10 @@
 #include "stm32f446xx.h"
 #include "rcc_driver.h"
 
-#define FREQ_8MHZ    8000000    /**< Frequency of 8 MHz */
-#define FREQ_16MHZ   16000000   /**< Frequency of 16 MHz */
+/** @brief Frequency of 8 MHz */
+#define FREQ_8MHZ    8000000
+/** @brief Frequency of 16 MHz */
+#define FREQ_16MHZ   16000000
 
 static uint16_t AHB_PreScaler[8] = {2, 4, 8, 16, 64, 128, 256, 512};
 static uint8_t APB_PreScaler[4] = {2, 4, 8, 16};

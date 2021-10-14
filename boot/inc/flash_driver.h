@@ -26,7 +26,8 @@
 #include <stdint.h>
 #include "stm32f446xx.h"
 
-#define MAX_NUM_SECTOR  8   /**< Maximum number of sectors of the Flash memory */
+/** @brief Maximum number of sectors of the Flash memory */
+#define MAX_NUM_SECTOR  8
 
 /**
  * @brief List of allowed PSIZE values for FLASH CR register.
