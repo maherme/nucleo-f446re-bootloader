@@ -413,225 +413,225 @@ typedef struct
 /** @} */
 
 /**
- * @name Bit position definition I2C_CR1.
+ * @name Bit position definition I2C control register 1.
  * @{
  */
-#define I2C_CR1_PE          0
-#define I2C_CR1_SMBUS       1
-#define I2C_CR1_SMBTYPE     3
-#define I2C_CR1_ENARP       4
-#define I2C_CR1_ENPEC       5
-#define I2C_CR1_ENGC        6
-#define I2C_CR1_NOSTRETCH   7
-#define I2C_CR1_START       8
-#define I2C_CR1_STOP        9
-#define I2C_CR1_ACK         10
-#define I2C_CR1_POS         11
-#define I2C_CR1_PEC         12
-#define I2C_CR1_ALERT       13
-#define I2C_CR1_SWRST       15
+#define I2C_CR1_PE          0   /**< @brief Peripheral enable offset */
+#define I2C_CR1_SMBUS       1   /**< @brief SMBus mode offset */
+#define I2C_CR1_SMBTYPE     3   /**< @brief SMBus type offset */
+#define I2C_CR1_ENARP       4   /**< @brief ARP enable offset */
+#define I2C_CR1_ENPEC       5   /**< @brief PEC enable offset */
+#define I2C_CR1_ENGC        6   /**< @brief General call enable offset */
+#define I2C_CR1_NOSTRETCH   7   /**< @brief Clock stretching disable (Slave mode) offset */
+#define I2C_CR1_START       8   /**< @brief Start generation offset */
+#define I2C_CR1_STOP        9   /**< @brief Stop generation offset */
+#define I2C_CR1_ACK         10  /**< @brief Acknowledge enable offset */
+#define I2C_CR1_POS         11  /**< @brief Acknowledge/PEC Position (for data reception) offset */
+#define I2C_CR1_PEC         12  /**< @brief Packet error checking offset */
+#define I2C_CR1_ALERT       13  /**< @brief SMBus alert offset */
+#define I2C_CR1_SWRST       15  /**< @brief Software reset offset */
 /** @} */
 
 /**
- * @name Bit position definition I2C_CR2.
+ * @name Bit position definition I2C control register 2.
  * @{
  */
-#define I2C_CR2_FREQ        0
-#define I2C_CR2_ITERREN     8
-#define I2C_CR2_ITEVTEN     9
-#define I2C_CR2_ITBUFEN     10
-#define I2C_CR2_DMAEN       11
-#define I2C_CR2_LAST        12
+#define I2C_CR2_FREQ        0   /**< @brief Peripheral clock frequency offset */
+#define I2C_CR2_ITERREN     8   /**< @brief Error interrupt enable offset */
+#define I2C_CR2_ITEVTEN     9   /**< @brief Event interrupt enable offset */
+#define I2C_CR2_ITBUFEN     10  /**< @brief Buffer interrupt enable offset */
+#define I2C_CR2_DMAEN       11  /**< @brief DMA requests enable offset */
+#define I2C_CR2_LAST        12  /**< @brief DMA last transfer offset */
 /** @} */
 
 /**
- * @name Bit position definition I2C_SR1.
+ * @name Bit position definition I2C status register 1.
  * @{
  */
-#define I2C_SR1_SB          0
-#define I2C_SR1_ADDR        1
-#define I2C_SR1_BTF         2
-#define I2C_SR1_ADD10       3
-#define I2C_SR1_STOPF       4
-#define I2C_SR1_RXNE        6
-#define I2C_SR1_TXE         7
-#define I2C_SR1_BERR        8
-#define I2C_SR1_ARLO        9
-#define I2C_SR1_AF          10
-#define I2C_SR1_OVR         11
-#define I2C_SR1_PECERR      12
-#define I2C_SR1_TIMEOUT     14
-#define I2C_SR1_SMBALERT    15
+#define I2C_SR1_SB          0  /**< @brief Start bit (Master mode) offset */
+#define I2C_SR1_ADDR        1  /**< @brief Address sent (master mode)/matched (slave mode) offset */
+#define I2C_SR1_BTF         2  /**< @brief Byte transfer finished offset */
+#define I2C_SR1_ADD10       3  /**< @brief 10-bit header sent (Master mode) offset */
+#define I2C_SR1_STOPF       4  /**< @brief Stop detection (slave mode) offset */
+#define I2C_SR1_RXNE        6  /**< @brief Data register not empty (receivers) offset */
+#define I2C_SR1_TXE         7  /**< @brief Data register empty (transmitters) offset */
+#define I2C_SR1_BERR        8  /**< @brief Bus error offset */
+#define I2C_SR1_ARLO        9  /**< @brief Arbitration lost (master mode) offset */
+#define I2C_SR1_AF          10 /**< @brief Acknowledge failure offset */
+#define I2C_SR1_OVR         11 /**< @brief Overrun/Underrun offset*/
+#define I2C_SR1_PECERR      12 /**< @brief PEC Error in reception offset */
+#define I2C_SR1_TIMEOUT     14 /**< @brief Timeout or Tlow error offset */
+#define I2C_SR1_SMBALERT    15 /**< @brief SMBus alert offset */
 /** @} */
 
 /**
- * @name Bit position definition I2C_SR2.
+ * @name Bit position definition I2C status register 2.
  * @{
  */
-#define I2C_SR2_MSL         0
-#define I2C_SR2_BUSY        1
-#define I2C_SR2_TRA         2
-#define I2C_SR2_GENCALL     4
-#define I2C_SR2_SMBDEFAULT  5
-#define I2C_SR2_SMBHOST     6
-#define I2C_SR2_DUALF       7
-#define I2C_SR2_PEC         8
+#define I2C_SR2_MSL         0   /**< @brief Master/slave offset */
+#define I2C_SR2_BUSY        1   /**< @brief Bus busy offset */
+#define I2C_SR2_TRA         2   /**< @brief Transmitter/receiver offset */
+#define I2C_SR2_GENCALL     4   /**< @brief General call address (Slave mode) offset */
+#define I2C_SR2_SMBDEFAULT  5   /**< @brief SMBus device default address (Slave mode) offset */
+#define I2C_SR2_SMBHOST     6   /**< @brief SMBus host header (Slave mode) offset */
+#define I2C_SR2_DUALF       7   /**< @brief Dual flag (Slave mode) offset */
+#define I2C_SR2_PEC         8   /**< @brief Packet error checking register offset */
 /** @} */
 
 /**
- * @name Bit position definition I2C_CCR.
+ * @name Bit position definition I2C clock control register.
  * @{
  */
-#define I2C_CCR_CCR         0
-#define I2C_CCR_DUTY        14
-#define I2C_CCR_FS          15
+#define I2C_CCR_CCR         0  /**< @brief Clock control register in Fm/Sm mode (Master mode) offset */
+#define I2C_CCR_DUTY        14 /**< @brief Fm mode duty cycle offset */
+#define I2C_CCR_FS          15 /**< @brief I2C master mode selection offset */
 /** @} */
 
 /**
- * @name Bit position definition USART_CR1.
+ * @name Bit position definition USART control register 1.
  * @{
  */
-#define USART_CR1_SBK       0
-#define USART_CR1_RWU       1
-#define USART_CR1_RE        2
-#define USART_CR1_TE        3
-#define USART_CR1_IDLEIE    4
-#define USART_CR1_RXNEIE    5
-#define USART_CR1_TCIE      6
-#define USART_CR1_TXEIE     7
-#define USART_CR1_PEIE      8
-#define USART_CR1_PS        9
-#define USART_CR1_PCE       10
-#define USART_CR1_WAKE      11
-#define USART_CR1_M         12
-#define USART_CR1_UE        13
-#define USART_CR1_OVER8     15
+#define USART_CR1_SBK       0   /**< @brief Send break offset */
+#define USART_CR1_RWU       1   /**< @brief Receiver wakeup offset */
+#define USART_CR1_RE        2   /**< @brief Receiver enable offset */
+#define USART_CR1_TE        3   /**< @brief Transmitter enable offset */
+#define USART_CR1_IDLEIE    4   /**< @brief IDLE interrupt enable offset */
+#define USART_CR1_RXNEIE    5   /**< @brief RXNE interrupt enable offset */
+#define USART_CR1_TCIE      6   /**< @brief Transmission complete interrupt enable offset */
+#define USART_CR1_TXEIE     7   /**< @brief TXE interrupt enable offset */
+#define USART_CR1_PEIE      8   /**< @brief PE interrupt enable offset */
+#define USART_CR1_PS        9   /**< @brief Parity selection offset */
+#define USART_CR1_PCE       10  /**< @brief Parity control enable offset */
+#define USART_CR1_WAKE      11  /**< @brief Wakeup method offset */
+#define USART_CR1_M         12  /**< @brief Word length offset */
+#define USART_CR1_UE        13  /**< @brief USART enable offset */
+#define USART_CR1_OVER8     15  /**< @brief Oversampling mode offset */
 /** @} */
 
 /**
- * @name Bit position definition USART_CR2.
+ * @name Bit position definition USART control register 2.
  * @{
  */
-#define USART_CR2_ADD       0
-#define USART_CR2_LBDL      5
-#define USART_CR2_LBDIE     6
-#define USART_CR2_LBCL      8
-#define USART_CR2_CPHA      9
-#define USART_CR2_CPOL      10
-#define USART_CR2_CLKEN     11
-#define USART_CR2_STOP      12
-#define USART_CR2_LINEN     14
+#define USART_CR2_ADD       0  /**< @brief Address of the USART node offset */
+#define USART_CR2_LBDL      5  /**< @brief LIN break detection length offset */
+#define USART_CR2_LBDIE     6  /**< @brief LIN break detection interrupt enable offset */
+#define USART_CR2_LBCL      8  /**< @brief Last bit clock pulse offset */
+#define USART_CR2_CPHA      9  /**< @brief Clock phase offset */
+#define USART_CR2_CPOL      10 /**< @brief Clock polarity offset */
+#define USART_CR2_CLKEN     11 /**< @brief Clock enable offset */
+#define USART_CR2_STOP      12 /**< @brief STOP bits offset */
+#define USART_CR2_LINEN     14 /**< @brief LIN mode enable offset */
 /** @} */
 
 /**
- * @name Bit position definition USART_CR3.
+ * @name Bit position definition USART control register 3.
  * @{
  */
-#define USART_CR3_EIE       0
-#define USART_CR3_IREN      1
-#define USART_CR3_IRLP      2
-#define USART_CR3_HDSEL     3
-#define USART_CR3_NACK      4
-#define USART_CR3_SCEN      5
-#define USART_CR3_DMAR      6
-#define USART_CR3_DMAT      7
-#define USART_CR3_RTSE      8
-#define USART_CR3_CTSE      9
-#define USART_CR3_CTSIE     10
-#define USART_CR3_ONEBIT    11
+#define USART_CR3_EIE       0  /**< @brief Error interrupt enable offset */
+#define USART_CR3_IREN      1  /**< @brief IrDA mode enable offset */
+#define USART_CR3_IRLP      2  /**< @brief IrDA low-power offset */
+#define USART_CR3_HDSEL     3  /**< @brief Half-duplex selection offset */
+#define USART_CR3_NACK      4  /**< @brief Smartcard NACK enable offset */
+#define USART_CR3_SCEN      5  /**< @brief Smartcard mode enable offset */
+#define USART_CR3_DMAR      6  /**< @brief DMA enable receiver offset */
+#define USART_CR3_DMAT      7  /**< @brief DMA enable transmitter offset */
+#define USART_CR3_RTSE      8  /**< @brief RTS enable offset */
+#define USART_CR3_CTSE      9  /**< @brief CTS enable offset */
+#define USART_CR3_CTSIE     10 /**< @brief CTS interrupt enable offset */
+#define USART_CR3_ONEBIT    11 /**< @brief One sample bit method enable offset */
 /** @} */
 
 /**
- * @name Bit position definition USART_SR.
+ * @name Bit position definition USART status register.
  * @{
  */
-#define USART_SR_PE         0
-#define USART_SR_FE         1
-#define USART_SR_NF         2
-#define USART_SR_ORE        3
-#define USART_SR_IDLE       4
-#define USART_SR_RXNE       5
-#define USART_SR_TC         6
-#define USART_SR_TXE        7
-#define USART_SR_LBD        8
-#define USART_SR_CTS        9
+#define USART_SR_PE         0   /**< @brief Parity error offset */
+#define USART_SR_FE         1   /**< @brief Framing error offset */
+#define USART_SR_NF         2   /**< @brief Noise detected flag offset */
+#define USART_SR_ORE        3   /**< @brief Overrun error offset */
+#define USART_SR_IDLE       4   /**< @brief IDLE line detected offset */
+#define USART_SR_RXNE       5   /**< @brief Read data register not empty offset */
+#define USART_SR_TC         6   /**< @brief Transmission complete offset */
+#define USART_SR_TXE        7   /**< @brief Transmit data register empty offset */
+#define USART_SR_LBD        8   /**< @brief LIN break detection flag offset */
+#define USART_SR_CTS        9   /**< @brief CTS flag offset */
 /** @} */
 
 /**
- * @name Bit position definition CRC_CR.
+ * @name Bit position definition CRC control register.
  * @{
  */
-#define CRC_CR_RESET        0
+#define CRC_CR_RESET        0   /**< @brief Reset bit offset */
 /** @} */
 
 /**
- * @name Bit position definition FLASH_ACR.
+ * @name Bit position definition FLASH access control register.
  * @{
  */
-#define FLASH_ACR_LATENCY   0
-#define FLASH_ACR_PRFTEN    8
-#define FLASH_ACR_ICEN      9
-#define FLASH_ACR_DCEN      10
-#define FLASH_ACR_ICRST     11
-#define FLASH_ACR_DCRST     12
+#define FLASH_ACR_LATENCY   0  /**< @brief Latency offset */
+#define FLASH_ACR_PRFTEN    8  /**< @brief Prefetch enable offset */
+#define FLASH_ACR_ICEN      9  /**< @brief Instruction cache enable offset */
+#define FLASH_ACR_DCEN      10 /**< @brief Data cache enable offset */
+#define FLASH_ACR_ICRST     11 /**< @brief Instruction cache reset offset */
+#define FLASH_ACR_DCRST     12 /**< @brief Data cache reset offset */
 /** @} */
 
 /**
  * @name Bit position definition FLASH_KEYR.
  * @{
  */
-#define FLASH_KEYR          0
+#define FLASH_KEYR          0   /**< @brief FPEC key offset */
 /** @} */
 
 /**
  * @name Bit position definition FLASH_OPTKEYR.
  * @{
  */
-#define FLASH_OPTKEYR       0
+#define FLASH_OPTKEYR       0   /**< @brief Option byte key offset */
 /** @} */
 
 /**
- * @name Bit position definition FLASH_SR.
+ * @name Bit position definition FLASH status register.
  * @{
  */
-#define FLASH_SR_EOP        0
-#define FLASH_SR_OPERR      1
-#define FLASH_SR_WRPERR     4
-#define FLASH_SR_PGAERR     5
-#define FLASH_SR_PGPERR     6
-#define FLASH_SR_PGSERR     7
-#define FLASH_SR_RDERR      8
-#define FLASH_SR_BSY        16
+#define FLASH_SR_EOP        0  /**< @brief End of operation offset */
+#define FLASH_SR_OPERR      1  /**< @brief Operation error offset */
+#define FLASH_SR_WRPERR     4  /**< @brief Write protection error offset */
+#define FLASH_SR_PGAERR     5  /**< @brief Programming alignment error offset */
+#define FLASH_SR_PGPERR     6  /**< @brief Programming parallelism error offset */
+#define FLASH_SR_PGSERR     7  /**< @brief Programming sequence error offset */
+#define FLASH_SR_RDERR      8  /**< @brief Read Protection Error (pcrop) offset */
+#define FLASH_SR_BSY        16 /**< @brief Busy offset */
 /** @} */
 
 /**
- * @name Bit position definition FLASH_CR.
+ * @name Bit position definition FLASH control register.
  * @{
  */
-#define FLASH_CR_PG         0
-#define FLASH_CR_SER        1
-#define FLASH_CR_MER        2
-#define FLASH_CR_SNB        3
-#define FLASH_CR_PSIZE      8
-#define FLASH_CR_STRT       16
-#define FLASH_CR_EOPIE      24
-#define FLASH_CR_ERRIE      25
-#define FLASH_CR_LOCK       31
+#define FLASH_CR_PG         0  /**< @brief Programming offset */
+#define FLASH_CR_SER        1  /**< @brief Sector erase offset */
+#define FLASH_CR_MER        2  /**< @brief Mass erase offset */
+#define FLASH_CR_SNB        3  /**< @brief Sector number offset */
+#define FLASH_CR_PSIZE      8  /**< @brief Program size offset */
+#define FLASH_CR_STRT       16 /**< @brief Start offset */
+#define FLASH_CR_EOPIE      24 /**< @brief End of operation interrupt enable offset */
+#define FLASH_CR_ERRIE      25 /**< @brief Error interrupt enable offset */
+#define FLASH_CR_LOCK       31 /**< @brief Lock offset */
 /** @} */
 
 /**
- * @name Bit position definition FLASH_OPTCR.
+ * @name Bit position definition FLASH option control register.
  * @{
  */
-#define FLASH_OPTCR_OPTLOCK     0
-#define FLASH_OPTCR_OPTSTRT     1
-#define FLASH_OPTCR_BOR_LEV     2
-#define FLASH_OPTCR_WDG_SW      5
-#define FLASH_OPTCR_NRST_STOP   6
-#define FLASH_OPTCR_NRST_STDBY  7
-#define FLASH_OPTCR_RDP         8
-#define FLASH_OPTCR_NWRP        16
-#define FLASH_OPTCR_SPRMOD      31
+#define FLASH_OPTCR_OPTLOCK     0  /**< @brief Option lock offset */
+#define FLASH_OPTCR_OPTSTRT     1  /**< @brief Option start offset */
+#define FLASH_OPTCR_BOR_LEV     2  /**< @brief BOR reset level offset */
+#define FLASH_OPTCR_WDG_SW      5  /**< @brief User option byte (WDG_SW) offset */
+#define FLASH_OPTCR_NRST_STOP   6  /**< @brief User option byte (nRST_STOP) offset */
+#define FLASH_OPTCR_NRST_STDBY  7  /**< @brief User option byte (nRST_STDBY) offset */
+#define FLASH_OPTCR_RDP         8  /**< @brief Read protect offset */
+#define FLASH_OPTCR_NWRP        16 /**< @brief Not write protect offset */
+#define FLASH_OPTCR_SPRMOD      31 /**< @brief Selection of Protection Mode of nWRPi bits offset */
 /** @} */
 
 /*****************************************************************************************************/
@@ -689,137 +689,144 @@ typedef struct
  * @name Clock enable macros for GPIOx peripheral.
  * @{
  */
-#define GPIOA_PCLK_EN()     (RCC->AHB1ENR |= (1 << 0))
-#define GPIOB_PCLK_EN()     (RCC->AHB1ENR |= (1 << 1))
-#define GPIOC_PCLK_EN()     (RCC->AHB1ENR |= (1 << 2))
-#define GPIOD_PCLK_EN()     (RCC->AHB1ENR |= (1 << 3))
-#define GPIOE_PCLK_EN()     (RCC->AHB1ENR |= (1 << 4))
-#define GPIOF_PCLK_EN()     (RCC->AHB1ENR |= (1 << 5))
-#define GPIOG_PCLK_EN()     (RCC->AHB1ENR |= (1 << 6))
-#define GPIOH_PCLK_EN()     (RCC->AHB1ENR |= (1 << 7))
+#define GPIOA_PCLK_EN()     (RCC->AHB1ENR |= (1 << 0))  /**< @brief Clock enable for GPIOA */
+#define GPIOB_PCLK_EN()     (RCC->AHB1ENR |= (1 << 1))  /**< @brief Clock enable for GPIOB */
+#define GPIOC_PCLK_EN()     (RCC->AHB1ENR |= (1 << 2))  /**< @brief Clock enable for GPIOC */
+#define GPIOD_PCLK_EN()     (RCC->AHB1ENR |= (1 << 3))  /**< @brief Clock enable for GPIOD */
+#define GPIOE_PCLK_EN()     (RCC->AHB1ENR |= (1 << 4))  /**< @brief Clock enable for GPIOE */
+#define GPIOF_PCLK_EN()     (RCC->AHB1ENR |= (1 << 5))  /**< @brief Clock enable for GPIOF */
+#define GPIOG_PCLK_EN()     (RCC->AHB1ENR |= (1 << 6))  /**< @brief Clock enable for GPIOG */
+#define GPIOH_PCLK_EN()     (RCC->AHB1ENR |= (1 << 7))  /**< @brief Clock enable for GPIOH */
 /** @} */
 
 /**
  * @name Clock enable macros for I2Cx peripheral.
  * @{
  */
-#define I2C1_PCLK_EN()      (RCC->APB1ENR |= (1 << 21))
-#define I2C2_PCLK_EN()      (RCC->APB1ENR |= (1 << 22))
-#define I2C3_PCLK_EN()      (RCC->APB1ENR |= (1 << 23))
+#define I2C1_PCLK_EN()      (RCC->APB1ENR |= (1 << 21)) /**< @brief Clock enable for I2C1 */
+#define I2C2_PCLK_EN()      (RCC->APB1ENR |= (1 << 22)) /**< @brief Clock enable for I2C2 */
+#define I2C3_PCLK_EN()      (RCC->APB1ENR |= (1 << 23)) /**< @brief Clock enable for I2C3 */
 /** @} */
 
 /**
  * @name Clock enable macros for SPIx peripheral.
  * @{
  */
-#define SPI1_PCLK_EN()      (RCC->APB2ENR |= (1 << 12))
-#define SPI2_PCLK_EN()      (RCC->APB1ENR |= (1 << 14))
-#define SPI3_PCLK_EN()      (RCC->APB1ENR |= (1 << 15))
-#define SPI4_PCLK_EN()      (RCC->APB2ENR |= (1 << 13))
+#define SPI1_PCLK_EN()      (RCC->APB2ENR |= (1 << 12)) /**< @brief Clock enable for SPI1 */
+#define SPI2_PCLK_EN()      (RCC->APB1ENR |= (1 << 14)) /**< @brief Clock enable for SPI2 */
+#define SPI3_PCLK_EN()      (RCC->APB1ENR |= (1 << 15)) /**< @brief Clock enable for SPI3 */
+#define SPI4_PCLK_EN()      (RCC->APB2ENR |= (1 << 13)) /**< @brief Clock enable for SPI4 */
 /** @} */
 
 /**
  * @name Clock enable macros for USARTx / UARTx peripheral.
  * @{
  */
-#define USART1_PCLK_EN()    (RCC->APB2ENR |= (1 << 4))
-#define USART2_PCLK_EN()    (RCC->APB1ENR |= (1 << 17))
-#define USART3_PCLK_EN()    (RCC->APB1ENR |= (1 << 18))
-#define UART4_PCLK_EN()     (RCC->APB1ENR |= (1 << 19))
-#define UART5_PCLK_EN()     (RCC->APB1ENR |= (1 << 20))
-#define USART6_PCLK_EN()    (RCC->APB2ENR |= (1 << 5))
+#define USART1_PCLK_EN()    (RCC->APB2ENR |= (1 << 4))  /**< @brief Clock enable for USART1 */
+#define USART2_PCLK_EN()    (RCC->APB1ENR |= (1 << 17)) /**< @brief Clock enable for USART2 */
+#define USART3_PCLK_EN()    (RCC->APB1ENR |= (1 << 18)) /**< @brief Clock enable for USART3 */
+#define UART4_PCLK_EN()     (RCC->APB1ENR |= (1 << 19)) /**< @brief Clock enable for UART4 */
+#define UART5_PCLK_EN()     (RCC->APB1ENR |= (1 << 20)) /**< @brief Clock enable for UART5 */
+#define USART6_PCLK_EN()    (RCC->APB2ENR |= (1 << 5))  /**< @brief Clock enable for USART6 */
 /** @} */
 
 /**
  * @name Clock enable macros for SYSCFG peripheral.
  * @{
  */
-#define SYSCFG_PCLK_EN()    (RCC->APB2ENR |= (1 << 14))
+#define SYSCFG_PCLK_EN()    (RCC->APB2ENR |= (1 << 14)) /**< @brief Clock enable for SYSCFG */
 /** @} */
 
 /**
  * @name Clock enable macros for CRC peripheral.
  * @{
  */
-#define CRC_PCLK_EN()       (RCC->AHB1ENR |= (1 << 12))
+#define CRC_PCLK_EN()       (RCC->AHB1ENR |= (1 << 12)) /**< @brief Clock enable for CRC */
 /** @} */
 
 /**
  * @name Clock disable macros for GPIOx peripheral.
  * @{
  */
-#define GPIOA_PCLK_DI()     (RCC->AHB1ENR &= ~(1 << 0))
-#define GPIOB_PCLK_DI()     (RCC->AHB1ENR &= ~(1 << 1))
-#define GPIOC_PCLK_DI()     (RCC->AHB1ENR &= ~(1 << 2))
-#define GPIOD_PCLK_DI()     (RCC->AHB1ENR &= ~(1 << 3))
-#define GPIOE_PCLK_DI()     (RCC->AHB1ENR &= ~(1 << 4))
-#define GPIOF_PCLK_DI()     (RCC->AHB1ENR &= ~(1 << 5))
-#define GPIOG_PCLK_DI()     (RCC->AHB1ENR &= ~(1 << 6))
-#define GPIOH_PCLK_DI()     (RCC->AHB1ENR &= ~(1 << 7))
+#define GPIOA_PCLK_DI()     (RCC->AHB1ENR &= ~(1 << 0)) /**< @brief Clock disable for GPIOA */
+#define GPIOB_PCLK_DI()     (RCC->AHB1ENR &= ~(1 << 1)) /**< @brief Clock disable for GPIOB */
+#define GPIOC_PCLK_DI()     (RCC->AHB1ENR &= ~(1 << 2)) /**< @brief Clock disable for GPIOC */
+#define GPIOD_PCLK_DI()     (RCC->AHB1ENR &= ~(1 << 3)) /**< @brief Clock disable for GPIOD */
+#define GPIOE_PCLK_DI()     (RCC->AHB1ENR &= ~(1 << 4)) /**< @brief Clock disable for GPIOE */
+#define GPIOF_PCLK_DI()     (RCC->AHB1ENR &= ~(1 << 5)) /**< @brief Clock disable for GPIOF */
+#define GPIOG_PCLK_DI()     (RCC->AHB1ENR &= ~(1 << 6)) /**< @brief Clock disable for GPIOG */
+#define GPIOH_PCLK_DI()     (RCC->AHB1ENR &= ~(1 << 7)) /**< @brief Clock disable for GPIOH */
 /** @} */
 
 /**
  * @name Clock disable macros for I2Cx peripheral.
  * @{
  */
-#define I2C1_PCLK_DI()      (RCC->APB1ENR &= ~(1 << 21))
-#define I2C2_PCLK_DI()      (RCC->APB1ENR &= ~(1 << 22))
-#define I2C3_PCLK_DI()      (RCC->APB1ENR &= ~(1 << 23))
+#define I2C1_PCLK_DI()      (RCC->APB1ENR &= ~(1 << 21)) /**< @brief Clock disable for I2C1 */
+#define I2C2_PCLK_DI()      (RCC->APB1ENR &= ~(1 << 22)) /**< @brief Clock disable for I2C2 */
+#define I2C3_PCLK_DI()      (RCC->APB1ENR &= ~(1 << 23)) /**< @brief Clock disable for I2C3 */
 /** @} */
 
 /**
  * @name Clock disable macros for SPIx peripheral.
  * @{
  */
-#define SPI1_PCLK_DI()      (RCC->APB2ENR &= ~(1 << 12))
-#define SPI2_PCLK_DI()      (RCC->APB1ENR &= ~(1 << 14))
-#define SPI3_PCLK_DI()      (RCC->APB1ENR &= ~(1 << 15))
-#define SPI4_PCLK_DI()      (RCC->APB2ENR &= ~(1 << 13))
+#define SPI1_PCLK_DI()      (RCC->APB2ENR &= ~(1 << 12)) /**< @brief Clock disable for SPI1 */
+#define SPI2_PCLK_DI()      (RCC->APB1ENR &= ~(1 << 14)) /**< @brief Clock disable for SPI2 */
+#define SPI3_PCLK_DI()      (RCC->APB1ENR &= ~(1 << 15)) /**< @brief Clock disable for SPI3 */
+#define SPI4_PCLK_DI()      (RCC->APB2ENR &= ~(1 << 13)) /**< @brief Clock disable for SPI4 */
 /** @} */
 
 /**
  * @name Clock disable macros for USARTx / UARTx peripheral.
  * @{
  */
-#define USART1_PCLK_DI()    (RCC->APB2ENR &= ~(1 << 4))
-#define USART2_PCLK_DI()    (RCC->APB1ENR &= ~(1 << 17))
-#define USART3_PCLK_DI()    (RCC->APB1ENR &= ~(1 << 18))
-#define UART4_PCLK_DI()     (RCC->APB1ENR &= ~(1 << 19))
-#define UART5_PCLK_DI()     (RCC->APB1ENR &= ~(1 << 20))
-#define USART6_PCLK_DI()    (RCC->APB2ENR &= ~(1 << 5))
+#define USART1_PCLK_DI()    (RCC->APB2ENR &= ~(1 << 4))     /**< @brief Clock disable for USART1 */
+#define USART2_PCLK_DI()    (RCC->APB1ENR &= ~(1 << 17))    /**< @brief Clock disable for USART2 */
+#define USART3_PCLK_DI()    (RCC->APB1ENR &= ~(1 << 18))    /**< @brief Clock disable for USART3 */
+#define UART4_PCLK_DI()     (RCC->APB1ENR &= ~(1 << 19))    /**< @brief Clock disable for UART4 */
+#define UART5_PCLK_DI()     (RCC->APB1ENR &= ~(1 << 20))    /**< @brief Clock disable for UART5 */
+#define USART6_PCLK_DI()    (RCC->APB2ENR &= ~(1 << 5))     /**< @brief Clock disable for USART6 */
 /** @} */
 
 /**
  * @name Clock disable macros for SYSCFG peripheral.
  * @{
  */
-#define SYSCFG_PCLK_DI()    (RCC->APB2ENR &= ~(1 << 14))
+#define SYSCFG_PCLK_DI()    (RCC->APB2ENR &= ~(1 << 14))    /**< @brief Clock disable for SYSCFG */
 /** @} */
 
 /**
  * @name Clock disable macros for CRC peripheral.
  * @{
  */
-#define CRC_PCLK_DI()       (RCC->AHB1ENR &= ~(1 << 12))
+#define CRC_PCLK_DI()       (RCC->AHB1ENR &= ~(1 << 12))    /**< @brief Clock disable for CRC */
 /** @} */
 
 /**
  * @name Reset macros GPIOx peripheral.
  * @{
  */
+/** @brief Reset macro for GPIOA */
 #define GPIOA_REG_RESET()   do{(RCC->AHB1RSTR |= (1 << 0)); (RCC->AHB1RSTR &= ~(1 << 0));}while(0)
+/** @brief Reset macro for GPIOB */
 #define GPIOB_REG_RESET()   do{(RCC->AHB1RSTR |= (1 << 1)); (RCC->AHB1RSTR &= ~(1 << 1));}while(0)
+/** @brief Reset macro for GPIOC */
 #define GPIOC_REG_RESET()   do{(RCC->AHB1RSTR |= (1 << 2)); (RCC->AHB1RSTR &= ~(1 << 2));}while(0)
+/** @brief Reset macro for GPIOD */
 #define GPIOD_REG_RESET()   do{(RCC->AHB1RSTR |= (1 << 3)); (RCC->AHB1RSTR &= ~(1 << 3));}while(0)
+/** @brief Reset macro for GPIOE */
 #define GPIOE_REG_RESET()   do{(RCC->AHB1RSTR |= (1 << 4)); (RCC->AHB1RSTR &= ~(1 << 4));}while(0)
+/** @brief Reset macro for GPIOF */
 #define GPIOF_REG_RESET()   do{(RCC->AHB1RSTR |= (1 << 5)); (RCC->AHB1RSTR &= ~(1 << 5));}while(0)
+/** @brief Reset macro for GPIOG */
 #define GPIOG_REG_RESET()   do{(RCC->AHB1RSTR |= (1 << 6)); (RCC->AHB1RSTR &= ~(1 << 6));}while(0)
+/** @brief Reset macro for GPIOH */
 #define GPIOH_REG_RESET()   do{(RCC->AHB1RSTR |= (1 << 7)); (RCC->AHB1RSTR &= ~(1 << 7));}while(0)
 /** @} */
 
 /**
- * @name This macro returns a code between 0 to 7 for a given GPIO base address(x).
- * @{
+ * @brief This macro returns a code between 0 to 7 for a given GPIO base address(x).
  */
 #define GPIO_BASEADDR_TO_CODE(x)    ((x == GPIOA) ? 0 :\
                                     (x == GPIOB) ? 1 :\
@@ -829,15 +836,18 @@ typedef struct
                                     (x == GPIOF) ? 5 :\
                                     (x == GPIOG) ? 6 :\
                                     (x == GPIOH) ? 7 : 0)
-/** @} */
 
 /**
  * @name Reset macros SPIx peripheral.
  * @{
  */
+/** @brief Reset macro for SPI1 */
 #define SPI1_REG_RESET()    do{(RCC->APB2RSTR |= (1 << 12)); (RCC->APB2RSTR &= ~(1 << 12));}while(0)
+/** @brief Reset macro for SPI2 */
 #define SPI2_REG_RESET()    do{(RCC->APB1RSTR |= (1 << 14)); (RCC->APB1RSTR &= ~(1 << 14));}while(0)
+/** @brief Reset macro for SPI3 */
 #define SPI3_REG_RESET()    do{(RCC->APB1RSTR |= (1 << 15)); (RCC->APB1RSTR &= ~(1 << 15));}while(0)
+/** @brief Reset macro for SPI4 */
 #define SPI4_REG_RESET()    do{(RCC->APB2RSTR |= (1 << 13)); (RCC->APB2RSTR &= ~(1 << 13));}while(0)
 /** @} */
 
@@ -845,8 +855,11 @@ typedef struct
  * @name Reset macros I2Cx peripheral.
  * @{
  */
+/** @brief Reset macro for I2C1 */
 #define I2C1_REG_RESET()    do{(RCC->APB1RSTR |= (1 << 21)); (RCC->APB1RSTR &= ~(1 << 21));}while(0)
+/** @brief Reset macro for I2C2 */
 #define I2C2_REG_RESET()    do{(RCC->APB1RSTR |= (1 << 22)); (RCC->APB1RSTR &= ~(1 << 22));}while(0)
+/** @brief Reset macro for I2C3 */
 #define I2C3_REG_RESET()    do{(RCC->APB1RSTR |= (1 << 23)); (RCC->APB1RSTR &= ~(1 << 23));}while(0)
 /** @} */
 
@@ -854,11 +867,17 @@ typedef struct
  * @name Reset macros USARTx peripheral.
  * @{
  */
+/** @brief Reset macro for USART1 */
 #define USART1_REG_RESET()  do{(RCC->APB2RSTR |= (1 << 4)); (RCC->APB2RSTR &= ~(1 << 4));}while(0)
+/** @brief Reset macro for USART2 */
 #define USART2_REG_RESET()  do{(RCC->APB1RSTR |= (1 << 17)); (RCC->APB1RSTR &= ~(1 << 17));}while(0)
+/** @brief Reset macro for USART3 */
 #define USART3_REG_RESET()  do{(RCC->APB1RSTR |= (1 << 18)); (RCC->APB1RSTR &= ~(1 << 18));}while(0)
+/** @brief Reset macro for UART4 */
 #define UART4_REG_RESET()   do{(RCC->APB1RSTR |= (1 << 19)); (RCC->APB1RSTR &= ~(1 << 19));}while(0)
+/** @brief Reset macro for UART5 */
 #define UART5_REG_RESET()   do{(RCC->APB1RSTR |= (1 << 20)); (RCC->APB1RSTR &= ~(1 << 20));}while(0)
+/** @brief Reset macro for USART6 */
 #define USART6_REG_RESET()  do{(RCC->APB2RSTR |= (1 << 5)); (RCC->APB2RSTR &= ~(1 << 5));}while(0)
 /** @} */
 
@@ -866,6 +885,7 @@ typedef struct
  * @name Reset macros CRC peripheral.
  * @{
  */
+/** @brief Reset macro for CRC */
 #define CRC_REG_RESET()     do{(RCC->AHB1RSTR |= (1 << 12)); (RCC->AHB1RSTR &= ~(1 << 12));}while(0)
 /** @} */
 
