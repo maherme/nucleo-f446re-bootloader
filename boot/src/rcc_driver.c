@@ -21,7 +21,9 @@
 /** @brief Frequency of 16 MHz */
 #define FREQ_16MHZ   16000000
 
+/** @brief Possible AHB prescaler values */
 static uint16_t AHB_PreScaler[8] = {2, 4, 8, 16, 64, 128, 256, 512};
+/** @brief Possible APB prescaler values */
 static uint8_t APB_PreScaler[4] = {2, 4, 8, 16};
 
 /*****************************************************************************************************/
