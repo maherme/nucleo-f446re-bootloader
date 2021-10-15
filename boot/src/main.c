@@ -1,7 +1,7 @@
 /**
 * @file main.c
 *
-* @briefjFile containing the main function.
+* @brief File containing the main function.
 */
 
 #include <stdio.h>
@@ -13,21 +13,39 @@
 #include "btl_functions.h"
 #include "crc_driver.h"
 
+/** @brief Handler struct for managing the USART1 */
 static USART_Handle_t USART1Handle;
-static USART_Handle_t USART3Handle;
 
+/** @brief Function needed for enabling semihosting */
 extern void initialise_monitor_handles(void);
 
 /*****************************************************************************************************/
 /*                                       Static Function Prototypes                                  */
 /*****************************************************************************************************/
 
+/**
+ * @brief Function for initializing the GPIO peripheral regarding to LED.
+ * @return void
+ */
 static void LED_GPIOInit(void);
+
+/**
+ * @brief Function for initializing the GPIO peripheral regarding to button.
+ * @return void
+ */
 static void Button_GPIOInit(void);
+
+/**
+ * @brief Function for initializing the USART1 peripheral.
+ * @return void
+ */
 static void USART1_Init(USART_Handle_t* pUSART_Handle);
+
+/**
+ * @brief Function for initializing the GPIO peripheral regarding to USART1.
+ * @return void
+ */
 static void USART1_GPIOInit(void);
-static void USART3_Init(USART_Handle_t* pUSART_Handle);
-static void USART3_GPIOInit(void);
 
 int main(void){
 
@@ -46,14 +64,8 @@ int main(void){
     USART1_Init(&USART1Handle);
     /* USART1 interrupt configuration */
     USART_IRQConfig(IRQ_NO_USART1, ENABLE);
-    /* USART3 configuration */
-    USART3_GPIOInit();
-    USART3_Init(&USART3Handle);
-    /* USART3 interrupt configuration */
-    USART_IRQConfig(IRQ_NO_USART3, ENABLE);
 
     USART_Enable(USART1, ENABLE);
-    USART_Enable(USART3, ENABLE);
 
     if(GPIO_ReadFromInputPin(GPIOC, GPIO_PIN_NO_13) == GPIO_PIN_RESET){
         uart_read_data(&USART1Handle);
@@ -69,12 +81,9 @@ int main(void){
 /*                               Weak Function Overwrite Definitions                                 */
 /*****************************************************************************************************/
 
+/** @brief Handler function for managing the USART1 interrupts */
 void USART1_Handler(void){
     USART_IRQHandling(&USART1Handle);
-}
-
-void USART3_Handler(void){
-    USART_IRQHandling(&USART3Handle);
 }
 
 /*****************************************************************************************************/
@@ -146,42 +155,5 @@ static void USART1_GPIOInit(void){
 
     /* USART1 RX */
     USARTPins.GPIO_PinConfig.GPIO_PinNumber = GPIO_PIN_NO_7;
-    GPIO_Init(&USARTPins);
-}
-
-static void USART3_Init(USART_Handle_t* pUSART_Handle){
-
-    memset(pUSART_Handle, 0, sizeof(*pUSART_Handle));
-
-    pUSART_Handle->pUSARTx = USART3;
-    pUSART_Handle->USART_Config.USART_Baud = USART_STD_BAUD_115200;
-    pUSART_Handle->USART_Config.USART_HWFlowControl = USART_HW_FLOW_CTRL_NONE;
-    pUSART_Handle->USART_Config.USART_Mode = USART_MODE_TXRX;
-    pUSART_Handle->USART_Config.USART_NoOfStopBits = USART_STOPBITS_1;
-    pUSART_Handle->USART_Config.USART_WordLength = USART_WORDLEN_8BITS;
-    pUSART_Handle->USART_Config.USART_ParityControl = USART_PARITY_DISABLE;
-
-    USART_Init(pUSART_Handle);
-}
-
-static void USART3_GPIOInit(void){
-
-    GPIO_Handle_t USARTPins;
-
-    memset(&USARTPins, 0, sizeof(USARTPins));
-
-    USARTPins.pGPIOx = GPIOC;
-    USARTPins.GPIO_PinConfig.GPIO_PinMode = GPIO_MODE_ALTFN;
-    USARTPins.GPIO_PinConfig.GPIO_PinOPType = GPIO_OP_TYPE_PP;
-    USARTPins.GPIO_PinConfig.GPIO_PinPuPdControl = GPIO_PIN_PU;
-    USARTPins.GPIO_PinConfig.GPIO_PinSpeed = GPIO_SPEED_FAST;
-    USARTPins.GPIO_PinConfig.GPIO_PinAltFunMode = 7;
-
-    /* USART3 TX */
-    USARTPins.GPIO_PinConfig.GPIO_PinNumber = GPIO_PIN_NO_10;
-    GPIO_Init(&USARTPins);
-
-    /* USART3 RX */
-    USARTPins.GPIO_PinConfig.GPIO_PinNumber = GPIO_PIN_NO_11;
     GPIO_Init(&USARTPins);
 }
