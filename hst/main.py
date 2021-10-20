@@ -30,11 +30,13 @@ class MainApp(QMainWindow):
         self.erase_menu = EraseMenu("Erase Menu:")
         self.write_display = WriteDisplay("Write Memory:")
         self.rw_prot_display = RWProtectDisplay("Read/Write Protection Menu:")
+        self.read_display = MemReadDisplay("Read Memory:")
         self.stack_lay = QStackedLayout()
         self.stack_lay.addWidget(self.display)
         self.stack_lay.addWidget(self.erase_menu)
         self.stack_lay.addWidget(self.write_display)
         self.stack_lay.addWidget(self.rw_prot_display)
+        self.stack_lay.addWidget(self.read_display)
         grid.addLayout(self.stack_lay, 1, 1, 1, 2)
         widget.setLayout(grid)
         self.setCentralWidget(widget)
@@ -56,6 +58,8 @@ class MainApp(QMainWindow):
         self.btn_grp_cmd.btn_cmd_rw_protect.clicked.connect(self.slot_rw_protect)
         self.rw_prot_display.check_dis_protect.stateChanged.connect(self.slot_rw_disable)
         self.rw_prot_display.btn_write_protect.clicked.connect(self.slot_rw_protect_write)
+        self.btn_grp_cmd.btn_cmd_read.clicked.connect(self.slot_read)
+        self.read_display.btn_read.clicked.connect(self.slot_read_start)
 
     def slot_connect(self):
         if boot_serial.connect_serial(self.btn_grp_cnt.usb_list.currentText()):
@@ -273,6 +277,30 @@ class MainApp(QMainWindow):
 
             boot_cmd.cmd_en_rw_protect(sectors, mode)
 
+    def slot_read(self):
+        self.stack_lay.setCurrentIndex(4)
+
+    def slot_read_start(self):
+        self.read_display.lab_mem_read.clear()
+        addr = int(self.read_display.text_addr.text(), 16)
+        offset = int(self.read_display.text_offset.text(), 10)
+        if(4*offset < 256):
+            value = boot_cmd.cmd_mem_read(addr, 4*offset)
+            if(value[0] == 0):
+                for i,_ in enumerate(value[1:]):
+                    i += 1
+                    if(not i%4):
+                        mem_read_value = (value[i] << 24) + (value[i-1] << 16) + (value[i-2] << 8) + value[i-3]
+                        self.read_display.lab_mem_read.setText(self.read_display.lab_mem_read.text() + \
+                                                               '0x{0:0{1}X}'.format(addr + i - 4, 8) + \
+                                                               "\t" + \
+                                                               '0x{0:0{1}X}'.format(mem_read_value, 8) + \
+                                                               "\n")
+            else:
+                self.read_display.lab_mem_read.setText("Error: try accessing to an invalid memory address!")
+        else:
+            self.read_display.lab_mem_read.setText("Error: too size for offset value!")
+
 def protect_type(status, n):
     if(status[1] & (1 << 7)):
         if(status[0] & (1 << n)):
@@ -312,6 +340,7 @@ class CmdBtnGrp(QGroupBox):
         self.btn_cmd_write = QPushButton("Write")
         self.btn_cmd_read_sector_status = QPushButton("Read Sector Status")
         self.btn_cmd_rw_protect = QPushButton("R/W Protection")
+        self.btn_cmd_read = QPushButton("Read")
         self.setEnabled(False)
 
         vbox = QVBoxLayout()
@@ -324,6 +353,7 @@ class CmdBtnGrp(QGroupBox):
         vbox.addWidget(self.btn_cmd_write)
         vbox.addWidget(self.btn_cmd_read_sector_status)
         vbox.addWidget(self.btn_cmd_rw_protect)
+        vbox.addWidget(self.btn_cmd_read)
         vbox.addStretch(1)
         self.setLayout(vbox)
 
@@ -426,6 +456,41 @@ class RWProtectDisplay(QGroupBox):
         vbox.addWidget(self.check_sector6)
         vbox.addWidget(self.check_sector7)
         vbox.addWidget(self.btn_write_protect)
+        vbox.addStretch(1)
+        self.setLayout(vbox)
+
+class MemReadDisplay(QGroupBox):
+    def __init__(self, name):
+        super(MemReadDisplay, self).__init__(name)
+
+        self.lab_addr = QLabel("Base Address")
+        self.text_addr = QLineEdit(self)
+        self.text_addr.setFixedWidth(120)
+        self.lab_offset = QLabel("Length (in word)")
+        self.text_offset = QLineEdit(self)
+        self.text_offset.setFixedWidth(120)
+        self.btn_read = QPushButton("Read")
+        self.btn_read.setFixedWidth(120)
+        self.lab_mem_read = QLabel()
+        self.lab_mem_read.setAlignment(Qt.AlignTop | Qt.AlignLeft)
+
+        self.scroll = QScrollArea()
+        self.scroll.setWidget(self.lab_mem_read)
+        self.scroll.setVerticalScrollBarPolicy(Qt.ScrollBarAlwaysOn)
+        self.scroll.setHorizontalScrollBarPolicy(Qt.ScrollBarAlwaysOff)
+        self.scroll.setWidgetResizable(True)
+        self.scroll.setFixedHeight(350)
+
+        hbox = QHBoxLayout()
+        hbox.addWidget(self.lab_addr)
+        hbox.addWidget(self.text_addr)
+        hbox.addWidget(self.lab_offset)
+        hbox.addWidget(self.text_offset)
+        hbox.addWidget(self.btn_read)
+        hbox.addStretch(1)
+        vbox = QVBoxLayout()
+        vbox.addLayout(hbox)
+        vbox.addWidget(self.scroll)
         vbox.addStretch(1)
         self.setLayout(vbox)
 

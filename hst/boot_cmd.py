@@ -16,6 +16,8 @@ CMD_WRITE               = 0x57
 CMD_WRITE_LEN           = 11
 CMD_EN_RW_PROTECT       = 0x58
 CMD_EN_RW_PROTECT_LEN   = 8
+CMD_MEM_READ            = 0x59
+CMD_MEM_READ_LEN        = 11
 CMD_READ_SECTOR_ST      = 0x5A
 CMD_READ_SECTOR_ST_LEN  = 6
 CMD_DIS_RW_PROTECT      = 0x5C
@@ -319,3 +321,34 @@ def cmd_dis_rw_protect():
 
     return value
 
+def cmd_mem_read(address, len_to_read):
+
+    data_buf = []
+
+    boot_serial.purge_serial()
+
+    data_buf.append(CMD_MEM_READ_LEN - 1)
+    data_buf.append(CMD_MEM_READ)
+    data_buf.append(word_to_byte(address, 1, 1))
+    data_buf.append(word_to_byte(address, 2, 1))
+    data_buf.append(word_to_byte(address, 3, 1))
+    data_buf.append(word_to_byte(address, 4, 1))
+    data_buf.append(len_to_read)
+    crc32 = get_crc(data_buf, CMD_MEM_READ_LEN - 4)
+    data_buf.append(word_to_byte(crc32, 1, 1))
+    data_buf.append(word_to_byte(crc32, 2, 1))
+    data_buf.append(word_to_byte(crc32, 3, 1))
+    data_buf.append(word_to_byte(crc32, 4, 1))
+
+    boot_serial.write_serial(data_buf[0])
+    for i in data_buf[1:CMD_MEM_READ_LEN]:
+        boot_serial.write_serial(i)
+
+    ack = boot_serial.read_serial(2)
+    ack = bytearray(ack)
+    len_recv = (bytearray(ack))[1]
+
+    recv = boot_serial.read_serial(len_recv)
+    value = bytearray(recv)
+
+    return value
