@@ -478,6 +478,43 @@ static void handle_en_rw_protect(uint8_t* buffer, USART_Handle_t* pUSART_Handle)
 }
 
 static void handle_mem_read(uint8_t* buffer, USART_Handle_t* pUSART_Handle){
+
+    uint8_t data_read[256] = {0};
+    uint32_t flash_addr = 0;
+    uint8_t len_to_read = 0;
+    /* Total length of the cmd packet */
+    uint32_t cmd_packet_len = buffer[0] + 1;
+    /* Extract the CRC32 sent by the host */
+    uint32_t host_crc = *((uint32_t*)(buffer + cmd_packet_len - CRC_LEN));
+
+    printf("CMD Memory read received\r\n");
+
+    /* Verify checksum */
+    if(!verify_cmd_crc(&buffer[0], cmd_packet_len - CRC_LEN, host_crc)){
+        len_to_read = buffer[6];
+        send_ack(pUSART_Handle, len_to_read + 1);
+        /* Read the base address */
+        flash_addr = *(uint32_t*)(&buffer[2]);
+        /* Check if addresses to read are valid */
+        if(verify_address(flash_addr) && verify_address(flash_addr + len_to_read)){
+            /* Read flash memory */
+            for(int i = 0; i < len_to_read; i++){
+                data_read[i + 1] = *(uint8_t*)(flash_addr + i);
+            }
+            /* Set status as valid */
+            data_read[0] = ADDR_VALID;
+        }
+        else{
+            /* Set status as invalid */
+            data_read[0] = ADDR_INVALID;
+        }
+        /* Send the data read to the host */
+        USART_SendData(pUSART_Handle, data_read, len_to_read + 1);
+    }
+    else{
+        send_nack(pUSART_Handle);
+    }
+
 }
 
 static void handle_read_sector_protection_status(uint8_t* buffer, USART_Handle_t* pUSART_Handle){
