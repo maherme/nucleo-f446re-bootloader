@@ -1,4 +1,4 @@
-/**
+/********************************************************************************************************//**
 * @file stm32f446xx.h
 *
 * @brief File containing macros definition and structures for configuring the microcontroller.
@@ -12,9 +12,9 @@
 
 #include <stdint.h>
 
-/*****************************************************************************************************/
-/*                          Generic macros                                                           */
-/*****************************************************************************************************/
+/***********************************************************************************************************/
+/*                          Generic macros                                                                 */
+/***********************************************************************************************************/
 
 /**
  * @name Some Generic Macros.
@@ -30,9 +30,9 @@
 #define FLAG_RESET          RESET       /**< @brief Reset value for a flag */
 /** @} */
 
-/*****************************************************************************************************/
-/*                          ARM Cortex M4 Processor Specific Registers                               */
-/*****************************************************************************************************/
+/***********************************************************************************************************/
+/*                          ARM Cortex M4 Processor Specific Registers                                     */
+/***********************************************************************************************************/
 
 /**
  * @name ARM Cortex M4 Processor Specific Registers.
@@ -52,43 +52,43 @@
 
 #define DBGMCU_BASEADDR     0xE0042000                          /**< @brief Debug Peripheral Base Addr */
 
-#define NO_PR_BITS_IMPLEMENTED  4 /**< @brief Number of priority bits implemented in the Priority Register */
+#define NO_PR_BITS_IMPLEMENTED  4 /**< @brief Numb of priority bits implemented in the Priority Register */
 /** @} */
 
-/*****************************************************************************************************/
-/*                          Memory and Bus Base Address Definition                                   */
-/*****************************************************************************************************/
+/***********************************************************************************************************/
+/*                          Memory and Bus Base Address Definition                                         */
+/***********************************************************************************************************/
 
 /**
  * @name Base and End Addresses of Memories.
  * @{
  */
-#define FLASH_BASEADDR      0x08000000U         /**< @brief Base addr of flash memory, size 512KB */
-#define FLASH_ENDADDR       0x081FFFFFU         /**< @brief End addr of the total flash memory */
-#define SRAM1_BASEADDR      0x20000000U         /**< @brief Base addr of system RAM first block, size 112KB */
-#define SRAM1_ENDADDR       0x2001BFFFU         /**< @brief End addr of the total SRAM1 memory */
-#define SRAM2_BASEADDR      0x2001C000U         /**< @brief Base addr of system RAM second block, size 16KB */
-#define SRAM2_ENDADDR       0x2001FFFFU         /**< @brief End addr of the total SRAM2 memory */
-#define SRAM                SRAM1_BASEADDR      /**< @brief Base addr of the SRAM memory, size 128KB */
-#define ROM                 0x1FFF0000U         /**< @brief Base addr of system memory or ROM, size 30KB */
-#define BKPSRAM_ENDADDR     0x40024FFFU         /**< @brief End addr of the total backup SRAM, size 4KB */
+#define FLASH_BASEADDR      0x08000000U     /**< @brief Base addr of flash memory, size 512KB */
+#define FLASH_ENDADDR       0x081FFFFFU     /**< @brief End addr of the total flash memory */
+#define SRAM1_BASEADDR      0x20000000U     /**< @brief Base addr of system RAM first block, size 112KB */
+#define SRAM1_ENDADDR       0x2001BFFFU     /**< @brief End addr of the total SRAM1 memory */
+#define SRAM2_BASEADDR      0x2001C000U     /**< @brief Base addr of system RAM second block, size 16KB */
+#define SRAM2_ENDADDR       0x2001FFFFU     /**< @brief End addr of the total SRAM2 memory */
+#define SRAM                SRAM1_BASEADDR  /**< @brief Base addr of the SRAM memory, size 128KB */
+#define ROM                 0x1FFF0000U     /**< @brief Base addr of system memory or ROM, size 30KB */
+#define BKPSRAM_ENDADDR     0x40024FFFU     /**< @brief End addr of the total backup SRAM, size 4KB */
 /** @} */
 
 /**
  * @name Base Addresses of AHBx and APBx Bus Peripheral.
  * @{
  */
-#define PERIPH_BASEADDR     0x40000000U         /**< @brief Base addr of peripherals */
-#define APB1_BASEADDR       PERIPH_BASEADDR     /**< @brief Base addr of peripheral connected to APB1 bus */
-#define APB2_BASEADDR       0x40010000U         /**< @brief Base addr of peripheral connected to APB2 bus */
-#define AHB1_BASEADDR       0x40020000U         /**< @brief Base addr of peripheral connected to AHB1 bus */
-#define AHB2_BASEADDR       0x50000000U         /**< @brief Base addr of peripheral connected to AHB2 bus */
-#define AHB3_BASEADDR       0xA0000000U         /**< @brief Base addr of peripheral connected to AHB3 bus */
+#define PERIPH_BASEADDR     0x40000000U     /**< @brief Base addr of peripherals */
+#define APB1_BASEADDR       PERIPH_BASEADDR /**< @brief Base addr of peripheral connected to APB1 bus */
+#define APB2_BASEADDR       0x40010000U     /**< @brief Base addr of peripheral connected to APB2 bus */
+#define AHB1_BASEADDR       0x40020000U     /**< @brief Base addr of peripheral connected to AHB1 bus */
+#define AHB2_BASEADDR       0x50000000U     /**< @brief Base addr of peripheral connected to AHB2 bus */
+#define AHB3_BASEADDR       0xA0000000U     /**< @brief Base addr of peripheral connected to AHB3 bus */
 /** @} */
 
-/*****************************************************************************************************/
-/*                          Peripheral Base Address Definition                                       */
-/*****************************************************************************************************/
+/***********************************************************************************************************/
+/*                          Peripheral Base Address Definition                                             */
+/***********************************************************************************************************/
 
 /**
  * @name Base addresses of peripheral connected to AHB1 bus.
@@ -104,7 +104,7 @@
 #define GPIOH_BASEADDR      (AHB1_BASEADDR + 0x1C00)    /**< @brief Base address of GPIOH */
 #define CRC_BASEADDR        (AHB1_BASEADDR + 0x3000)    /**< @brief Base address of CRC */
 #define RCC_BASEADDR        (AHB1_BASEADDR + 0x3800)    /**< @brief Base address of RCC */
-#define FLASHINTR_BASEADDR  (AHB1_BASEADDR + 0x3C00)    /**< @brief Base address of flash interface register */
+#define FLASHINTR_BASEADDR  (AHB1_BASEADDR + 0x3C00)    /**< @brief Base address of flash interface regist */
 #define BKPSRAM_BASEADDR    (AHB1_BASEADDR + 0x4000)    /**< @brief Base address of BKPSRAM */
 #define DMA1_BASEADDR       (AHB1_BASEADDR + 0x6000)    /**< @brief Base address of DMA1 */
 #define DMA2_BASEADDR       (AHB1_BASEADDR + 0x6400)    /**< @brief Base address of DMA2 */
@@ -181,25 +181,25 @@
 #define QUADSPI_BASEADDR    (AHB3_BASEADDR + 0x1000)    /**< @brief Base addr of QUADSPI register */
 /** @} */
 
-/*****************************************************************************************************/
-/*                          Peripheral Register Definition Structures                                */
-/*****************************************************************************************************/
+/***********************************************************************************************************/
+/*                          Peripheral Register Definition Structures                                      */
+/***********************************************************************************************************/
 
 /**
  * @brief Peripheral register definition structure for GPIO.
  */
 typedef struct
 {
-    volatile uint32_t MODER;        /**< @brief GPIO port mode register                      Addr offset 0x00 */
-    volatile uint32_t OTYPER;       /**< @brief GPIO port output type register               Addr offset 0x04 */
-    volatile uint32_t OSPEEDER;     /**< @brief GPIO port output speed register              Addr offset 0x08 */
-    volatile uint32_t PUPDR;        /**< @brief GPIO port pull-up/pull-down register         Addr offset 0x0C */
-    volatile uint32_t IDR;          /**< @brief GPIO port input data register                Addr offset 0x10 */
-    volatile uint32_t ODR;          /**< @brief GPIO port output data register               Addr offset 0x14 */
-    volatile uint32_t BSRR;         /**< @brief GPIO port bit set/reset register             Addr offset 0x18 */
-    volatile uint32_t LCKR;         /**< @brief GPIO port configuration lock register        Addr offset 0x1C */
-    volatile uint32_t AFR[2];       /**< @brief GPIO alternate function low register AFR[0]  Addr offset 0x20<br> */
-                                    /**< @brief GPIO alternate function high register AFR[1] Addr offset 0x24 */
+    volatile uint32_t MODER;    /**< @brief GPIO port mode register                      Addr offset 0x00 */
+    volatile uint32_t OTYPER;   /**< @brief GPIO port output type register               Addr offset 0x04 */
+    volatile uint32_t OSPEEDER; /**< @brief GPIO port output speed register              Addr offset 0x08 */
+    volatile uint32_t PUPDR;    /**< @brief GPIO port pull-up/pull-down register         Addr offset 0x0C */
+    volatile uint32_t IDR;      /**< @brief GPIO port input data register                Addr offset 0x10 */
+    volatile uint32_t ODR;      /**< @brief GPIO port output data register               Addr offset 0x14 */
+    volatile uint32_t BSRR;     /**< @brief GPIO port bit set/reset register             Addr offset 0x18 */
+    volatile uint32_t LCKR;     /**< @brief GPIO port configuration lock register        Addr offset 0x1C */
+    volatile uint32_t AFR[2];   /**< @brief GPIO alternate funct low register AFR[0]  Addr offset 0x20<br> */
+                                /**< @brief GPIO alternate function high register AFR[1] Addr offset 0x24 */
 } GPIO_RegDef_t;
 
 /**
@@ -207,44 +207,44 @@ typedef struct
  */
 typedef struct
 {
-    volatile uint32_t CR;           /**< @brief RCC clock control register                   Addr offset 0x00 */
-    volatile uint32_t PLLCFGR;      /**< @brief RCC PLL configuration register               Addr offset 0x04 */
-    volatile uint32_t CFGR;         /**< @brief RCC clock configuration register             Addr offset 0x08 */
-    volatile uint32_t CIR;          /**< @brief RCC clock interrupt register                 Addr offset 0x0C */
-    volatile uint32_t AHB1RSTR;     /**< @brief RCC AHB1 peripheral reset register           Addr offset 0x10 */
-    volatile uint32_t AHB2RSTR;     /**< @brief RCC AHB2 peripheral reset register           Addr offset 0x14 */
-    volatile uint32_t AHB3RSTR;     /**< @brief RCC AHB3 peripheral reset register           Addr offset 0x18 */
-    uint32_t RESERVED0;             /**< @brief Reserved                                     Addr offset 0x1C */
-    volatile uint32_t APB1RSTR;     /**< @brief RCC APB1 peripheral reset register           Addr offset 0x20 */
-    volatile uint32_t APB2RSTR;     /**< @brief RCC APB2 peripheral reset register           Addr offset 0x24 */
-    uint32_t RESERVED1;             /**< @brief Reserved                                     Addr offset 0x28 */
-    uint32_t RESERVED2;             /**< @brief Reserved                                     Addr offset 0x2C */
-    volatile uint32_t AHB1ENR;      /**< @brief RCC AHB1 peripheral clock enable register    Addr offset 0x30 */
-    volatile uint32_t AHB2ENR;      /**< @brief RCC AHB2 peripheral clock enable register    Addr offset 0x34 */
-    volatile uint32_t AHB3ENR;      /**< @brief RCC AHB3 peripheral clock enable register    Addr offset 0x38 */
-    uint32_t RESERVED3;             /**< @brief Reserved                                     Addr offset 0x3C */
-    volatile uint32_t APB1ENR;      /**< @brief RCC APB1 peripheral clock enable register    Addr offset 0x40 */
-    volatile uint32_t APB2ENR;      /**< @brief RCC APB2 peripheral clock enable register    Addr offset 0x44 */
-    uint32_t RESERVED4;             /**< @brief Reserved                                     Addr offset 0x48 */
-    uint32_t RESERVED5;             /**< @brief Reserved                                     Addr offset 0x4C */
-    volatile uint32_t AHB1LPENR;    /**< @brief RCC AHB1 peri clk en in low power mode reg   Addr offset 0x50 */
-    volatile uint32_t AHB2LPENR;    /**< @brief RCC AHB2 peri clk en in low power mode reg   Addr offset 0x54 */
-    volatile uint32_t AHB3LPENR;    /**< @brief RCC AHB3 peri clk en in low power mode reg   Addr offset 0x58 */
-    uint32_t RESERVED6;             /**< @brief Reserved                                     Addr offset 0x5C */
-    volatile uint32_t APB1LPENR;    /**< @brief RCC APB1 peri clk en in low power mode reg   Addr offset 0x60 */
-    volatile uint32_t APB2LPENR;    /**< @brief RCC APB2 peri clk en in low power mode reg   Addr offset 0x64 */
-    uint32_t RESERVED7;             /**< @brief Reserved                                     Addr offset 0x68 */
-    uint32_t RESERVED8;             /**< @brief Reserved                                     Addr offset 0x6C */
-    volatile uint32_t BDCR;         /**< @brief RCC Backup domain control register           Addr offset 0x70 */
-    volatile uint32_t CSR;          /**< @brief RCC clock control & status register          Addr offset 0x74 */
-    uint32_t RESERVED9;             /**< @brief Reserved                                     Addr offset 0x78 */
-    uint32_t RESERVED10;            /**< @brief Reserved                                     Addr offset 0x7C */
-    volatile uint32_t SSCGR;        /**< @brief RCC spread spectrum clk generation reg       Addr offset 0x80 */
-    volatile uint32_t PLLI2SCFGR;   /**< @brief RCC PLLI2S configuration register            Addr offset 0x84 */
-    volatile uint32_t PLLSAICFGR;   /**< @brief RCC PLL configuration register               Addr offset 0x88 */
-    volatile uint32_t DCKCFGR;      /**< @brief RCC dedicated clock configuration register   Addr offset 0x8C */
-    volatile uint32_t CKGATENR;     /**< @brief RCC clocks gated enable register             Addr offset 0x90 */
-    volatile uint32_t DCKCFGR2;     /**< @brief RCC dedicated clocks configuration reg 2     Addr offset 0x94 */
+    volatile uint32_t CR;           /**< @brief RCC clock control register                   Addr off 0x00 */
+    volatile uint32_t PLLCFGR;      /**< @brief RCC PLL configuration register               Addr off 0x04 */
+    volatile uint32_t CFGR;         /**< @brief RCC clock configuration register             Addr off 0x08 */
+    volatile uint32_t CIR;          /**< @brief RCC clock interrupt register                 Addr off 0x0C */
+    volatile uint32_t AHB1RSTR;     /**< @brief RCC AHB1 peripheral reset register           Addr off 0x10 */
+    volatile uint32_t AHB2RSTR;     /**< @brief RCC AHB2 peripheral reset register           Addr off 0x14 */
+    volatile uint32_t AHB3RSTR;     /**< @brief RCC AHB3 peripheral reset register           Addr off 0x18 */
+    uint32_t RESERVED0;             /**< @brief Reserved                                     Addr off 0x1C */
+    volatile uint32_t APB1RSTR;     /**< @brief RCC APB1 peripheral reset register           Addr off 0x20 */
+    volatile uint32_t APB2RSTR;     /**< @brief RCC APB2 peripheral reset register           Addr off 0x24 */
+    uint32_t RESERVED1;             /**< @brief Reserved                                     Addr off 0x28 */
+    uint32_t RESERVED2;             /**< @brief Reserved                                     Addr off 0x2C */
+    volatile uint32_t AHB1ENR;      /**< @brief RCC AHB1 peripheral clock enable register    Addr off 0x30 */
+    volatile uint32_t AHB2ENR;      /**< @brief RCC AHB2 peripheral clock enable register    Addr off 0x34 */
+    volatile uint32_t AHB3ENR;      /**< @brief RCC AHB3 peripheral clock enable register    Addr off 0x38 */
+    uint32_t RESERVED3;             /**< @brief Reserved                                     Addr off 0x3C */
+    volatile uint32_t APB1ENR;      /**< @brief RCC APB1 peripheral clock enable register    Addr off 0x40 */
+    volatile uint32_t APB2ENR;      /**< @brief RCC APB2 peripheral clock enable register    Addr off 0x44 */
+    uint32_t RESERVED4;             /**< @brief Reserved                                     Addr off 0x48 */
+    uint32_t RESERVED5;             /**< @brief Reserved                                     Addr off 0x4C */
+    volatile uint32_t AHB1LPENR;    /**< @brief RCC AHB1 peri clk en in low power mode reg   Addr off 0x50 */
+    volatile uint32_t AHB2LPENR;    /**< @brief RCC AHB2 peri clk en in low power mode reg   Addr off 0x54 */
+    volatile uint32_t AHB3LPENR;    /**< @brief RCC AHB3 peri clk en in low power mode reg   Addr off 0x58 */
+    uint32_t RESERVED6;             /**< @brief Reserved                                     Addr off 0x5C */
+    volatile uint32_t APB1LPENR;    /**< @brief RCC APB1 peri clk en in low power mode reg   Addr off 0x60 */
+    volatile uint32_t APB2LPENR;    /**< @brief RCC APB2 peri clk en in low power mode reg   Addr off 0x64 */
+    uint32_t RESERVED7;             /**< @brief Reserved                                     Addr off 0x68 */
+    uint32_t RESERVED8;             /**< @brief Reserved                                     Addr off 0x6C */
+    volatile uint32_t BDCR;         /**< @brief RCC Backup domain control register           Addr off 0x70 */
+    volatile uint32_t CSR;          /**< @brief RCC clock control & status register          Addr off 0x74 */
+    uint32_t RESERVED9;             /**< @brief Reserved                                     Addr off 0x78 */
+    uint32_t RESERVED10;            /**< @brief Reserved                                     Addr off 0x7C */
+    volatile uint32_t SSCGR;        /**< @brief RCC spread spectrum clk generation reg       Addr off 0x80 */
+    volatile uint32_t PLLI2SCFGR;   /**< @brief RCC PLLI2S configuration register            Addr off 0x84 */
+    volatile uint32_t PLLSAICFGR;   /**< @brief RCC PLL configuration register               Addr off 0x88 */
+    volatile uint32_t DCKCFGR;      /**< @brief RCC dedicated clock configuration register   Addr off 0x8C */
+    volatile uint32_t CKGATENR;     /**< @brief RCC clocks gated enable register             Addr off 0x90 */
+    volatile uint32_t DCKCFGR2;     /**< @brief RCC dedicated clocks configuration reg 2     Addr off 0x94 */
 } RCC_RegDef_t;
 
 /**
@@ -265,18 +265,18 @@ typedef struct
  */
 typedef struct
 {
-    volatile uint32_t MEMRMP;       /**< @brief SYSCFG memory remap register                 Addr offset 0x00 */
-    volatile uint32_t PMC;          /**< @brief SYSCFG peripheral mode config register       Addr offset 0x04 */
-    volatile uint32_t EXTICR[4];    /**< @brief SYSCFG ext interrupt cfg reg 1 EXTICR[0]     Addr offset 0x08<br> */
-                                    /**< @brief SYSCFG ext interrupt cfg reg 2 EXTICR[1]     Addr offset 0x0C<br> */
-                                    /**< @brief SYSCFG ext interrupt cfg reg 3 EXTICR[2]     Addr offset 0x10<br> */
-                                    /**< @brief SYSCFG ext interrupt cfg reg 4 EXTICR[3]     Addr offset 0x14 */
-    uint32_t RESERVED0;             /**< @brief Reserved                                     Addr offset 0x18 */
-    uint32_t RESERVED1;             /**< @brief Reserved                                     Addr offset 0x1C */
-    volatile uint32_t CMPCR;        /**< @brief Compensation cell control register           Addr offset 0x20 */
-    uint32_t RESERVED2;             /**< @brief Reserved                                     Addr offset 0x24 */
-    uint32_t RESERVED3;             /**< @brief Reserved                                     Addr offset 0x28 */
-    volatile uint32_t CFGR;         /**< @brief SYSCFG configuration register                Addr offset 0x2C */
+    volatile uint32_t MEMRMP;       /**< @brief SYSCFG memory remap register            Addr offset 0x00 */
+    volatile uint32_t PMC;          /**< @brief SYSCFG peripheral mode config register  Addr offset 0x04 */
+    volatile uint32_t EXTICR[4];    /**< @brief SYSCFG ext int cfg reg 1 EXTICR[0]  Addr offset 0x08<br> */
+                                    /**< @brief SYSCFG ext int cfg reg 2 EXTICR[1]  Addr offset 0x0C<br> */
+                                    /**< @brief SYSCFG ext int cfg reg 3 EXTICR[2]  Addr offset 0x10<br> */
+                                    /**< @brief SYSCFG ext int cfg reg 4 EXTICR[3]  Addr offset 0x14 */
+    uint32_t RESERVED0;             /**< @brief Reserved                                Addr offset 0x18 */
+    uint32_t RESERVED1;             /**< @brief Reserved                                Addr offset 0x1C */
+    volatile uint32_t CMPCR;        /**< @brief Compensation cell control register      Addr offset 0x20 */
+    uint32_t RESERVED2;             /**< @brief Reserved                                Addr offset 0x24 */
+    uint32_t RESERVED3;             /**< @brief Reserved                                Addr offset 0x28 */
+    volatile uint32_t CFGR;         /**< @brief SYSCFG configuration register           Addr offset 0x2C */
 }SYSCFG_RegDef_t;
 
 /**
@@ -360,9 +360,9 @@ typedef struct
     volatile uint32_t OPTCR;        /**< @brief Flash option control register   Address offset 0x14 */
 }FLASHINTR_RegDef_t;
 
-/*****************************************************************************************************/
-/*                          Bit Position Definition of Peripheral Register                           */
-/*****************************************************************************************************/
+/***********************************************************************************************************/
+/*                          Bit Position Definition of Peripheral Register                                 */
+/***********************************************************************************************************/
 
 /**
  * @name Bit position definitions SPI control register 1.
@@ -634,9 +634,9 @@ typedef struct
 #define FLASH_OPTCR_SPRMOD      31 /**< @brief Selection of Protection Mode of nWRPi bits offset */
 /** @} */
 
-/*****************************************************************************************************/
-/*          Peripheral definitions (peripheral base addresses typecasted to xxx_RegDef_t)            */
-/*****************************************************************************************************/
+/***********************************************************************************************************/
+/*          Peripheral definitions (peripheral base addresses typecasted to xxx_RegDef_t)                  */
+/***********************************************************************************************************/
 
 /**
  * @name Peripheral Base Addresses Typecasted to xxx_RegDef_t.
@@ -678,12 +678,12 @@ typedef struct
 
 #define DBGMCU      ((DBG_RegDef_t*)DBGMCU_BASEADDR)        /**< @brief DBGMCU base addr reg definition */
 
-#define FLASHINTR   ((FLASHINTR_RegDef_t*)FLASHINTR_BASEADDR)   /**< @brief FLASHINTR base addr reg definition */
+#define FLASHINTR   ((FLASHINTR_RegDef_t*)FLASHINTR_BASEADDR)   /**< @brief FLASHINTR base addr reg defini */
 /** @} */
 
-/*****************************************************************************************************/
-/*                          Peripheral macros                                                        */
-/*****************************************************************************************************/
+/***********************************************************************************************************/
+/*                          Peripheral macros                                                              */
+/***********************************************************************************************************/
 
 /**
  * @name Clock enable macros for GPIOx peripheral.
@@ -889,9 +889,9 @@ typedef struct
 #define CRC_REG_RESET()     do{(RCC->AHB1RSTR |= (1 << 12)); (RCC->AHB1RSTR &= ~(1 << 12));}while(0)
 /** @} */
 
-/*****************************************************************************************************/
-/*                          IRQ definitions                                                          */
-/*****************************************************************************************************/
+/***********************************************************************************************************/
+/*                          IRQ definitions                                                                */
+/***********************************************************************************************************/
 
 /**
  * @name IRQ (Interrupt Request) number.

@@ -1,4 +1,4 @@
-/**
+/********************************************************************************************************//**
 * @file usart_driver.c
 *
 * @brief File containing the APIs for configuring the USART peripheral.
@@ -29,9 +29,9 @@
 #include "usart_driver.h"
 #include "rcc_driver.h"
 
-/*****************************************************************************************************/
-/*                                       Public API Definitions                                      */
-/*****************************************************************************************************/
+/***********************************************************************************************************/
+/*                                       Public API Definitions                                            */
+/***********************************************************************************************************/
 
 void USART_Init(USART_Handle_t* pUSART_Handle){
 
@@ -499,7 +499,8 @@ void USART_IRQHandling(USART_Handle_t* pUSART_Handle){
                     /* Check parity control */
                     if(pUSART_Handle->USART_Config.USART_ParityControl == USART_PARITY_DISABLE){
                         /* 9 bits will be of user data */
-                        *((uint16_t*)pUSART_Handle->pRxBuffer) = (pUSART_Handle->pUSARTx->DR & (uint16_t)0x01FF);
+                        *((uint16_t*)pUSART_Handle->pRxBuffer) = (pUSART_Handle->pUSARTx->DR &
+                                                                  (uint16_t)0x01FF);
                         pUSART_Handle->pRxBuffer++;
                         pUSART_Handle->pRxBuffer++;
                         pUSART_Handle->RxLen -= 2;

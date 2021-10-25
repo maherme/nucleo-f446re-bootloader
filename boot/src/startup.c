@@ -1,4 +1,4 @@
-/**
+/********************************************************************************************************//**
 * @file startup.c
 *
 * @brief File containing the interrupt vector table and initialize process of the microcontroller.

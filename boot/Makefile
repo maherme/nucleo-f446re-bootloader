@@ -27,8 +27,10 @@ CC = arm-none-eabi-gcc
 OBJCOPY = arm-none-eabi-objcopy
 MACH = cortex-m4
 CFLAGS = -c -MD -mcpu=$(MACH) -mthumb -mfloat-abi=soft -std=gnu11 -Wall -I$(INC_DIR) -O0
-LDFLAGS = -mcpu=$(MACH) -mthumb -mfloat-abi=soft --specs=nano.specs -T $(LNK_DIR)/lk_f446re.ld -Wl,-Map=$(BLD_DIR)/nucleof446re.map
-LDFLAGS_SH = -mcpu=$(MACH) -mthumb -mfloat-abi=soft --specs=rdimon.specs -T $(LNK_DIR)/lk_f446re.ld -Wl,-Map=$(BLD_DIR)/nucleof446re_sh.map
+LDFLAGS = -mcpu=$(MACH) -mthumb -mfloat-abi=soft --specs=nano.specs -T $(LNK_DIR)/lk_f446re.ld \
+		  -Wl,-Map=$(BLD_DIR)/nucleof446re.map
+LDFLAGS_SH = -mcpu=$(MACH) -mthumb -mfloat-abi=soft --specs=rdimon.specs -T $(LNK_DIR)/lk_f446re.ld \
+			 -Wl,-Map=$(BLD_DIR)/nucleof446re_sh.map
 
 $(TARGET1) : $(OBJS1)
 	@mkdir -p $(BLD_DIR)
