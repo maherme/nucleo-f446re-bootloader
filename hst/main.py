@@ -1,3 +1,12 @@
+""" Main.
+
+This is the main file of the program, which implements a graphic user interface based on PyQt5 framework, to
+interact with the bootloader using the serial port of the host computer.
+
+This program requires that PyQt5 and pyserial be installed within the Python environment you are running
+this program in.
+"""
+
 import sys
 import os
 from PyQt5.QtWidgets import *
@@ -13,14 +22,17 @@ address = 0
 protection_mode = ["Write Protection", "Read/Write Protection","No protection"]
 
 class MainApp(QMainWindow):
+    """A class for implementing the main window and managing the graphic user interface."""
+
     def __init__(self, parent=None):
         super(MainApp, self).__init__(parent)
 
         self.setWindowTitle("Bootloader Host Application")
-        #self.setFixedSize(500, 500)
 
+        # Create a Qt widget, which will be our main window
         widget = QWidget()
 
+        # Instances of different menu layers
         grid = QGridLayout()
         self.btn_grp_cnt = CntBtnGrp("Connection:")
         grid.addWidget(self.btn_grp_cnt, 0, 0, 1, 2)
@@ -41,7 +53,7 @@ class MainApp(QMainWindow):
         widget.setLayout(grid)
         self.setCentralWidget(widget)
 
-        # Connections
+        # Connections between buttons and slots
         self.btn_grp_cnt.btn_connect.clicked.connect(self.slot_connect)
         self.btn_grp_cmd.btn_cmd_ver.clicked.connect(self.slot_version)
         self.btn_grp_cmd.btn_cmd_help.clicked.connect(self.slot_help)
@@ -62,16 +74,22 @@ class MainApp(QMainWindow):
         self.read_display.btn_read.clicked.connect(self.slot_read_start)
 
     def slot_connect(self):
+        """Slot for managing the connection regarding to the serial port."""
+
         if boot_serial.connect_serial(self.btn_grp_cnt.usb_list.currentText()):
             self.btn_grp_cmd.setEnabled(True)
         else:
             pass
 
     def slot_version(self):
+        """Slot for displaying the bootloader version."""
+
         self.stack_lay.setCurrentIndex(0)
         self.display.lab_display.setText('Bootloader Version: ' + hex(boot_cmd.cmd_ver()[0]))
 
     def slot_help(self):
+        """Slot for displaying the bootloader supported commands."""
+
         self.stack_lay.setCurrentIndex(0)
         value = boot_cmd.cmd_help()
         str_cmp = []
@@ -81,6 +99,8 @@ class MainApp(QMainWindow):
         self.display.lab_display.setText(''.join(str_cmp))
 
     def slot_cid(self):
+        """Slot for displaying the chip identifier."""
+
         self.stack_lay.setCurrentIndex(0)
         value = boot_cmd.cmd_cid()
         str_cmp = []
@@ -90,10 +110,14 @@ class MainApp(QMainWindow):
         self.display.lab_display.setText(''.join(str_cmp))
 
     def slot_rdp(self):
+        """Slot for displaying the read protection option level."""
+
         self.stack_lay.setCurrentIndex(0)
         self.display.lab_display.setText('Read Protection Opt Lvl: ' + hex(boot_cmd.cmd_rdp()[0]))
 
     def slot_go(self):
+        """Slot for managing the go to adrress command."""
+
         self.stack_lay.setCurrentIndex(0)
         text, ok = QInputDialog().getText(self, \
                                           'Enter address to jump:', \
@@ -111,10 +135,14 @@ class MainApp(QMainWindow):
                 self.display.lab_display.setText('ERROR: Invalid Address')
 
     def slot_erase(self):
+        """Slot for displaying the erase menu."""
+
         self.btn_grp_cmd.setEnabled(False)
         self.stack_lay.setCurrentIndex(1)
 
-    def slot_mass_erase(self, state):
+    def slot_mass_erase(self, state : bool):
+        """Slot for managing the mass erase checkbox in the erase menu."""
+
         if(QtCore.Qt.Checked == state):
             self.erase_menu.spin_sector.setEnabled(False)
             self.erase_menu.spin_num_sector.setEnabled(False)
@@ -123,10 +151,14 @@ class MainApp(QMainWindow):
             self.erase_menu.spin_num_sector.setEnabled(True)
 
     def slot_cancel_erase(self):
+        """Slot for managing the cancel button in the erase menu."""
+
         self.stack_lay.setCurrentIndex(0)
         self.btn_grp_cmd.setEnabled(True)
 
     def slot_ok_erase(self):
+        """Slot for managing the showed message box in the erase menu."""
+
         if self.erase_menu.check_mass_erase.isChecked():
             msg_mass_erase = QMessageBox()
             msg_mass_erase.setWindowTitle("Warning Message")
@@ -163,19 +195,25 @@ class MainApp(QMainWindow):
                 msg_sector_erase.buttonClicked.connect(self.slot_sector_erase_ok)
                 msg_sector_erase.exec_()
 
-    def slot_mass_erase_ok(self, i):
+    def slot_mass_erase_ok(self, i : QPushButton):
+        """Slot for managing the mass erase command."""
+
         if(i.text() == 'OK'):
             boot_cmd.cmd_erase(0xFF, 0)
         else:
             pass
 
-    def slot_sector_erase_ok(self, i):
+    def slot_sector_erase_ok(self, i : QPushButton):
+        """Slot for managing the sector erase command."""
+
         if(i.text() == 'OK'):
             boot_cmd.cmd_erase(self.erase_menu.spin_sector.value(), self.erase_menu.spin_num_sector.value())
         else:
             pass
 
     def slot_write(self):
+        """Slot for displaying the write menu."""
+
         global file_name
         global file_size
         global address
@@ -202,6 +240,8 @@ class MainApp(QMainWindow):
                 self.write_display.lab_addr.setText("Starting Address: " + address)
 
     def slot_write_start(self):
+        """Slot for managing the write process."""
+
         global address
 
         address_flash = int(address, 16)
@@ -225,9 +265,11 @@ class MainApp(QMainWindow):
             bytes_to_sent += len_to_read
             bytes_remaining = file_size - bytes_to_sent
 
-            self.write_display.pbar.setValue((bytes_to_sent/file_size)*100)
+            self.write_display.pbar.setValue(int((bytes_to_sent/file_size)*100))
 
     def slot_read_sector_st(self):
+        """Slot for managing the read sector status command and displaying the result."""
+
         self.stack_lay.setCurrentIndex(0)
         value = boot_cmd.cmd_read_sector_st()
 
@@ -244,9 +286,20 @@ class MainApp(QMainWindow):
                                              protect_type(value, x))
 
     def slot_rw_protect(self):
+        """Slot for displaying the enable read/write protection menu."""
+
         self.stack_lay.setCurrentIndex(3)
 
-    def slot_rw_disable(self, state):
+    def slot_rw_disable(self, state : bool):
+        """Slot for enabling/disabling the check boxes of the enable read/write protection menu depending
+        on the disabling protetion for all sectors check box.
+
+        Parameters
+        ----------
+        state :
+            The state of the "Disable R/W Protection for All Sectors" check box.
+        """
+
         if(QtCore.Qt.Checked == state):
             self.rw_prot_display.check_sprmod.setEnabled(False)
             self.rw_prot_display.check_sector0.setEnabled(False)
@@ -269,6 +322,8 @@ class MainApp(QMainWindow):
             self.rw_prot_display.check_sector7.setEnabled(True)
 
     def slot_rw_protect_write(self):
+        """Slot for manaing the enable read/write protection command."""
+
         mode = 1
         sectors = 0
 
@@ -298,9 +353,13 @@ class MainApp(QMainWindow):
             boot_cmd.cmd_en_rw_protect(sectors, mode)
 
     def slot_read(self):
+        """Slot for displaying the read menu."""
+
         self.stack_lay.setCurrentIndex(4)
 
     def slot_read_start(self):
+        """Slot for managing the read command."""
+
         self.read_display.lab_mem_read.clear()
         addr = int(self.read_display.text_addr.text(), 16)
         offset = int(self.read_display.text_offset.text(), 10)
@@ -324,7 +383,21 @@ class MainApp(QMainWindow):
         else:
             self.read_display.lab_mem_read.setText("Error: too size for offset value!")
 
-def protect_type(status, n):
+def protect_type(status : list, n : int) -> str:
+    """Return the protection status for a sector of the flash depending on the protection mode.
+
+    Parameters
+    ----------
+    status : list
+        Is a byte array with the nWRP register value from the bootloader.
+    n : int
+        Is the number of the flash sector.
+
+    Return : str
+    ------
+    String with the protection mode description.
+    """
+
     if(status[1] & (1 << 7)):
         if(status[0] & (1 << n)):
             return protection_mode[1]
@@ -337,6 +410,8 @@ def protect_type(status, n):
             return protection_mode[0]
 
 class CntBtnGrp(QGroupBox):
+    """A class for managing the buttons related with the connection via serial port."""
+
     def __init__(self, name):
         super(CntBtnGrp, self).__init__(name)
 
@@ -351,6 +426,8 @@ class CntBtnGrp(QGroupBox):
         self.setLayout(hbox)
 
 class CmdBtnGrp(QGroupBox):
+    """A class for managing the buttons related with sending a command to the bootloader."""
+
     def __init__(self, name):
         super(CmdBtnGrp, self).__init__(name)
 
@@ -381,6 +458,8 @@ class CmdBtnGrp(QGroupBox):
         self.setLayout(vbox)
 
 class Display(QGroupBox):
+    """A class for implementing the panel for showing the output for most commands."""
+
     def __init__(self, name):
         super(Display, self).__init__(name)
 
@@ -393,6 +472,8 @@ class Display(QGroupBox):
         self.setLayout(vbox)
 
 class EraseMenu(QGroupBox):
+    """A class used for implementing the panel for the erase command."""
+
     def __init__(self, name):
         super(EraseMenu, self).__init__(name)
 
@@ -425,6 +506,8 @@ class EraseMenu(QGroupBox):
         self.setLayout(vbox)
 
 class WriteDisplay(QGroupBox):
+    """A class used for implementing the panel for the write command."""
+
     def __init__(self, name):
         super(WriteDisplay, self).__init__(name)
 
@@ -449,6 +532,8 @@ class WriteDisplay(QGroupBox):
         self.setLayout(vbox)
 
 class RWProtectDisplay(QGroupBox):
+    """A class used for implementing the panel for the enable read/write protection command."""
+
     def __init__(self, name):
         super(RWProtectDisplay, self).__init__(name)
 
@@ -483,6 +568,8 @@ class RWProtectDisplay(QGroupBox):
         self.setLayout(vbox)
 
 class MemReadDisplay(QGroupBox):
+    """A class used for implementing the panel for the memory read command output."""
+
     def __init__(self, name):
         super(MemReadDisplay, self).__init__(name)
 
@@ -497,6 +584,7 @@ class MemReadDisplay(QGroupBox):
         self.lab_mem_read = QLabel()
         self.lab_mem_read.setAlignment(Qt.AlignTop | Qt.AlignLeft)
 
+        # Scroll area for showing the result of the memory read command
         self.scroll = QScrollArea()
         self.scroll.setWidget(self.lab_mem_read)
         self.scroll.setVerticalScrollBarPolicy(Qt.ScrollBarAlwaysOn)
@@ -518,7 +606,11 @@ class MemReadDisplay(QGroupBox):
         self.setLayout(vbox)
 
 if __name__ == '__main__':
+    # For managing the Qt event loop
     app = QApplication(sys.argv)
+    # Instance the main window class
     window = MainApp()
+    # Show the main window, it is hidden by default
     window.show()
+    # Start the event loop
     sys.exit(app.exec_())

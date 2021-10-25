@@ -1,5 +1,19 @@
-import boot_serial
+"""Bootloader commands.
 
+This is a module for managing the commands to be sent to the bootloader application via serial port.
+
+This modue requires that the boot_serial module was imported.
+
+This module contains the following functions:
+
+    * word_to_byt - Extracts a byte from a word.
+    * get_crc - Calculates the crc of a number of bytes.
+"""
+
+import boot_serial
+from typing import BinaryIO
+
+# Ids and legths of supported commands
 CMD_GET_VER             = 0x51
 CMD_GET_VER_LEN         = 6
 CMD_GET_HELP            = 0x52
@@ -23,10 +37,38 @@ CMD_READ_SECTOR_ST_LEN  = 6
 CMD_DIS_RW_PROTECT      = 0x5C
 CMD_DIS_RW_PROTECT_LEN  = 6
 
-def word_to_byte(addr, index, lowerfirst):
-    return (addr >> (8 * (index - 1)) & 0x000000FF)
+def word_to_byte(word : int, index : int) -> int:
+    """ Extract a byte from a word.
 
-def get_crc(buff, length):
+    Parameter
+    ---------
+    word : int
+        Is the word.
+    index : int
+        Is the byte number to be extracted.
+
+    Return : int
+    ------
+    The byte extracted from the word.
+    """
+
+    return (word >> (8 * (index - 1)) & 0x000000FF)
+
+def get_crc(buff : list, length : int) -> int:
+    """Calculate the crc of a number of bytes.
+
+    Parameter
+    ---------
+    buff : list
+        Is the array of bytes to calculate the crc.
+    length : int
+        Is the number of bytes for calculating the crc.
+
+    Return
+    ------
+    crc : int
+        Is the calculated crc.
+    """
 
     crc = 0xFFFFFFFF
 
@@ -39,7 +81,7 @@ def get_crc(buff, length):
                 crc = (crc << 1)
     return crc
 
-def cmd_ver():
+def cmd_ver() -> bytearray:
 
     data_buf = []
 
@@ -48,10 +90,10 @@ def cmd_ver():
     data_buf.append(CMD_GET_VER_LEN - 1)
     data_buf.append(CMD_GET_VER)
     crc32 = get_crc(data_buf, CMD_GET_VER_LEN - 4)
-    data_buf.append(word_to_byte(crc32, 1, 1))
-    data_buf.append(word_to_byte(crc32, 2, 1))
-    data_buf.append(word_to_byte(crc32, 3, 1))
-    data_buf.append(word_to_byte(crc32, 4, 1))
+    data_buf.append(word_to_byte(crc32, 1))
+    data_buf.append(word_to_byte(crc32, 2))
+    data_buf.append(word_to_byte(crc32, 3))
+    data_buf.append(word_to_byte(crc32, 4))
 
     boot_serial.write_serial(data_buf[0])
     for i in data_buf[1:CMD_GET_VER_LEN]:
@@ -65,7 +107,7 @@ def cmd_ver():
 
     return value
 
-def cmd_help():
+def cmd_help() -> bytearray:
 
     data_buf = []
 
@@ -74,10 +116,10 @@ def cmd_help():
     data_buf.append(CMD_GET_HELP_LEN - 1)
     data_buf.append(CMD_GET_HELP)
     crc32 = get_crc(data_buf, CMD_GET_HELP_LEN - 4)
-    data_buf.append(word_to_byte(crc32, 1, 1))
-    data_buf.append(word_to_byte(crc32, 2, 1))
-    data_buf.append(word_to_byte(crc32, 3, 1))
-    data_buf.append(word_to_byte(crc32, 4, 1))
+    data_buf.append(word_to_byte(crc32, 1))
+    data_buf.append(word_to_byte(crc32, 2))
+    data_buf.append(word_to_byte(crc32, 3))
+    data_buf.append(word_to_byte(crc32, 4))
 
     boot_serial.write_serial(data_buf[0])
     for i in data_buf[1:CMD_GET_HELP_LEN]:
@@ -91,7 +133,7 @@ def cmd_help():
 
     return value
 
-def cmd_cid():
+def cmd_cid() -> bytearray:
 
     data_buf = []
 
@@ -100,10 +142,10 @@ def cmd_cid():
     data_buf.append(CMD_GET_CID_LEN - 1)
     data_buf.append(CMD_GET_CID)
     crc32 = get_crc(data_buf, CMD_GET_CID_LEN - 4)
-    data_buf.append(word_to_byte(crc32, 1, 1))
-    data_buf.append(word_to_byte(crc32, 2, 1))
-    data_buf.append(word_to_byte(crc32, 3, 1))
-    data_buf.append(word_to_byte(crc32, 4, 1))
+    data_buf.append(word_to_byte(crc32, 1))
+    data_buf.append(word_to_byte(crc32, 2))
+    data_buf.append(word_to_byte(crc32, 3))
+    data_buf.append(word_to_byte(crc32, 4))
 
     boot_serial.write_serial(data_buf[0])
     for i in data_buf[1:CMD_GET_CID_LEN]:
@@ -117,7 +159,7 @@ def cmd_cid():
 
     return value
 
-def cmd_rdp():
+def cmd_rdp() -> bytearray:
 
     data_buf = []
 
@@ -126,10 +168,10 @@ def cmd_rdp():
     data_buf.append(CMD_GET_RDP_LEN - 1)
     data_buf.append(CMD_GET_RDP)
     crc32 = get_crc(data_buf, CMD_GET_RDP_LEN - 4)
-    data_buf.append(word_to_byte(crc32, 1, 1))
-    data_buf.append(word_to_byte(crc32, 2, 1))
-    data_buf.append(word_to_byte(crc32, 3, 1))
-    data_buf.append(word_to_byte(crc32, 4, 1))
+    data_buf.append(word_to_byte(crc32, 1))
+    data_buf.append(word_to_byte(crc32, 2))
+    data_buf.append(word_to_byte(crc32, 3))
+    data_buf.append(word_to_byte(crc32, 4))
 
     boot_serial.write_serial(data_buf[0])
     for i in data_buf[1:CMD_GET_RDP_LEN]:
@@ -143,7 +185,7 @@ def cmd_rdp():
 
     return value
 
-def cmd_go(addr):
+def cmd_go(addr : int) -> bytearray:
 
     data_buf = []
     go_address = int(addr, 16)
@@ -152,15 +194,15 @@ def cmd_go(addr):
 
     data_buf.append(CMD_GO_LEN - 1)
     data_buf.append(CMD_GO)
-    data_buf.append(word_to_byte(go_address, 1, 1))
-    data_buf.append(word_to_byte(go_address, 2, 1))
-    data_buf.append(word_to_byte(go_address, 3, 1))
-    data_buf.append(word_to_byte(go_address, 4, 1))
+    data_buf.append(word_to_byte(go_address, 1))
+    data_buf.append(word_to_byte(go_address, 2))
+    data_buf.append(word_to_byte(go_address, 3))
+    data_buf.append(word_to_byte(go_address, 4))
     crc32 = get_crc(data_buf, CMD_GO_LEN - 4)
-    data_buf.append(word_to_byte(crc32, 1, 1))
-    data_buf.append(word_to_byte(crc32, 2, 1))
-    data_buf.append(word_to_byte(crc32, 3, 1))
-    data_buf.append(word_to_byte(crc32, 4, 1))
+    data_buf.append(word_to_byte(crc32, 1))
+    data_buf.append(word_to_byte(crc32, 2))
+    data_buf.append(word_to_byte(crc32, 3))
+    data_buf.append(word_to_byte(crc32, 4))
 
     boot_serial.write_serial(data_buf[0])
     for i in data_buf[1:CMD_GO_LEN]:
@@ -174,7 +216,7 @@ def cmd_go(addr):
 
     return value
 
-def cmd_erase(sector, num_sectors):
+def cmd_erase(sector : int, num_sectors : int) -> bytearray:
 
     data_buf = []
 
@@ -185,10 +227,10 @@ def cmd_erase(sector, num_sectors):
     data_buf.append(sector)
     data_buf.append(num_sectors)
     crc32 = get_crc(data_buf, CMD_ERASE - 4)
-    data_buf.append(word_to_byte(crc32, 1, 1))
-    data_buf.append(word_to_byte(crc32, 2, 1))
-    data_buf.append(word_to_byte(crc32, 3, 1))
-    data_buf.append(word_to_byte(crc32, 4, 1))
+    data_buf.append(word_to_byte(crc32, 1))
+    data_buf.append(word_to_byte(crc32, 2))
+    data_buf.append(word_to_byte(crc32, 3))
+    data_buf.append(word_to_byte(crc32, 4))
 
     boot_serial.write_serial(data_buf[0])
     for i in data_buf[1:CMD_ERASE_LEN]:
@@ -202,7 +244,7 @@ def cmd_erase(sector, num_sectors):
 
     return value
 
-def cmd_write(len_to_read, address, bin_file):
+def cmd_write(len_to_read : int, address : int, bin_file : BinaryIO) -> None:
 
     data_buf = []
 
@@ -212,10 +254,10 @@ def cmd_write(len_to_read, address, bin_file):
 
     data_buf.append(cmd_total_len - 1)
     data_buf.append(CMD_WRITE)
-    data_buf.append(word_to_byte(address, 1, 1))
-    data_buf.append(word_to_byte(address, 2, 1))
-    data_buf.append(word_to_byte(address, 3, 1))
-    data_buf.append(word_to_byte(address, 4, 1))
+    data_buf.append(word_to_byte(address, 1))
+    data_buf.append(word_to_byte(address, 2))
+    data_buf.append(word_to_byte(address, 3))
+    data_buf.append(word_to_byte(address, 4))
     data_buf.append(len_to_read)
 
     for _ in range(len_to_read):
@@ -223,10 +265,10 @@ def cmd_write(len_to_read, address, bin_file):
         data_buf.append(int(file_read_value[0]))
 
     crc32 = get_crc(data_buf, cmd_total_len - 4)
-    data_buf.append(word_to_byte(crc32, 1, 1))
-    data_buf.append(word_to_byte(crc32, 2, 1))
-    data_buf.append(word_to_byte(crc32, 3, 1))
-    data_buf.append(word_to_byte(crc32, 4, 1))
+    data_buf.append(word_to_byte(crc32, 1))
+    data_buf.append(word_to_byte(crc32, 2))
+    data_buf.append(word_to_byte(crc32, 3))
+    data_buf.append(word_to_byte(crc32, 4))
 
     boot_serial.write_serial(data_buf[0])
     for i in data_buf[1:cmd_total_len]:
@@ -238,7 +280,7 @@ def cmd_write(len_to_read, address, bin_file):
 
     recv = boot_serial.read_serial(len_recv)
 
-def cmd_read_sector_st():
+def cmd_read_sector_st() -> bytearray:
 
     data_buf = []
 
@@ -247,10 +289,10 @@ def cmd_read_sector_st():
     data_buf.append(CMD_READ_SECTOR_ST_LEN - 1)
     data_buf.append(CMD_READ_SECTOR_ST)
     crc32 = get_crc(data_buf, CMD_READ_SECTOR_ST_LEN - 4)
-    data_buf.append(word_to_byte(crc32, 1, 1))
-    data_buf.append(word_to_byte(crc32, 2, 1))
-    data_buf.append(word_to_byte(crc32, 3, 1))
-    data_buf.append(word_to_byte(crc32, 4, 1))
+    data_buf.append(word_to_byte(crc32, 1))
+    data_buf.append(word_to_byte(crc32, 2))
+    data_buf.append(word_to_byte(crc32, 3))
+    data_buf.append(word_to_byte(crc32, 4))
 
     boot_serial.write_serial(data_buf[0])
     for i in data_buf[1:CMD_READ_SECTOR_ST_LEN]:
@@ -265,7 +307,7 @@ def cmd_read_sector_st():
 
     return value
 
-def cmd_en_rw_protect(sectors, mode):
+def cmd_en_rw_protect(sectors : int, mode : int) -> bytearray:
 
     data_buf = []
 
@@ -276,10 +318,10 @@ def cmd_en_rw_protect(sectors, mode):
     data_buf.append(sectors)
     data_buf.append(mode)
     crc32 = get_crc(data_buf, CMD_EN_RW_PROTECT_LEN - 4)
-    data_buf.append(word_to_byte(crc32, 1, 1))
-    data_buf.append(word_to_byte(crc32, 2, 1))
-    data_buf.append(word_to_byte(crc32, 3, 1))
-    data_buf.append(word_to_byte(crc32, 4, 1))
+    data_buf.append(word_to_byte(crc32, 1))
+    data_buf.append(word_to_byte(crc32, 2))
+    data_buf.append(word_to_byte(crc32, 3))
+    data_buf.append(word_to_byte(crc32, 4))
 
     boot_serial.write_serial(data_buf[0])
     for i in data_buf[1:CMD_EN_RW_PROTECT_LEN]:
@@ -294,7 +336,7 @@ def cmd_en_rw_protect(sectors, mode):
 
     return value
 
-def cmd_dis_rw_protect():
+def cmd_dis_rw_protect() -> bytearray:
 
     data_buf = []
 
@@ -303,10 +345,10 @@ def cmd_dis_rw_protect():
     data_buf.append(CMD_DIS_RW_PROTECT_LEN - 1)
     data_buf.append(CMD_DIS_RW_PROTECT)
     crc32 = get_crc(data_buf, CMD_DIS_RW_PROTECT_LEN - 4)
-    data_buf.append(word_to_byte(crc32, 1, 1))
-    data_buf.append(word_to_byte(crc32, 2, 1))
-    data_buf.append(word_to_byte(crc32, 3, 1))
-    data_buf.append(word_to_byte(crc32, 4, 1))
+    data_buf.append(word_to_byte(crc32, 1))
+    data_buf.append(word_to_byte(crc32, 2))
+    data_buf.append(word_to_byte(crc32, 3))
+    data_buf.append(word_to_byte(crc32, 4))
 
     boot_serial.write_serial(data_buf[0])
     for i in data_buf[1:CMD_DIS_RW_PROTECT_LEN]:
@@ -321,7 +363,7 @@ def cmd_dis_rw_protect():
 
     return value
 
-def cmd_mem_read(address, len_to_read):
+def cmd_mem_read(address : int, len_to_read : int) -> bytearray:
 
     data_buf = []
 
@@ -329,16 +371,16 @@ def cmd_mem_read(address, len_to_read):
 
     data_buf.append(CMD_MEM_READ_LEN - 1)
     data_buf.append(CMD_MEM_READ)
-    data_buf.append(word_to_byte(address, 1, 1))
-    data_buf.append(word_to_byte(address, 2, 1))
-    data_buf.append(word_to_byte(address, 3, 1))
-    data_buf.append(word_to_byte(address, 4, 1))
+    data_buf.append(word_to_byte(address, 1))
+    data_buf.append(word_to_byte(address, 2))
+    data_buf.append(word_to_byte(address, 3))
+    data_buf.append(word_to_byte(address, 4))
     data_buf.append(len_to_read)
     crc32 = get_crc(data_buf, CMD_MEM_READ_LEN - 4)
-    data_buf.append(word_to_byte(crc32, 1, 1))
-    data_buf.append(word_to_byte(crc32, 2, 1))
-    data_buf.append(word_to_byte(crc32, 3, 1))
-    data_buf.append(word_to_byte(crc32, 4, 1))
+    data_buf.append(word_to_byte(crc32, 1))
+    data_buf.append(word_to_byte(crc32, 2))
+    data_buf.append(word_to_byte(crc32, 3))
+    data_buf.append(word_to_byte(crc32, 4))
 
     boot_serial.write_serial(data_buf[0])
     for i in data_buf[1:CMD_MEM_READ_LEN]:

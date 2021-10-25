@@ -1,9 +1,31 @@
+""" Serial module.
+
+This is a module for managing the serial communication between the host computer and the bootloader.
+
+This modue requires that pyserial be installed within the Python environment you are running this module in.
+
+This module contains the following functions:
+
+    * serial_ports - Scan all active USB connected ports.
+    * connect_serial - Open a serial port with a baudrate of 115200 and a timeout of 2 seconds.
+    * read_serial - Read a number of bytes passed as argument from the serial port.
+    * write_serial - Send a byte passed as argument through the serial port.
+    * purge_serial - Reset the input buffer of the serial port.
+"""
+
 import serial
 import sys
 import glob
 import struct
 
-def serial_ports():
+def serial_ports() -> list:
+    """Scan all active USB connected ports.
+
+    Returns
+    -------
+    result : list
+        A list of strings with the file descriptor of each USB port connected.
+    """
 
     if sys.platform.startswith('linux') or sys.platform.startswith('cygwin'):
         ports = glob.glob('/dev/ttyUSB*')
@@ -22,29 +44,61 @@ def serial_ports():
 
     return result
 
-def connect_serial(port):
+def connect_serial(port : str) -> bool:
+    """Open a serial port configuring the baudrate to 115200 and a recpetion timeout of 2 seconds.
+
+    Parameters
+    ----------
+    port :
+        Is an string with the file descriptor of the USB port.
+
+    Return : bool
+    ------
+        True is port could be oppened or False is failed.
+    """
 
     global ser
 
     try:
-        ser = serial.Serial(port,115200,timeout=2)
+        ser = serial.Serial(port, 115200, timeout = 2)
     except:
-        return 0
+        return False
 
     if ser.is_open:
         pass
     else:
-        return 0
+        return False
 
-    return 1
+    return True
 
-def read_serial(length):
+def read_serial(length : int) -> bytes:
+    """Read a number of bytes from the serial port.
+
+    Parameters
+    ----------
+    length : int
+        Is the number of bytes to read.
+
+    Return : bytes
+    ------
+        An instance of bytes with the bytes read from the serial port.
+    """
+
     return ser.read(length)
 
-def write_serial(value):
+def write_serial(value : bytes):
+    """Write a byte in the serial port for sending.
+
+    Parameter
+    ---------
+    value : bytes
+        Is the byte to be sent.
+    """
 
     data = struct.pack('>B', value)
     ser.write(data)
 
 def purge_serial():
+    """Purge the serial input buffer."""
+
     ser.reset_input_buffer()
