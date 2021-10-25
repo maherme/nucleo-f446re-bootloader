@@ -7,7 +7,7 @@
 **
 **  Abstract    : STM32CubeIDE Minimal System calls file
 **
-** 		          For more information about which c-functions
+**                For more information about which c-functions
 **                need which of these lowlevel functions
 **                please consult the Newlib libc-manual
 **

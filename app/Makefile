@@ -9,20 +9,18 @@ BLD_DIR = ./build
 OBJS1 = $(OBJ_DIR)/main.o \
 		$(OBJ_DIR)/startup.o \
 		$(OBJ_DIR)/syscalls.o \
-		$(OBJ_DIR)/gpio_driver.o \
-		$(OBJ_DIR)/rcc_driver.o \
-		$(OBJ_DIR)/usart_driver.o
+		$(OBJ_DIR)/gpio_driver.o
 OBJS2 = $(OBJ_DIR)/main.o \
 		$(OBJ_DIR)/startup.o \
-		$(OBJ_DIR)/gpio_driver.o \
-		$(OBJ_DIR)/rcc_driver.o \
-		$(OBJ_DIR)/usart_driver.o
+		$(OBJ_DIR)/gpio_driver.o
 CC = arm-none-eabi-gcc
 OBJCOPY = arm-none-eabi-objcopy
 MACH = cortex-m4
 CFLAGS = -c -MD -mcpu=$(MACH) -mthumb -mfloat-abi=soft -std=gnu11 -Wall -I$(INC_DIR) -O0
-LDFLAGS = -mcpu=$(MACH) -mthumb -mfloat-abi=soft --specs=nano.specs -T $(LNK_DIR)/lk_f446re.ld -Wl,-Map=$(BLD_DIR)/nucleof446re.map
-LDFLAGS_SH = -mcpu=$(MACH) -mthumb -mfloat-abi=soft --specs=rdimon.specs -T $(LNK_DIR)/lk_f446re.ld -Wl,-Map=$(BLD_DIR)/nucleof446re_sh.map
+LDFLAGS = -mcpu=$(MACH) -mthumb -mfloat-abi=soft --specs=nano.specs -T $(LNK_DIR)/lk_f446re.ld \
+		  -Wl,-Map=$(BLD_DIR)/nucleof446re.map
+LDFLAGS_SH = -mcpu=$(MACH) -mthumb -mfloat-abi=soft --specs=rdimon.specs -T $(LNK_DIR)/lk_f446re.ld \
+			 -Wl,-Map=$(BLD_DIR)/nucleof446re_sh.map
 
 $(TARGET1) : $(OBJS1)
 	@mkdir -p $(BLD_DIR)

@@ -1,20 +1,26 @@
-/*****************************************************************************************************
-* FILENAME :        main.c
+/********************************************************************************************************//**
+* @file main.c
 *
-* DESCRIPTION :
-*       File containing the main function.
-*
-**/
+* @brief File containing the main function.
+*/
 
 #include <stdio.h>
 #include <stdint.h>
 #include <string.h>
 #include "stm32f446xx.h"
 #include "gpio_driver.h"
-#include "usart_driver.h"
 
+/** @brief Function needed for enabling semihosting */
 extern void initialise_monitor_handles(void);
 
+/***********************************************************************************************************/
+/*                                       Static Function Prototypes                                        */
+/***********************************************************************************************************/
+
+/**
+ * @brief Function for initializing the GPIO peripheral regarding to LED.
+ * @return void
+ */
 static void LED_GPIOInit(void);
 
 int main(void){
@@ -41,6 +47,10 @@ int main(void){
 
     return 0;
 }
+
+/***********************************************************************************************************/
+/*                                       Static Function Definitions                                       */
+/***********************************************************************************************************/
 
 static void LED_GPIOInit(void){
 
