@@ -95,7 +95,11 @@ class MainApp(QMainWindow):
 
     def slot_go(self):
         self.stack_lay.setCurrentIndex(0)
-        text, ok = QInputDialog().getText(self, 'Enter address to jump:', 'Address (hex format):', QLineEdit.Normal, '0x08008346')
+        text, ok = QInputDialog().getText(self, \
+                                          'Enter address to jump:', \
+                                          'Address (hex format):', \
+                                          QLineEdit.Normal, \
+                                          '0x08008346')
         if ok and text:
             ret = boot_cmd.cmd_go(text)
             if ret[0] == 0:
@@ -149,7 +153,11 @@ class MainApp(QMainWindow):
                 if(offset == 1):
                     msg_sector_erase.setText("Sector " + str(sector) + " will be erased")
                 else:
-                    msg_sector_erase.setText("Sectors from " + str(sector) + " to " + str(sector + offset - 1) + " will be erased")
+                    msg_sector_erase.setText("Sectors from " + \
+                                             str(sector) + \
+                                             " to " + \
+                                             str(sector + offset - 1) + \
+                                             " will be erased")
                 msg_sector_erase.setInformativeText("Are you sure to continue?")
                 msg_sector_erase.setStandardButtons(QMessageBox.Ok | QMessageBox.Cancel)
                 msg_sector_erase.buttonClicked.connect(self.slot_sector_erase_ok)
@@ -176,10 +184,18 @@ class MainApp(QMainWindow):
         options = QFileDialog.Options()
         options |= QFileDialog.DontUseNativeDialog
         dlg = QFileDialog()
-        file_name, _filter = dlg.getOpenFileName(None, 'Select Binary File', './', filter = '*.bin', options = options)
+        file_name, _filter = dlg.getOpenFileName(None, \
+                                                 'Select Binary File', \
+                                                 './', \
+                                                 filter = '*.bin', \
+                                                 options = options)
         if file_name:
             file_size = os.path.getsize(file_name)
-            address, ok = QInputDialog().getText(self, 'Enter Starting Address to Write:', 'Address (hex format):', QLineEdit.Normal, '0x08008000')
+            address, ok = QInputDialog().getText(self, \
+                                                 'Enter Starting Address to Write:', \
+                                                 'Address (hex format):', \
+                                                 QLineEdit.Normal, \
+                                                 '0x08008000')
             if ok and address:
                 self.write_display.lab_file.setText("File: " + file_name)
                 self.write_display.lab_size.setText("Size: " + str(file_size) + " Bytes")
@@ -221,7 +237,11 @@ class MainApp(QMainWindow):
             self.display.lab_display.setText('Flash Protection Mode: Write Protection\n')
 
         for x in range(8):
-            self.display.lab_display.setText(self.display.lab_display.text() + "\nSector " + str(x) + ":\t" + protect_type(value, x))
+            self.display.lab_display.setText(self.display.lab_display.text() + \
+                                             "\nSector " + \
+                                             str(x) + \
+                                             ":\t" + \
+                                             protect_type(value, x))
 
     def slot_rw_protect(self):
         self.stack_lay.setCurrentIndex(3)
@@ -290,7 +310,10 @@ class MainApp(QMainWindow):
                 for i,_ in enumerate(value[1:]):
                     i += 1
                     if(not i%4):
-                        mem_read_value = (value[i] << 24) + (value[i-1] << 16) + (value[i-2] << 8) + value[i-3]
+                        mem_read_value = (value[i] << 24) + \
+                                         (value[i-1] << 16) + \
+                                         (value[i-2] << 8) + \
+                                         value[i-3]
                         self.read_display.lab_mem_read.setText(self.read_display.lab_mem_read.text() + \
                                                                '0x{0:0{1}X}'.format(addr + i - 4, 8) + \
                                                                "\t" + \
