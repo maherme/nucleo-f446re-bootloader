@@ -1,4 +1,5 @@
-"""Bootloader commands.
+#!/usr/bin/env python3
+"""! @brief Bootloader commands.
 
 This is a module for managing the commands to be sent to the bootloader application via serial port.
 
@@ -10,64 +11,77 @@ This module contains the following functions:
     * get_crc - Calculates the crc of a number of bytes.
 """
 
+##
+# @file boot_cmd.py
+#
+
 import boot_serial
 from typing import BinaryIO
 
 # Ids and legths of supported commands
+## ID for get version command
 CMD_GET_VER             = 0x51
+## Length of get version command frame
 CMD_GET_VER_LEN         = 6
+## ID for get help command
 CMD_GET_HELP            = 0x52
+## Length of get help command frame
 CMD_GET_HELP_LEN        = 6
+## ID for get chip identifier command
 CMD_GET_CID             = 0x53
+## Length of get chip identifier command frame
 CMD_GET_CID_LEN         = 6
+## ID for get read protection command
 CMD_GET_RDP             = 0x54
+## Length of get read protection command frame
 CMD_GET_RDP_LEN         = 6
+## ID for go address command
 CMD_GO                  = 0x55
+## Length of go address command frame
 CMD_GO_LEN              = 10
+## ID for erase command
 CMD_ERASE               = 0x56
+## Length of erase command frame
 CMD_ERASE_LEN           = 8
+## ID for write command
 CMD_WRITE               = 0x57
+## Length of write command frame
 CMD_WRITE_LEN           = 11
+## ID for enable read/write flash protection command
 CMD_EN_RW_PROTECT       = 0x58
+## Length of enable read/write flash protection command frame
 CMD_EN_RW_PROTECT_LEN   = 8
+## ID for memory read command
 CMD_MEM_READ            = 0x59
+## Length of memory read command frame
 CMD_MEM_READ_LEN        = 11
+## ID for read flash sector status command
 CMD_READ_SECTOR_ST      = 0x5A
+## Length of read flash sector status command frame
 CMD_READ_SECTOR_ST_LEN  = 6
+## ID for disable read/write flash protection command
 CMD_DIS_RW_PROTECT      = 0x5C
+## Length of disable read/write flash protection command frame
 CMD_DIS_RW_PROTECT_LEN  = 6
 
 def word_to_byte(word : int, index : int) -> int:
-    """ Extract a byte from a word.
+    """! Extract a byte from a word.
 
-    Parameter
-    ---------
-    word : int
-        Is the word.
-    index : int
-        Is the byte number to be extracted.
+    @param word Is the word.
+    @param index Is the byte number to be extracted.
 
-    Return : int
-    ------
-    The byte extracted from the word.
+    @return The byte extracted from the word.
     """
 
     return (word >> (8 * (index - 1)) & 0x000000FF)
 
 def get_crc(buff : list, length : int) -> int:
-    """Calculate the crc of a number of bytes.
+    """! Calculate the crc of a number of bytes.
 
-    Parameter
-    ---------
-    buff : list
-        Is the array of bytes to calculate the crc.
-    length : int
-        Is the number of bytes for calculating the crc.
+    @param buff Is the array of bytes to calculate the crc.
+    @param length Is the number of bytes for calculating the crc.
 
-    Return
-    ------
-    crc : int
-        Is the calculated crc.
+    @return The calculated crc.
     """
 
     crc = 0xFFFFFFFF
@@ -82,6 +96,10 @@ def get_crc(buff : list, length : int) -> int:
     return crc
 
 def cmd_ver() -> bytearray:
+    """! Send version command using the serial port.
+
+    @return The bootloader version.
+    """
 
     data_buf = []
 
@@ -108,6 +126,10 @@ def cmd_ver() -> bytearray:
     return value
 
 def cmd_help() -> bytearray:
+    """! Send help command using the serial port.
+
+    @return The IDs of the supported commands by the bootloader.
+    """
 
     data_buf = []
 
@@ -134,6 +156,10 @@ def cmd_help() -> bytearray:
     return value
 
 def cmd_cid() -> bytearray:
+    """! Send chip identifier command using the serial port.
+
+    @return The chip identifier of the microcontroller.
+    """
 
     data_buf = []
 
@@ -160,6 +186,10 @@ def cmd_cid() -> bytearray:
     return value
 
 def cmd_rdp() -> bytearray:
+    """! Send read protection command using the serial port.
+
+    @return The read protection status of the flash memory.
+    """
 
     data_buf = []
 
@@ -186,6 +216,12 @@ def cmd_rdp() -> bytearray:
     return value
 
 def cmd_go(addr : int) -> bytearray:
+    """! Send go command using the serial port.
+
+    @param addr Is the address to jump.
+    
+    @return 1 if address for jumping is invalid.
+    """
 
     data_buf = []
     go_address = int(addr, 16)
@@ -217,6 +253,13 @@ def cmd_go(addr : int) -> bytearray:
     return value
 
 def cmd_erase(sector : int, num_sectors : int) -> bytearray:
+    """! Send erase memory command using the serial port.
+
+    @param sector The first sector to be erased. If it is set to 0xFF means a mass erase.
+    @param num_sectors The number of consecutive sectors to be erased.
+
+    @return 0 if success or 1 if failure.
+    """
 
     data_buf = []
 
@@ -245,6 +288,12 @@ def cmd_erase(sector : int, num_sectors : int) -> bytearray:
     return value
 
 def cmd_write(len_to_read : int, address : int, bin_file : BinaryIO) -> None:
+    """! Send write command using the serial port.
+
+    @param len_to_read Is the number of bytes to read from the binary file. They will be written in memory.
+    @param address Is the starting flash address to write.
+    @param bin_file Is the descriptor of a file open as binary io.
+    """
 
     data_buf = []
 
@@ -281,6 +330,10 @@ def cmd_write(len_to_read : int, address : int, bin_file : BinaryIO) -> None:
     recv = boot_serial.read_serial(len_recv)
 
 def cmd_read_sector_st() -> bytearray:
+    """! Send read sector protection status command using the serial port.
+
+    @return the value of the nWRP from Option Byte configuration.
+    """
 
     data_buf = []
 
@@ -308,6 +361,13 @@ def cmd_read_sector_st() -> bytearray:
     return value
 
 def cmd_en_rw_protect(sectors : int, mode : int) -> bytearray:
+    """! Send enable read/write protection command using the serial port.
+
+    @param sectors Is a byte with the selected sectors for enabling the protection.
+    @param mode Is the protection mode.
+
+    @return 0 if success or 1 if failure.
+    """
 
     data_buf = []
 
@@ -337,6 +397,10 @@ def cmd_en_rw_protect(sectors : int, mode : int) -> bytearray:
     return value
 
 def cmd_dis_rw_protect() -> bytearray:
+    """! Send disable read/write protection command using the serial port.
+
+    @return 0 if success or 1 if failure.
+    """
 
     data_buf = []
 
@@ -364,6 +428,13 @@ def cmd_dis_rw_protect() -> bytearray:
     return value
 
 def cmd_mem_read(address : int, len_to_read : int) -> bytearray:
+    """! Send memory read command using the serial port.
+
+    @param address Is the base address for reading.
+    @param len_to_read Is the number of addres for reading.
+
+    @return The content of the read memory address.
+    """
 
     data_buf = []
 
