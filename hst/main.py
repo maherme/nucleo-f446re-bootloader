@@ -35,9 +35,7 @@ class MainApp(QMainWindow):
 
     def __init__(self, parent=None):
         """! The MainApp base class initializer.
-
         @param parent Is a reference to the parent object (in Qt terminology).
-
         @return An instance of the MainApp class initialized.
         """
 
@@ -221,7 +219,6 @@ class MainApp(QMainWindow):
 
     def slot_mass_erase_ok(self, i : QPushButton):
         """! Slot for managing the mass erase command.
-
         @param i Is a push button instance for confirming the erase process.
         """
 
@@ -232,7 +229,6 @@ class MainApp(QMainWindow):
 
     def slot_sector_erase_ok(self, i : QPushButton):
         """! Slot for managing the sector erase command.
-
         @param i Is a push button instance for confirming the erase process.
         """
 
@@ -323,7 +319,6 @@ class MainApp(QMainWindow):
     def slot_rw_disable(self, state : bool):
         """! Slot for enabling/disabling the check boxes of the enable read/write protection menu depending
         on the disabling protetion for all sectors check box.
-
         @param state The state of the "Disable R/W Protection for All Sectors" check box.
         """
 
@@ -435,9 +430,7 @@ class ConnectButtonnGroup(QGroupBox):
 
     def __init__(self, name):
         """! The ConnectButtonnGroup base class initializer.
-
         @param name The name of the ConnectButtonnGroup.
-
         @return An instance of the ConnectButtonnGroup class initialized with the specified name.
         """
 
@@ -460,9 +453,7 @@ class CommandButtonnGroup(QGroupBox):
 
     def __init__(self, name):
         """! The CommandButtonnGroup base class initializer.
-
         @param name The name of the CommandButtonnGroup.
-
         @return An instance of the CommandButtonnGroup class initialized with the specified name.
         """
 
@@ -509,9 +500,7 @@ class Display(QGroupBox):
 
     def __init__(self, name):
         """! The Display base class initializer.
-
         @param name The name of the Display.
-
         @return An instance of the Display class initialized with the specified name.
         """
 
@@ -531,9 +520,7 @@ class EraseMenu(QGroupBox):
 
     def __init__(self, name):
         """! The EraseMenu base class initializer.
-
         @param name The name of the EraseMenu.
-
         @return An instance of the EraseMenu class initialized with the specified name.
         """
 
@@ -579,9 +566,7 @@ class WriteDisplay(QGroupBox):
 
     def __init__(self, name):
         """! The WriteDisplay base class initializer.
-
         @param name The name of the WriteDisplay.
-
         @return An instance of the WriteDisplay class initialized with the specified name.
         """
 
@@ -618,9 +603,7 @@ class RWProtectDisplay(QGroupBox):
 
     def __init__(self, name):
         """! The RWProtectDisplay base class initializer.
-
         @param name The name of the RWProtectDisplay.
-
         @return An instance of the RWProtectDisplay class initialized with the specified name.
         """
 
@@ -673,9 +656,7 @@ class MemReadDisplay(QGroupBox):
 
     def __init__(self, name):
         """! The MemReadDisplay base class initializer.
-
         @param name The name of the MemReadDisplay.
-
         @return An instance of the MemReadDisplay class initialized with the specified name.
         """
 

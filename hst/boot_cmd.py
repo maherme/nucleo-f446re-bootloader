@@ -9,6 +9,17 @@ This module contains the following functions:
 
     * word_to_byt - Extracts a byte from a word.
     * get_crc - Calculates the crc of a number of bytes.
+    * cmd_ver - Send version command using the serial port.
+    * cmd_help - Send help command using the serial port.
+    * cmd_cid - Send chip identifier command using the serial port.
+    * cmd_rdp - Send read protection command using the serial port.
+    * cmd_go - Send go command using the serial port.
+    * cmd_erase - Send erase memory command using the serial port.
+    * cmd_write - Send write command using the serial port.
+    * cmd_read_sector_st - Send read sector protection status command using the serial port.
+    * cmd_en_rw_protect - Send enable read/write protection command using the serial port.
+    * cmd_dis_rw_protect - Send disable read/write protection command using the serial port.
+    * cmd_mem_read - Send memory read command using the serial port.
 """
 
 ##
@@ -219,7 +230,7 @@ def cmd_go(addr : int) -> bytearray:
     """! Send go command using the serial port.
 
     @param addr Is the address to jump.
-    
+
     @return 1 if address for jumping is invalid.
     """
 
