@@ -35,3 +35,9 @@ clean_all:
 .PHONY : load
 load:
 	openocd -f board/st_nucleo_f4.cfg
+
+.PHONY : doxygen
+doxygen:
+	@cd app/doc && doxygen Doxyfile
+	@cd boot/doc && doxygen Doxyfile
+	@cd hst/doc && doxygen Doxyfile
