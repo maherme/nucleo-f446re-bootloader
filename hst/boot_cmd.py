@@ -74,6 +74,11 @@ CMD_READ_SECTOR_ST_LEN  = 6
 CMD_DIS_RW_PROTECT      = 0x5C
 ## Length of disable read/write flash protection command frame
 CMD_DIS_RW_PROTECT_LEN  = 6
+# ACK values from bootloader
+## ACK value
+BL_ACK = 0xA5
+## Non ACK value
+BL_NACK = 0x7F
 
 def word_to_byte(word : int, index : int) -> int:
     """! Extract a byte from a word.
@@ -106,10 +111,12 @@ def get_crc(buff : list, length : int) -> int:
                 crc = (crc << 1)
     return crc
 
-def cmd_ver() -> bytearray:
+def cmd_ver() -> (bool, bool, bytearray):
     """! Send version command using the serial port.
 
-    @return The bootloader version.
+    @return bool: error flag, True if error or False if command was OK.
+    @return bool: timeout flag, True if timeout error or False if not.
+    @return bytearrray: The bootloader version.
     """
 
     data_buf = []
@@ -128,18 +135,14 @@ def cmd_ver() -> bytearray:
     for i in data_buf[1:CMD_GET_VER_LEN]:
         boot_serial.write_serial(i)
 
-    ack = boot_serial.read_serial(2)
-    len_recv = (bytearray(ack))[1]
+    return check_answer()
 
-    recv = boot_serial.read_serial(len_recv)
-    value = bytearray(recv)
-
-    return value
-
-def cmd_help() -> bytearray:
+def cmd_help() -> (bool, bool, bytearray):
     """! Send help command using the serial port.
 
-    @return The IDs of the supported commands by the bootloader.
+    @return bool: error flag, True if error or False if command was OK.
+    @return bool: timeout flag, True if timeout error or False if not.
+    @return bytearray: The IDs of the supported commands by the bootloader.
     """
 
     data_buf = []
@@ -158,18 +161,14 @@ def cmd_help() -> bytearray:
     for i in data_buf[1:CMD_GET_HELP_LEN]:
         boot_serial.write_serial(i)
 
-    ack = boot_serial.read_serial(2)
-    len_recv = (bytearray(ack))[1]
+    return check_answer()
 
-    recv = boot_serial.read_serial(len_recv)
-    value = bytearray(recv)
-
-    return value
-
-def cmd_cid() -> bytearray:
+def cmd_cid() -> (bool, bool, bytearray):
     """! Send chip identifier command using the serial port.
 
-    @return The chip identifier of the microcontroller.
+    @return bool: error flag, True if error or False if command was OK.
+    @return bool: timeout flag, True if timeout error or False if not.
+    @return bytearray: The chip identifier of the microcontroller.
     """
 
     data_buf = []
@@ -188,18 +187,14 @@ def cmd_cid() -> bytearray:
     for i in data_buf[1:CMD_GET_CID_LEN]:
         boot_serial.write_serial(i)
 
-    ack = boot_serial.read_serial(2)
-    len_recv = (bytearray(ack))[1]
+    return check_answer()
 
-    recv = boot_serial.read_serial(len_recv)
-    value = bytearray(recv)
-
-    return value
-
-def cmd_rdp() -> bytearray:
+def cmd_rdp() -> (bool, bool, bytearray):
     """! Send read protection command using the serial port.
 
-    @return The read protection status of the flash memory.
+    @return bool: error flag, True if error or False if command was OK.
+    @return bool: timeout flag, True if timeout error or False if not.
+    @return bytearray: The read protection status of the flash memory.
     """
 
     data_buf = []
@@ -218,20 +213,16 @@ def cmd_rdp() -> bytearray:
     for i in data_buf[1:CMD_GET_RDP_LEN]:
         boot_serial.write_serial(i)
 
-    ack = boot_serial.read_serial(2)
-    len_recv = (bytearray(ack))[1]
+    return check_answer()
 
-    recv = boot_serial.read_serial(len_recv)
-    value = bytearray(recv)
-
-    return value
-
-def cmd_go(addr : int) -> bytearray:
+def cmd_go(addr : int) -> (bool, bool, bytearray):
     """! Send go command using the serial port.
 
     @param addr Is the address to jump.
 
-    @return 1 if address for jumping is invalid.
+    @return bool: error flag, True if error or False if command was OK.
+    @return bool: timeout flag, True if timeout error or False if not.
+    @return bytearray: 1 if address for jumping is invalid.
     """
 
     data_buf = []
@@ -255,21 +246,17 @@ def cmd_go(addr : int) -> bytearray:
     for i in data_buf[1:CMD_GO_LEN]:
         boot_serial.write_serial(i)
 
-    ack = boot_serial.read_serial(2)
-    len_recv = (bytearray(ack))[1]
+    return check_answer()
 
-    recv = boot_serial.read_serial(len_recv)
-    value = bytearray(recv)
-
-    return value
-
-def cmd_erase(sector : int, num_sectors : int) -> bytearray:
+def cmd_erase(sector : int, num_sectors : int) -> (bool, bool, bytearray):
     """! Send erase memory command using the serial port.
 
     @param sector The first sector to be erased. If it is set to 0xFF means a mass erase.
     @param num_sectors The number of consecutive sectors to be erased.
 
-    @return 0 if success or 1 if failure.
+    @return bool: error flag, True if error or False if command was OK.
+    @return bool: timeout flag, True if timeout error or False if not.
+    @return bytearray: 0 if success or 1 if failure.
     """
 
     data_buf = []
@@ -290,20 +277,18 @@ def cmd_erase(sector : int, num_sectors : int) -> bytearray:
     for i in data_buf[1:CMD_ERASE_LEN]:
         boot_serial.write_serial(i)
 
-    ack = boot_serial.read_serial(2)
-    len_recv = (bytearray(ack))[1]
+    return check_answer()
 
-    recv = boot_serial.read_serial(len_recv)
-    value = bytearray(recv)
-
-    return value
-
-def cmd_write(len_to_read : int, address : int, bin_file : BinaryIO) -> None:
+def cmd_write(len_to_read : int, address : int, bin_file : BinaryIO) -> (bool, bool, bytearray):
     """! Send write command using the serial port.
 
     @param len_to_read Is the number of bytes to read from the binary file. They will be written in memory.
     @param address Is the starting flash address to write.
     @param bin_file Is the descriptor of a file open as binary io.
+
+    @return bool: error flag, True if error or False if command was OK.
+    @return bool: timeout flag, True if timeout error or False if not.
+    @return bytearray:
     """
 
     data_buf = []
@@ -334,16 +319,14 @@ def cmd_write(len_to_read : int, address : int, bin_file : BinaryIO) -> None:
     for i in data_buf[1:cmd_total_len]:
         boot_serial.write_serial(i)
 
-    ack = boot_serial.read_serial(2)
-    ack = bytearray(ack)
-    len_recv = (bytearray(ack))[1]
+    return check_answer()
 
-    recv = boot_serial.read_serial(len_recv)
-
-def cmd_read_sector_st() -> bytearray:
+def cmd_read_sector_st() -> (bool, bool, bytearray):
     """! Send read sector protection status command using the serial port.
 
-    @return the value of the nWRP from Option Byte configuration.
+    @return bool: error flag, True if error or False if command was OK.
+    @return bool: timeout flag, True if timeout error or False if not.
+    @return bytearray: the value of the nWRP from Option Byte configuration.
     """
 
     data_buf = []
@@ -362,22 +345,17 @@ def cmd_read_sector_st() -> bytearray:
     for i in data_buf[1:CMD_READ_SECTOR_ST_LEN]:
         boot_serial.write_serial(i)
 
-    ack = boot_serial.read_serial(2)
-    ack = bytearray(ack)
-    len_recv = (bytearray(ack))[1]
+    return check_answer()
 
-    recv = boot_serial.read_serial(len_recv)
-    value = bytearray(recv)
-
-    return value
-
-def cmd_en_rw_protect(sectors : int, mode : int) -> bytearray:
+def cmd_en_rw_protect(sectors : int, mode : int) -> (bool, bool, bytearray):
     """! Send enable read/write protection command using the serial port.
 
     @param sectors Is a byte with the selected sectors for enabling the protection.
     @param mode Is the protection mode.
 
-    @return 0 if success or 1 if failure.
+    @return bool: error flag, True if error or False if command was OK.
+    @return bool: timeout flag, True if timeout error or False if not.
+    @return bytearray: 0 if success or 1 if failure.
     """
 
     data_buf = []
@@ -398,19 +376,14 @@ def cmd_en_rw_protect(sectors : int, mode : int) -> bytearray:
     for i in data_buf[1:CMD_EN_RW_PROTECT_LEN]:
         boot_serial.write_serial(i)
 
-    ack = boot_serial.read_serial(2)
-    ack = bytearray(ack)
-    len_recv = (bytearray(ack))[1]
+    return check_answer()
 
-    recv = boot_serial.read_serial(len_recv)
-    value = bytearray(recv)
-
-    return value
-
-def cmd_dis_rw_protect() -> bytearray:
+def cmd_dis_rw_protect() -> (bool, bool, bytearray):
     """! Send disable read/write protection command using the serial port.
 
-    @return 0 if success or 1 if failure.
+    @return bool: error flag, True if error or False if command was OK.
+    @return bool: timeout flag, True if timeout error or False if not.
+    @return bytearray: 0 if success or 1 if failure.
     """
 
     data_buf = []
@@ -429,22 +402,17 @@ def cmd_dis_rw_protect() -> bytearray:
     for i in data_buf[1:CMD_DIS_RW_PROTECT_LEN]:
         boot_serial.write_serial(i)
 
-    ack = boot_serial.read_serial(2)
-    ack = bytearray(ack)
-    len_recv = (bytearray(ack))[1]
+    return check_answer()
 
-    recv = boot_serial.read_serial(len_recv)
-    value = bytearray(recv)
-
-    return value
-
-def cmd_mem_read(address : int, len_to_read : int) -> bytearray:
+def cmd_mem_read(address : int, len_to_read : int) -> (bool, bool, bytearray):
     """! Send memory read command using the serial port.
 
     @param address Is the base address for reading.
     @param len_to_read Is the number of addres for reading.
 
-    @return The content of the read memory address.
+    @return bool: error flag, True if error or False if command was OK.
+    @return bool: timeout flag, True if timeout error or False if not.
+    @return bytearray: The content of the read memory address.
     """
 
     data_buf = []
@@ -468,11 +436,26 @@ def cmd_mem_read(address : int, len_to_read : int) -> bytearray:
     for i in data_buf[1:CMD_MEM_READ_LEN]:
         boot_serial.write_serial(i)
 
+    return check_answer()
+
+def check_answer() -> (bool, bool, bytearray):
+    """! Check received ack of command.
+
+    @return bool: error flag, True if error or False if command was OK.
+    @return bool: timeout flag, True if timeout error or False if not.
+    @return bytearray: The requested data by the command.
+    """
+
     ack = boot_serial.read_serial(2)
-    ack = bytearray(ack)
-    len_recv = (bytearray(ack))[1]
-
-    recv = boot_serial.read_serial(len_recv)
-    value = bytearray(recv)
-
-    return value
+    # Check lenght of ack for timeout error and value of ack (ack[0])
+    if len(ack) < 2:
+        return True, True, None
+    elif ack[0] != BL_ACK:
+        return True, False, None
+    else:
+        len_recv = (bytearray(ack))[1]
+        recv = boot_serial.read_serial(len_recv)
+        if len(recv) < len_recv:
+            return True, True, None
+        value = bytearray(recv)
+        return False, False, value

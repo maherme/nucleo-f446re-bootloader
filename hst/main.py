@@ -107,35 +107,61 @@ class MainApp(QMainWindow):
         """! Slot for displaying the bootloader version."""
 
         self.stack_lay.setCurrentIndex(0)
-        self.display.lab_display.setText('Bootloader Version: ' + hex(boot_cmd.cmd_ver()[0]))
+        error, timeout, value = boot_cmd.cmd_ver()
+        if not error and not timeout:
+            self.display.lab_display.setText('Bootloader Version: ' + hex(value[0]))
+        else:
+            if timeout:
+                self.display.lab_display.setText('Error: timeout')
+            else:
+                self.display.lab_display.setText('Error: command returned Non ACK')
 
     def slot_help(self):
         """! Slot for displaying the bootloader supported commands."""
 
         self.stack_lay.setCurrentIndex(0)
-        value = boot_cmd.cmd_help()
-        str_cmp = []
-        str_cmp.append('Commands Supported:\n')
-        for x in value:
-            str_cmp.append('\n' + hex(x))
-        self.display.lab_display.setText(''.join(str_cmp))
+        error, timeout, value = boot_cmd.cmd_help()
+        if not error and not timeout:
+            str_cmp = []
+            str_cmp.append('Commands Supported:\n')
+            for x in value:
+                str_cmp.append('\n' + hex(x))
+            self.display.lab_display.setText(''.join(str_cmp))
+        else:
+            if timeout:
+                self.display.lab_display.setText('Error: timeout')
+            else:
+                self.display.lab_display.setText('Error: command returned Non ACK')
 
     def slot_cid(self):
         """! Slot for displaying the chip identifier."""
 
         self.stack_lay.setCurrentIndex(0)
-        value = boot_cmd.cmd_cid()
-        str_cmp = []
-        str_cmp.append('Chip Identifier: ')
-        ci = (value[1] << 8 ) + value[0]
-        str_cmp.append(hex(ci))
-        self.display.lab_display.setText(''.join(str_cmp))
+        error, timeout, value = boot_cmd.cmd_cid()
+        if not error and not timeout:
+            str_cmp = []
+            str_cmp.append('Chip Identifier: ')
+            ci = (value[1] << 8 ) + value[0]
+            str_cmp.append(hex(ci))
+            self.display.lab_display.setText(''.join(str_cmp))
+        else:
+            if timeout:
+                self.display.lab_display.setText('Error: timeout')
+            else:
+                self.display.lab_display.setText('Error: command returned Non ACK')
 
     def slot_rdp(self):
         """! Slot for displaying the read protection option level."""
 
         self.stack_lay.setCurrentIndex(0)
-        self.display.lab_display.setText('Read Protection Opt Lvl: ' + hex(boot_cmd.cmd_rdp()[0]))
+        error, timeout, value = boot_cmd.cmd_rdp()
+        if not error and not timeout:
+            self.display.lab_display.setText('Read Protection Opt Lvl: ' + hex(value[0]))
+        else:
+            if timeout:
+                self.display.lab_display.setText('Error: timeout')
+            else:
+                self.display.lab_display.setText('Error: command returned Non ACK')
 
     def slot_go(self):
         """! Slot for managing the go to adrress command."""
@@ -147,14 +173,20 @@ class MainApp(QMainWindow):
                                           QLineEdit.Normal, \
                                           '0x08008346')
         if ok and text:
-            ret = boot_cmd.cmd_go(text)
-            if ret[0] == 0:
-                str_cmp = []
-                str_cmp.append('Jump to address: ')
-                str_cmp.append(text)
-                self.display.lab_display.setText(''.join(str_cmp))
+            error, timeout, ret = boot_cmd.cmd_go(text)
+            if not error and not timeout:
+                if ret[0] == 0:
+                    str_cmp = []
+                    str_cmp.append('Jump to address: ')
+                    str_cmp.append(text)
+                    self.display.lab_display.setText(''.join(str_cmp))
+                else:
+                    self.display.lab_display.setText('Error: invalid address')
             else:
-                self.display.lab_display.setText('ERROR: Invalid Address')
+                if timeout:
+                    self.display.lab_display.setText('Error: timeout')
+                else:
+                    self.display.lab_display.setText('Error: command returned Non ACK')
 
     def slot_erase(self):
         """! Slot for displaying the erase menu."""
@@ -223,9 +255,8 @@ class MainApp(QMainWindow):
         """
 
         if(i.text() == 'OK'):
-            boot_cmd.cmd_erase(0xFF, 0)
-        else:
-            pass
+            error, timeout, value = boot_cmd.cmd_erase(0xFF, 0)
+            self.check_process('Erase', error, timeout, value)
 
     def slot_sector_erase_ok(self, i : QPushButton):
         """! Slot for managing the sector erase command.
@@ -233,9 +264,9 @@ class MainApp(QMainWindow):
         """
 
         if(i.text() == 'OK'):
-            boot_cmd.cmd_erase(self.erase_menu.spin_sector.value(), self.erase_menu.spin_num_sector.value())
-        else:
-            pass
+            error, timeout, value = boot_cmd.cmd_erase(self.erase_menu.spin_sector.value(), \
+                                                       self.erase_menu.spin_num_sector.value())
+            self.check_process('Erase', error, timeout, value)
 
     def slot_write(self):
         """! Slot for displaying the write menu."""
@@ -285,7 +316,10 @@ class MainApp(QMainWindow):
             else:
                 len_to_read = bytes_remaining
 
-            boot_cmd.cmd_write(len_to_read, address_flash, bin_file)
+            error, timeout, value = boot_cmd.cmd_write(len_to_read, address_flash, bin_file)
+
+            if(error or (value[0] == 1)):
+                break
 
             address_flash += len_to_read
             bytes_to_sent += len_to_read
@@ -293,23 +327,31 @@ class MainApp(QMainWindow):
 
             self.write_display.pbar.setValue(int((bytes_to_sent/file_size)*100))
 
+        self.check_process('Write', error, timeout, value)
+
     def slot_read_sector_st(self):
         """! Slot for managing the read sector status command and displaying the result."""
 
         self.stack_lay.setCurrentIndex(0)
-        value = boot_cmd.cmd_read_sector_st()
+        error, timeout, value = boot_cmd.cmd_read_sector_st()
 
-        if(value[1] & (1 << 7)):
-            self.display.lab_display.setText('Flash Protection Mode: Read/Write Protection (PCROP)\n')
+        if not error and not timeout:
+            if(value[1] & (1 << 7)):
+                self.display.lab_display.setText('Flash Protection Mode: Read/Write Protection (PCROP)\n')
+            else:
+                self.display.lab_display.setText('Flash Protection Mode: Write Protection\n')
+
+            for x in range(8):
+                self.display.lab_display.setText(self.display.lab_display.text() + \
+                                                 "\nSector " + \
+                                                 str(x) + \
+                                                 ":\t" + \
+                                                 protect_type(value, x))
         else:
-            self.display.lab_display.setText('Flash Protection Mode: Write Protection\n')
-
-        for x in range(8):
-            self.display.lab_display.setText(self.display.lab_display.text() + \
-                                             "\nSector " + \
-                                             str(x) + \
-                                             ":\t" + \
-                                             protect_type(value, x))
+            if timeout:
+                self.display.lab_display.setText('Error: timeout')
+            else:
+                self.display.lab_display.setText('Error: command returned Non ACK')
 
     def slot_rw_protect(self):
         """! Slot for displaying the enable read/write protection menu."""
@@ -350,7 +392,8 @@ class MainApp(QMainWindow):
         sectors = 0
 
         if self.rw_prot_display.check_dis_protect.isChecked():
-            boot_cmd.cmd_dis_rw_protect()
+            error, timeout, value = boot_cmd.cmd_dis_rw_protect()
+            self.check_process('Disable R/W Protection', error, timeout, value)
         else:
             if self.rw_prot_display.check_sprmod.isChecked():
                 mode = 2
@@ -372,7 +415,8 @@ class MainApp(QMainWindow):
             if self.rw_prot_display.check_sector7.isChecked():
                 sectors |= 0x80
 
-            boot_cmd.cmd_en_rw_protect(sectors, mode)
+            error, timeout, value = boot_cmd.cmd_en_rw_protect(sectors, mode)
+            self.check_process('Enable R/W Protection', error, timeout, value)
 
     def slot_read(self):
         """! Slot for displaying the read menu."""
@@ -386,8 +430,12 @@ class MainApp(QMainWindow):
         addr = int(self.read_display.text_addr.text(), 16)
         offset = int(self.read_display.text_offset.text(), 10)
         if(4*offset < 256):
-            value = boot_cmd.cmd_mem_read(addr, 4*offset)
-            if(value[0] == 0):
+            error, timeout, value = boot_cmd.cmd_mem_read(addr, 4*offset)
+            if timeout:
+                self.read_display.lab_mem_read.setText('Error: timeout')
+            elif error:
+                self.read_display.lab_mem_read.setText('Error: command returned Non ACK')
+            elif(value[0] == 0):
                 for i,_ in enumerate(value[1:]):
                     i += 1
                     if(not i%4):
@@ -404,6 +452,31 @@ class MainApp(QMainWindow):
                 self.read_display.lab_mem_read.setText("Error: try accessing to an invalid memory address!")
         else:
             self.read_display.lab_mem_read.setText("Error: too size for offset value!")
+
+    def check_process(self, process : str, error : bool, timeout : bool, value : bytearray):
+        """! Show a popup message with the result of a process, for example an erase process.
+        @param process Is the name of the process: erase, write.
+        @param error Is the returned error flag from the command of the process.
+        @param timeout Is the returned timeout flag from the command of the process.
+        @param value Is the returned value from the command of the process.
+        """
+
+        msg_popup = QMessageBox()
+        msg_popup.setStandardButtons(QMessageBox.Ok)
+        if(not timeout and not error and (value[0] == 0)):
+            msg_popup.setWindowTitle('Info Message')
+            msg_popup.setIcon(QMessageBox.Information)
+            msg_popup.setText(process + ' Process Success!!!')
+        else:
+            msg_popup.setWindowTitle('Error Message')
+            msg_popup.setIcon(QMessageBox.Warning)
+            if timeout:
+                msg_popup.setText('Error: timeout')
+            elif value[0] == 1:
+                msg_popup.setText(process + ' Process Failed!!!')
+            else:
+                msg_popup.setText('Error: command returned Non ACK')
+        msg_popup.exec_()
 
 def protect_type(status : list, n : int) -> str:
     """! Return the protection status for a sector of the flash depending on the protection mode.
