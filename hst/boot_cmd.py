@@ -70,6 +70,10 @@ CMD_MEM_READ_LEN        = 11
 CMD_READ_SECTOR_ST      = 0x5A
 ## Length of read flash sector status command frame
 CMD_READ_SECTOR_ST_LEN  = 6
+## ID for one-time programmable bytes read command
+CMD_OTP_READ            = 0x5B
+## Length of one-time programmable bytes read command frame
+CMD_OTP_READ_LEN        = 7
 ## ID for disable read/write flash protection command
 CMD_DIS_RW_PROTECT      = 0x5C
 ## Length of disable read/write flash protection command frame
@@ -277,7 +281,8 @@ def cmd_erase(sector : int, num_sectors : int) -> (bool, bool, bytearray):
     for i in data_buf[1:CMD_ERASE_LEN]:
         boot_serial.write_serial(i)
 
-    return check_answer()
+    # Needed time for erasing process can be longer than the other commands (2 seconds by default).
+    return check_answer(timeout=10)
 
 def cmd_write(len_to_read : int, address : int, bin_file : BinaryIO) -> (bool, bool, bytearray):
     """! Send write command using the serial port.
@@ -438,13 +443,48 @@ def cmd_mem_read(address : int, len_to_read : int) -> (bool, bool, bytearray):
 
     return check_answer()
 
-def check_answer() -> (bool, bool, bytearray):
+def cmd_otp_read(sector : int) -> (bool, bool, bytearray):
+    """! Send one-time programmable byte read command using the serial port.
+
+    @param sector Is the OTP sector for reading.
+
+    @return bool: error flag, True if error or False if command was OK.
+    @return bool: timeout flag, True if timeout error or False if not.
+    @return bytearray: The content of the read memory address.
+    """
+
+    data_buf = []
+
+    boot_serial.purge_serial()
+
+    data_buf.append(CMD_OTP_READ_LEN - 1)
+    data_buf.append(CMD_OTP_READ)
+    data_buf.append(sector)
+    crc32 = get_crc(data_buf, CMD_OTP_READ_LEN - 4)
+    data_buf.append(word_to_byte(crc32, 1))
+    data_buf.append(word_to_byte(crc32, 2))
+    data_buf.append(word_to_byte(crc32, 3))
+    data_buf.append(word_to_byte(crc32, 4))
+
+    boot_serial.write_serial(data_buf[0])
+    for i in data_buf[1:CMD_OTP_READ_LEN]:
+        boot_serial.write_serial(i)
+
+    return check_answer()
+
+
+def check_answer(timeout : int =2) -> (bool, bool, bytearray):
     """! Check received ack of command.
+
+    @param timeout Is the timeout value in seconds for configuring the serial port.
 
     @return bool: error flag, True if error or False if command was OK.
     @return bool: timeout flag, True if timeout error or False if not.
     @return bytearray: The requested data by the command.
     """
+
+    if timeout != 2:
+        boot_serial.timeout_serial(timeout)
 
     ack = boot_serial.read_serial(2)
     # Check lenght of ack for timeout error and value of ack (ack[0])

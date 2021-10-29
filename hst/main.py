@@ -60,10 +60,12 @@ class MainApp(QMainWindow):
         self.erase_menu = EraseMenu("Erase Menu:")
         ## For displaying the write menu
         self.write_display = WriteDisplay("Write Memory:")
-        ## For display the enable read/write protection menu
+        ## For displaying the enable read/write protection menu
         self.rw_prot_display = RWProtectDisplay("Read/Write Protection Menu:")
-        ## For display the read menu
+        ## For displaying the read menu
         self.read_display = MemReadDisplay("Read Memory:")
+        ## For displaying the OTP read menu
+        self.otp_read_display = OTPReadDisplay("One-time programmable bytes Menu:")
         ## Stacked layout for overlaying the different menus
         self.stack_lay = QStackedLayout()
         self.stack_lay.addWidget(self.display)
@@ -71,6 +73,7 @@ class MainApp(QMainWindow):
         self.stack_lay.addWidget(self.write_display)
         self.stack_lay.addWidget(self.rw_prot_display)
         self.stack_lay.addWidget(self.read_display)
+        self.stack_lay.addWidget(self.otp_read_display)
         grid.addLayout(self.stack_lay, 1, 1, 1, 2)
         widget.setLayout(grid)
         self.setCentralWidget(widget)
@@ -94,6 +97,8 @@ class MainApp(QMainWindow):
         self.rw_prot_display.btn_write_protect.clicked.connect(self.slot_rw_protect_write)
         self.btn_grp_cmd.btn_cmd_read.clicked.connect(self.slot_read)
         self.read_display.btn_read.clicked.connect(self.slot_read_start)
+        self.btn_grp_cmd.btn_cmd_otp_read.clicked.connect(self.slot_otp_read)
+        self.otp_read_display.btn_read.clicked.connect(self.slot_otp_read_start)
 
     def slot_connect(self):
         """! Slot for managing the connection regarding to the serial port."""
@@ -276,16 +281,21 @@ class MainApp(QMainWindow):
         global address
 
         self.stack_lay.setCurrentIndex(2)
+        # Restart labels each time write process is started
+        self.write_display.lab_file.setText("File: ")
+        self.write_display.lab_size.setText("Size: ")
+        self.write_display.lab_addr.setText("Starting Address: ")
+        # Popup for asking about binary file for writing
         options = QFileDialog.Options()
         options |= QFileDialog.DontUseNativeDialog
-        dlg = QFileDialog()
-        file_name, _filter = dlg.getOpenFileName(None, \
+        file_name, _filter = QFileDialog.getOpenFileName(None, \
                                                  'Select Binary File', \
                                                  './', \
                                                  filter = '*.bin', \
                                                  options = options)
         if file_name:
             file_size = os.path.getsize(file_name)
+            # Popup for asking about starting address for writing
             address, ok = QInputDialog().getText(self, \
                                                  'Enter Starting Address to Write:', \
                                                  'Address (hex format):', \
@@ -445,13 +455,42 @@ class MainApp(QMainWindow):
                                          value[i-3]
                         self.read_display.lab_mem_read.setText(self.read_display.lab_mem_read.text() + \
                                                                '0x{0:0{1}X}'.format(addr + i - 4, 8) + \
-                                                               "\t" + \
+                                                               '\t' + \
                                                                '0x{0:0{1}X}'.format(mem_read_value, 8) + \
-                                                               "\n")
+                                                               '\n')
             else:
                 self.read_display.lab_mem_read.setText("Error: try accessing to an invalid memory address!")
         else:
             self.read_display.lab_mem_read.setText("Error: too size for offset value!")
+
+    def slot_otp_read(self):
+        """! Slot for displaying the OTP read menu"""
+
+        self.stack_lay.setCurrentIndex(5)
+
+    def slot_otp_read_start(self):
+        """! Slot for managing the OTP read command."""
+
+        self.otp_read_display.lab_mem_read.clear()
+        addr_otp = self.otp_read_display.spin_sector.value()
+        error, timeout, value = boot_cmd.cmd_otp_read(addr_otp)
+        if timeout:
+            self.otp_read_display.lab_mem_read.setText('Error: timeout')
+        elif error:
+            self.otp_read_display.lab_mem_read.setText('Error: command returned Non ACK')
+        elif(value[0] == 0):
+            for i,_ in enumerate(value[1:]):
+                i += 1
+                if(not i%4):
+                    mem_read_value = (value[i] << 24) + (value[i-1] << 16) + (value[i-2] << 8) + value[i-3]
+                    # 0x1FFF7800 is the base address of OTP bytes for STM32F446RE microcontroller
+                    self.otp_read_display.lab_mem_read.setText(self.otp_read_display.lab_mem_read.text() + \
+                                            '0x{0:0{1}X}'.format(0x1FFF7800 + addr_otp*32 + i - 4, 8) + \
+                                            '\t' + \
+                                            '0x{0:0{1}X}'.format(mem_read_value, 8) + \
+                                            '\n')
+        else:
+            self.read_display.lab_mem_read.setText("Error: try accessing to an invalid sector value!")
 
     def check_process(self, process : str, error : bool, timeout : bool, value : bytearray):
         """! Show a popup message with the result of a process, for example an erase process.
@@ -551,7 +590,9 @@ class CommandButtonnGroup(QGroupBox):
         ## Push button for sending enable read/write protection flash command
         self.btn_cmd_rw_protect = QPushButton("R/W Protection")
         ## Push button for sending read command
-        self.btn_cmd_read = QPushButton("Read")
+        self.btn_cmd_read = QPushButton("Read Memory")
+        ## Push button for sending OTP read command
+        self.btn_cmd_otp_read = QPushButton("Read OTP")
         self.setEnabled(False)
 
         vbox = QVBoxLayout()
@@ -565,6 +606,7 @@ class CommandButtonnGroup(QGroupBox):
         vbox.addWidget(self.btn_cmd_read_sector_status)
         vbox.addWidget(self.btn_cmd_rw_protect)
         vbox.addWidget(self.btn_cmd_read)
+        vbox.addWidget(self.btn_cmd_otp_read)
         vbox.addStretch(1)
         self.setLayout(vbox)
 
@@ -758,7 +800,7 @@ class MemReadDisplay(QGroupBox):
         self.scroll.setVerticalScrollBarPolicy(Qt.ScrollBarAlwaysOn)
         self.scroll.setHorizontalScrollBarPolicy(Qt.ScrollBarAlwaysOff)
         self.scroll.setWidgetResizable(True)
-        self.scroll.setFixedHeight(350)
+        self.scroll.setFixedHeight(380)
 
         hbox = QHBoxLayout()
         hbox.addWidget(self.lab_addr)
@@ -768,6 +810,49 @@ class MemReadDisplay(QGroupBox):
         hbox.addWidget(self.btn_read)
         hbox.addStretch(1)
         vbox = QVBoxLayout()
+        vbox.addLayout(hbox)
+        vbox.addWidget(self.scroll)
+        vbox.addStretch(1)
+        self.setLayout(vbox)
+
+class OTPReadDisplay(QGroupBox):
+    """! A class used for implementing the panel for the one-time programmable bytes read command output."""
+
+    def __init__(self, name):
+        """! The OTPReadDisplay base class initializer.
+        @param name The name of the OTPReadDisplay.
+        @return An instance of the OTPReadDisplay class initialized with the specified name.
+        """
+
+        super(OTPReadDisplay, self).__init__(name)
+
+        ## Label for information about sector selection
+        self.label = QLabel("One-time programmable sector for reading:")
+        ## Spin box for selecting the starting sector to erase
+        self.spin_sector = QSpinBox()
+        self.spin_sector.setFixedWidth(70)
+        self.spin_sector.setRange(0, 15)
+        ## Push button for starting the read process
+        self.btn_read = QPushButton("Read")
+        self.btn_read.setFixedWidth(120)
+        ## Label for displaying the memory content
+        self.lab_mem_read = QLabel()
+        self.lab_mem_read.setAlignment(Qt.AlignTop | Qt.AlignLeft)
+
+        ## Scroll area for showing the result of the memory read command
+        self.scroll = QScrollArea()
+        self.scroll.setWidget(self.lab_mem_read)
+        self.scroll.setVerticalScrollBarPolicy(Qt.ScrollBarAlwaysOn)
+        self.scroll.setHorizontalScrollBarPolicy(Qt.ScrollBarAlwaysOff)
+        self.scroll.setWidgetResizable(True)
+        self.scroll.setFixedHeight(380)
+
+        hbox = QHBoxLayout()
+        vbox = QVBoxLayout()
+        vbox.addWidget(self.label)
+        hbox.addWidget(self.spin_sector)
+        hbox.addWidget(self.btn_read)
+        hbox.addStretch(1)
         vbox.addLayout(hbox)
         vbox.addWidget(self.scroll)
         vbox.addStretch(1)

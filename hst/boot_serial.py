@@ -91,3 +91,11 @@ def purge_serial():
     """! Purge the serial input buffer."""
 
     ser.reset_input_buffer()
+
+def timeout_serial(new_timeout : int):
+    """! Change the configured timeout value.
+
+    @param new_timeout Is the value of the timeout in seconds.
+    """
+
+    ser.timeout = new_timeout

@@ -24,6 +24,10 @@
 #define ADDR_VALID      0x00
 /** @brief Invalid Flash address flag */
 #define ADDR_INVALID    0x01
+/** @brief Valid OTP sector flag */
+#define OTP_VALID       0x00
+/** @brief Invalid OTP sector flag */
+#define OTP_INVALID     0x01
 /** @brief Starting address for the user application code in flash. */
 #define FLASH_SECTOR2_BASE_ADDRESS 0x08008000U
 
