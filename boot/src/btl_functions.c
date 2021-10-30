@@ -479,7 +479,7 @@ static void handle_en_rw_protect(uint8_t* buffer, USART_Handle_t* pUSART_Handle)
 
 static void handle_mem_read(uint8_t* buffer, USART_Handle_t* pUSART_Handle){
 
-    uint8_t data_read[256] = {0};
+    uint8_t data_read[257] = {0};
     uint32_t flash_addr = 0;
     uint8_t len_to_read = 0;
     /* Total length of the cmd packet */
@@ -495,8 +495,8 @@ static void handle_mem_read(uint8_t* buffer, USART_Handle_t* pUSART_Handle){
         send_ack(pUSART_Handle, len_to_read + 1);
         /* Read the base address */
         flash_addr = *(uint32_t*)(&buffer[2]);
-        /* Check if addresses to read are valid */
-        if(verify_address(flash_addr) && verify_address(flash_addr + len_to_read)){
+        /* Check if number of bytes and addresses to read are valid */
+        if((len_to_read < 256) && verify_address(flash_addr) && verify_address(flash_addr + len_to_read)){
             /* Read flash memory */
             for(int i = 0; i < len_to_read; i++){
                 data_read[i + 1] = *(uint8_t*)(flash_addr + i);
