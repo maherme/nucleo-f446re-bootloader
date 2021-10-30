@@ -49,6 +49,8 @@ static void USART1_GPIOInit(void);
 
 int main(void){
 
+    uint32_t count = 0;
+
     initialise_monitor_handles();
 
     printf("Starting bootloader program!!!\r\n");
@@ -68,7 +70,17 @@ int main(void){
     USART_Enable(USART1, ENABLE);
 
     if(GPIO_ReadFromInputPin(GPIOC, GPIO_PIN_NO_13) == GPIO_PIN_RESET){
-        uart_read_data(&USART1Handle);
+        for(;;){
+            uart_read_command(&USART1Handle);
+            if(count > 75000){
+                /* Blink LED */
+                GPIO_ToggleOutputPin(GPIOA, GPIO_PIN_NO_5);
+                count = 0;
+            }
+            else{
+                count++;
+            }
+        }
     }
     else{
         jump_to_app();

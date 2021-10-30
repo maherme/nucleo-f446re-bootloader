@@ -4,7 +4,7 @@
 * @brief Header file containing the prototypes of the needed functions for performing the bootloader.
 *
 * Public Functions:
-*       - void uart_read_data(USART_Handle_t* pUSART_Handle)
+*       - void uart_read_command(USART_Handle_t* pUSART_Handle)
 *       - void jump_to_app(void)
 */
 
@@ -71,7 +71,7 @@ __attribute__((always_inline)) static inline void __set_MSP(uint32_t topOfMainSt
  * @param[in] pUSART_Handle: pointer to the handle structure for the USART peripheral.
  * @return void
  */
-void uart_read_data(USART_Handle_t* pUSART_Handle);
+void uart_read_command(USART_Handle_t* pUSART_Handle);
 
 /**
  * @brief Function for jumping to the user application code in flash.

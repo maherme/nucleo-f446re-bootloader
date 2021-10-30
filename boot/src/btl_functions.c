@@ -4,7 +4,7 @@
 * @brief File containing the needed functions for performing the bootloader.
 *
 * Public Functions:
-*       - void uart_read_data(USART_Handle_t* pUSART_Handle)
+*       - void uart_read_command(USART_Handle_t* pUSART_Handle)
 *       - void jump_to_app(void)
 *
 * @note
@@ -19,6 +19,13 @@
 #include "crc_driver.h"
 #include "flash_driver.h"
 #include "gpio_driver.h"
+
+/***********************************************************************************************************/
+/*                                       Static Function Prototypes                                        */
+/***********************************************************************************************************/
+
+/** @brief Flag for notifying a reception data form UART */
+static uint8_t uart_rx_flag = 0;
 
 /***********************************************************************************************************/
 /*                                       Static Function Prototypes                                        */
@@ -211,16 +218,24 @@ void jump_to_app(void){
     app_reset_handler();
 }
 
-void uart_read_data(USART_Handle_t* pUSART_Handle){
+void uart_read_command(USART_Handle_t* pUSART_Handle){
 
-    uint8_t len_rx = 0;
-    uint8_t rx_buffer[200] = {0};
+    static uint8_t i = 0;
+    static uint8_t rx_byte = 0;
+    static uint8_t rx_buffer[200] = {0};
 
-    while(1){
-        memset(rx_buffer, 0, sizeof(rx_buffer));
-        USART_ReceiveData(pUSART_Handle, rx_buffer, 1);
-        len_rx = rx_buffer[0];
-        USART_ReceiveData(pUSART_Handle, &rx_buffer[1], len_rx);
+    /* Enable reception in interrupt mode */
+    if(pUSART_Handle->RxBusyState == USART_READY){
+        USART_ReceiveDataIT(pUSART_Handle, &rx_byte, 1);
+    }
+    /* If UART data is received is stored in the reception buffer */
+    if(uart_rx_flag == 1){
+        uart_rx_flag = 0;
+        rx_buffer[i] = rx_byte;
+        i++;
+    }
+    /* Complete frame received */
+    if(i == (rx_buffer[0] + 1)){
         switch((btl_cmd_t)rx_buffer[1]){
             case BL_GET_VER:
                 handle_getver_cmd(rx_buffer, pUSART_Handle);
@@ -260,7 +275,32 @@ void uart_read_data(USART_Handle_t* pUSART_Handle){
                 break;
              default:
                 break;
-        }
+            }
+        i = 0;
+        memset(rx_buffer, 0, sizeof(rx_buffer));
+    }
+}
+
+/***********************************************************************************************************/
+/*                               Weak Function Overwrite Definitions                                       */
+/***********************************************************************************************************/
+
+/**
+ * @brief Function for application callback.
+ * @param[in] pUSART_Handle handle structure to USART peripheral.
+ * @param[in] app_event application event.
+ * @return void.
+ */
+void USART_ApplicationEventCallback(USART_Handle_t* pUSART_Handle, uint8_t app_event){
+
+    if(app_event == USART_EVENT_RX_CMPLT){
+        uart_rx_flag = 1;
+    }
+    else if(app_event == USART_EVENT_TX_CMPLT){
+        /* do nothing */
+    }
+    else{
+        /* do nothing */
     }
 }
 
