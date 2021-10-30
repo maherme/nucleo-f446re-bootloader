@@ -33,6 +33,18 @@ static uint8_t uart_rx_flag = 0;
 
 /**
  * @brief Function for handling the get version command, which sends to the host the bootloader version.
+ *
+ * **Command Frame:**
+ * | Length to Follow | Command Code | CRC    |
+ * | :--------------: | :----------: | :----: |
+ * | 1 Byte           | 1 Byte       | 4 Byte |
+ * | 0x05             | 0x51         | TBC    |
+ *
+ * **Bootloader Reply**
+ * | Bootloader Version Number |
+ * | :-----------------------: |
+ * | 1 Byte                    |
+*
  * @param[in] buffer: is a pointer to the command frame received.
  * @param[in] pUSART_Handle: is the handle structure for the UART peripheral used for receiving and
  *            sending commands.
@@ -42,6 +54,18 @@ static void handle_getver_cmd(uint8_t* buffer, USART_Handle_t* pUSART_Handle);
 
 /**
  * @brief Function for handling the get help command, which sends to the host the supported command.
+ *
+ * **Command Frame:**
+ * | Length to Follow | Command Code | CRC    |
+ * | :--------------: | :----------: | :----: |
+ * | 1 Byte           | 1 Byte       | 4 Byte |
+ * | 0x05             | 0x52         | TBC    |
+ *
+ * **Bootloader Reply**
+ * | Supported Command Codes         |
+ * | :-----------------------------: |
+ * | N Byte (N = number of commands) |
+ *
  * @param[in] buffer is a pointer to the command frame received.
  * @param[in] pUSART_Handle is the handle structure for the UART peripheral used for receiving and
  *            sending commands.
@@ -51,6 +75,18 @@ static void handle_gethelp_cmd(uint8_t* buffer, USART_Handle_t* pUSART_Handle);
 
 /**
  * @brief Function for handling the get cid command, which sends to the host the chip identifier.
+ *
+ * **Command Frame:**
+ * | Length to Follow | Command Code | CRC    |
+ * | :--------------: | :----------: | :----: |
+ * | 1 Byte           | 1 Byte       | 4 Byte |
+ * | 0x05             | 0x53         | TBC    |
+ *
+ * **Bootloader Reply**
+ * | MCU Chip ID (LSB) | MCU Chip ID (MSB) |
+ * | :---------------: | :---------------: |
+ * | 1 Byte            | 1 Byte            |
+ *
  * @param[in] buffer is a pointer to the command frame received.
  * @param[in] pUSART_Handle is the handle structure for the UART peripheral used for receiving and
  *            sending commands.
@@ -61,6 +97,18 @@ static void handle_getcid_cmd(uint8_t* buffer, USART_Handle_t* pUSART_Handle);
 /**
  * @brief Function for handling the get rdp command, which sends to the host the read protection
  *        option byte.
+ *
+ * **Command Frame:**
+ * | Length to Follow | Command Code | CRC    |
+ * | :--------------: | :----------: | :----: |
+ * | 1 Byte           | 1 Byte       | 4 Byte |
+ * | 0x05             | 0x54         | TBC    |
+ *
+ * **Bootloader Reply**
+ * | RDP Status |
+ * | :--------: |
+ * | 1 Byte     |
+ *
  * @param[in] buffer is a pointer to the command frame received.
  * @param[in] pUSART_Handle is the handle structure for the UART peripheral used for receiving and
  *            sending commands.
@@ -71,6 +119,18 @@ static void handle_getrdp_cmd(uint8_t* buffer, USART_Handle_t* pUSART_Handle);
 /**
  * @brief Function for handling the go to address command, which order to the bootloader jump to
  *        an specific memory address.
+ *
+ * **Command Frame:**
+ * | Length to Follow | Command Code | Memory Address            | CRC    |
+ * | :--------------: | :----------: | :-----------------------: | :----: |
+ * | 1 Byte           | 1 Byte       | 4 Byte (Little Endian)    | 4 Byte |
+ * | 0x09             | 0x55         | TBC                       | TBC    |
+ *
+ * **Bootloader Reply**
+ * | Status |
+ * | :----: |
+ * | 1 Byte |
+ *
  * @param[in] buffer is a pointer to the command frame received.
  * @param[in] pUSART_Handle is the handle structure for the UART peripheral used for receiving and
  *            sending commands.
@@ -81,6 +141,18 @@ static void handle_go_cmd(uint8_t* buffer, USART_Handle_t* pUSART_Handle);
 /**
  * @brief Function for handling the flash erase command, which order to the bootloader to erase an
  *        specific sector of the flash or a mass erase.
+ *
+ * **Command Frame:**
+ * | Length to Follow | Command Code | Sector Number | Number of Sectors | CRC    |
+ * | :--------------: | :----------: | :-----------: | :---------------: | :----: |
+ * | 1 Byte           | 1 Byte       | 1 Byte        | 1 Byte            | 4 Byte |
+ * | 0x07             | 0x56         | TBC           | TBC               | TBC    |
+ *
+ * **Bootloader Reply**
+ * | Status |
+ * | :----: |
+ * | 1 Byte |
+ *
  * @param[in] buffer is a pointer to the command frame received.
  * @param[in] pUSART_Handle is the handle structure for the UART peripheral used for receiving and
  *            sending commands.
@@ -91,6 +163,18 @@ static void handle_flash_erase_cmd(uint8_t* buffer, USART_Handle_t* pUSART_Handl
 /**
  * @brief Function for handling the memory write command, which order to the bootloader to write an
  *        specific memory address of the flash.
+ *
+ * **Command Frame:**
+ * | Length to Follow | Command Code | Base Memory Addr  | Payload Length | Payload | CRC    |
+ * | :--------------: | :----------: | :---------------: | :------------: | :-----: | :----: |
+ * | 1 Byte           | 1 Byte       | 4 Byte (L Endian) | 1 Byte         | X Byte  | 4 Byte |
+ * | 0x0A + X         | 0x57         | TBC               | TBC            | TBC     | TBC    |
+ *
+ * **Bootloader Reply**
+ * | Status |
+ * | :----: |
+ * | 1 Byte |
+ *
  * @param[in] buffer is a pointer to the command frame received.
  * @param[in] pUSART_Handle is the handle structure for the UART peripheral used for receiving and
  *            sending commands.
@@ -101,6 +185,18 @@ static void handle_mem_write_cmd(uint8_t* buffer, USART_Handle_t* pUSART_Handle)
 /**
  * @brief Function for handling the enable read/write protection command, which order to the bootloader
  *        to enable the read/write protection to a flash sector.
+ *
+ * **Command Frame:**
+ * | Length to Follow | Command Code | Sector Details | Protection Mode | CRC    |
+ * | :--------------: | :----------: | :------------: | :-------------: | :----: |
+ * | 1 Byte           | 1 Byte       | 1 Byte         | 1 Byte          | 4 Byte |
+ * | 0x07             | 0x58         | TBC            | TBC             | TBC    |
+ *
+ * **Bootloader Reply**
+ * | Status |
+ * | :----: |
+ * | 1 Byte |
+ *
  * @param[in] buffer is a pointer to the command frame received.
  * @param[in] pUSART_Handle is the handle structure for the UART peripheral used for receiving and
  *            sending commands.
@@ -111,6 +207,18 @@ static void handle_en_rw_protect(uint8_t* buffer, USART_Handle_t* pUSART_Handle)
 /**
  * @brief Function for handling the read flash memory command, which order to the bootloader to read a
  *        flash memory address section.
+ *
+ * **Command Frame:**
+ * | Length to Follow | Command Code | Base Memory Addr  | Length | CRC    |
+ * | :--------------: | :----------: | :---------------: | :----: | :----: |
+ * | 1 Byte           | 1 Byte       | 4 Byte (L Entian) | 1 Byte | 4 Byte |
+ * | 0x0A             | 0x59         | TBC               | TBC    | TBC    |
+ *
+ * **Bootloader Reply**
+ * | Status | Read Value           |
+ * | :----: | :------------------: |
+ * | 1 Byte | L Byte (L = Length)  |
+ *
  * @param[in] buffer is a pointer to the command frame received.
  * @param[in] pUSART_Handle is the handle structure for the UART peripheral used for receiving and
  *            sending commands.
@@ -121,6 +229,18 @@ static void handle_mem_read(uint8_t* buffer, USART_Handle_t* pUSART_Handle);
 /**
  * @brief Function for handling the read sector protection status command, which order to the bootloader
  *        to send the Option Byte configuration.
+ *
+ * **Command Frame:**
+ * | Length to Follow | Command Code | CRC    |
+ * | :--------------: | :----------: | :----: |
+ * | 1 Byte           | 1 Byte       | 4 Byte |
+ * | 0x05             | 0x5A         | TBC    |
+ *
+ * **Bootloader Reply**
+ * | Sector Status |
+ * | :-----------: |
+ * | 2 Byte        |
+ *
  * @param[in] buffer is a pointer to the command frame received.
  * @param[in] pUSART_Handle is the handle structure for the UART peripheral used for receiving and
  *            sending commands.
@@ -131,6 +251,18 @@ static void handle_read_sector_protection_status(uint8_t* buffer, USART_Handle_t
 /**
  * @brief Function for handling the read OTP flash address command, which order to the bootloader to read
  *        an OTP flash address.
+ *
+ * **Command Frame:**
+ * | Length to Follow | Command Code | OPT Sector | CRC    |
+ * | :--------------: | :----------: | :--------: | :----: |
+ * | 1 Byte           | 1 Byte       | 1 Byte     | 4 Byte |
+ * | 0x06             | 0x5B         | TBC        | TBC    |
+ *
+ * **Bootloader Reply**
+ * | Status | Read Value |
+ * | :----: | :--------: |
+ * | 1 Byte | 32 Byte    |
+ *
  * @param[in] buffer is a pointer to the command frame received.
  * @param[in] pUSART_Handle is the handle structure for the UART peripheral used for receiving and
  *            sending commands.
@@ -141,6 +273,18 @@ static void handle_read_otp(uint8_t* buffer, USART_Handle_t* pUSART_Handle);
 /**
  * @brief Function for handling the disable read/write protection command, which order to the bootloader
  *        to disable the read/write protection for all the flash sectors.
+ *
+ * **Command Frame:**
+ * | Length to Follow | Command Code | CRC    |
+ * | :--------------: | :----------: | :----: |
+ * | 1 Byte           | 1 Byte       | 4 Byte |
+ * | 0x05             | 0x5C         | TBC    |
+ *
+ * **Bootloader Reply**
+ * | Status |
+ * | :----: |
+ * | 1 Byte |
+ *
  * @param[in] buffer is a pointer to the command frame received.
  * @param[in] pUSART_Handle is the handle structure for the UART peripheral used for receiving and
  *            sending commands.
@@ -160,6 +304,13 @@ static uint8_t verify_cmd_crc(uint8_t* pData, uint32_t length, uint32_t crc_host
 
 /**
  * @brief Function for sending an ACK to the host.
+ *
+ * **ACK Frame:**
+ * | ACK Value | Answer Length |
+ * | :-------: | :-----------: |
+ * | 1 Byte    | 1 Byte        |
+ * | 0xA5      | TBC           |
+ *
  * @param[in] pUSART_Handle is the handle structure for the USART peripheral used for sending the ACK.
  * @param[in] follow_len is the length of the reply to the received command.
  * @return void
@@ -168,6 +319,13 @@ static void send_ack(USART_Handle_t* pUSART_Handle, uint8_t follow_len);
 
 /**
  * @brief Function for sending an NACK to the host.
+ *
+ * **NACK Frame:**
+ * | NACK Value |
+ * | :--------: |
+ * | 1 Byte     |
+ * | 0x7F       |
+ *
  * @param[in] pUSART_Handle is the handle structure for the USART peripheral used for sending the NACK.
  * @return void
  */
