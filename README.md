@@ -26,7 +26,61 @@ Remember you must enable semihosting in the telnet session if you compile the pr
 arm semihosting enable
 ```
 ## Flash Memory Layout
-| Address Range |      Content                   | Size  |
-|---------------|:------------------------------:|:-----:|
-| 0x0800-0000 to 0x0800-7FFF |  Bootloader       | 32KB  |
-| 0x0800-8000 to 0x0807-FFFF |  User Application | 480KB |
+| Address Range              | Content          | Size  |
+|:--------------------------:|:----------------:|:-----:|
+| 0x0800-0000 to 0x0800-7FFF | Bootloader       | 32KB  |
+| 0x0800-8000 to 0x0807-FFFF | User Application | 480KB |
+
+## Bootloader command frames
+
+- **Get Version:**
+
+  *Command Frame:*
+  | Length to Follow | Command Code | CRC    |
+  | :--------------: | :----------: | :----: |
+  | 1 Byte           | 1 Byte       | 4 Byte |
+  | 0x05             | 0x51         | TBC    |
+
+  *Bootloader Reply*
+  | Bootloader Version Number |
+  | :-----------------------: |
+  | 1 Byte                    |
+  
+- **Get Supported Commands**
+  
+  *Command Frame:*
+  | Length to Follow | Command Code | CRC    |
+  | :--------------: | :----------: | :----: |
+  | 1 Byte           | 1 Byte       | 4 Byte |
+  | 0x05             | 0x52         | TBC    |
+  
+  *Bootloader Reply*
+  | Supported Command Codes         |
+  | :-----------------------------: |
+  | N Byte (N = number of commands) |
+
+- **Get Chip identifier**
+
+  *Command Frame:*
+  | Length to Follow | Command Code | CRC    |
+  | :--------------: | :----------: | :----: |
+  | 1 Byte           | 1 Byte       | 4 Byte |
+  | 0x05             | 0x53         | TBC    |
+
+  *Bootloader Reply*
+  | MCU Chip ID (LSB) | MCU Chip ID (MSB) |
+  | :---------------: | :---------------: |
+  | 1 Byte            | 1 Byte            |
+
+- **Get Read Protection Status**
+
+  *Command Frame:*
+  | Length to Follow | Command Code | CRC    |
+  | :--------------: | :----------: | :----: |
+  | 1 Byte           | 1 Byte       | 4 Byte |
+  | 0x05             | 0x54         | TBC    |
+
+  *Bootloader Reply*
+  | RDP Status |
+  | :--------: |
+   1 Byte     |
