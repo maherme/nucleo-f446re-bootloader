@@ -41,7 +41,7 @@ arm semihosting enable
   | 1 Byte           | 1 Byte       | 4 Byte |
   | 0x05             | 0x51         | TBC    |
 
-  *Bootloader Reply*
+  *Bootloader Reply:*
   | Bootloader Version Number |
   | :-----------------------: |
   | 1 Byte                    |
@@ -54,7 +54,7 @@ arm semihosting enable
   | 1 Byte           | 1 Byte       | 4 Byte |
   | 0x05             | 0x52         | TBC    |
   
-  *Bootloader Reply*
+  *Bootloader Reply:*
   | Supported Command Codes         |
   | :-----------------------------: |
   | N Byte (N = number of commands) |
@@ -67,7 +67,7 @@ arm semihosting enable
   | 1 Byte           | 1 Byte       | 4 Byte |
   | 0x05             | 0x53         | TBC    |
 
-  *Bootloader Reply*
+  *Bootloader Reply:*
   | MCU Chip ID (LSB) | MCU Chip ID (MSB) |
   | :---------------: | :---------------: |
   | 1 Byte            | 1 Byte            |
@@ -80,7 +80,7 @@ arm semihosting enable
   | 1 Byte           | 1 Byte       | 4 Byte |
   | 0x05             | 0x54         | TBC    |
 
-  *Bootloader Reply*
+  *Bootloader Reply:*
   | RDP Status |
   | :--------: |
-   1 Byte     |
+  | 1 Byte     |
