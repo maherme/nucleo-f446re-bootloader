@@ -200,3 +200,12 @@ make doxygen
   | Status |
   | :----: |
   | 1 Byte |
+
+## Host Application
+
+You can find a host application created for testing the bootloader, this application has been developed using the PyQt5 library. The code of this application is placed in the [hst](hst) directory.
+
+For executing the application:
+```console
+python main.py
+```
