@@ -373,6 +373,8 @@ void jump_to_app(void){
 
     app_reset_handler = (void*)reset_handler_address;
 
+    SCB->VTOR = FLASH_SECTOR2_BASE_ADDRESS;
+
     app_reset_handler();
 }
 

@@ -50,6 +50,8 @@
 
 #define NVIC_PR_BASEADDR    ((volatile uint32_t*)0xE000E400)    /**< @brief NVIC Priority Register Addr */
 
+#define SCB_BASEADDR    ((volatile uint32_t*)0xE000ED00)        /**< @brief Sys Ctrl Block Register Addr */
+
 #define DBGMCU_BASEADDR     0xE0042000                          /**< @brief Debug Peripheral Base Addr */
 
 #define NO_PR_BITS_IMPLEMENTED  4 /**< @brief Numb of priority bits implemented in the Priority Register */
@@ -182,6 +184,35 @@
 #define FMC_BASEADDR        (AHB3_BASEADDR + 0x0000)    /**< @brief Base addr of FMC control register */
 #define QUADSPI_BASEADDR    (AHB3_BASEADDR + 0x1000)    /**< @brief Base addr of QUADSPI register */
 /** @} */
+
+/***********************************************************************************************************/
+/*                          CPU Register Definition Structures                                             */
+/***********************************************************************************************************/
+
+/**
+ * @brief Register definition structure for System Control Block.
+ * @note This structure has not included all the register provided by the SCB. Refer to ARM manual for
+ *       further information.
+ */
+typedef struct
+{
+    volatile uint32_t CPUID;    /**< @brief Refer to the CPUID Base Register             Addr offset 0x00 */
+    volatile uint32_t ICSR;     /**< @brief Interrupt Control and State Register         Addr offset 0x04 */
+    volatile uint32_t VTOR;     /**< @brief Vector Table Offset Register                 Addr offset 0x08 */
+    volatile uint32_t AIRCR;    /**< @brief App Interrupt and Reset Control Register     Addr offset 0x0C */
+    volatile uint32_t SCR;      /**< @brief System Control Register                      Addr offset 0x10 */
+    volatile uint32_t CCR;      /**< @brief Configuration and Control Register           Addr offset 0x14 */
+    volatile uint32_t SHPR1;    /**< @brief System Handler Priority Register 1           Addr offset 0x18 */
+    volatile uint32_t SHPR2;    /**< @brief System Handler Priority Register 2           Addr offset 0x1C */
+    volatile uint32_t SHPR3;    /**< @brief System Handler Priority Register 3           Addr offset 0x20 */
+    volatile uint32_t SHCSR;    /**< @brief System Handler Control and State Register    Addr offset 0x24 */
+    volatile uint32_t CFSR;     /**< @brief Configurable Fault Status Registers          Addr offset 0x28 */
+    volatile uint32_t HFSR;     /**< @brief HardFault Status Register                    Addr offset 0x2C */
+    volatile uint32_t DSFR;     /**< @brief Debug Fault Status Register                  Addr offset 0x30 */
+    volatile uint32_t MMFAR;    /**< @brief MemManage Fault Address Register             Addr offset 0x34 */
+    volatile uint32_t BFAR;     /**< @brief BusFault Address Register                    Addr offset 0x38 */
+    volatile uint32_t AFSR;     /**< @brief Auxiliary Fault Status Register              Addr offset 0x3C */
+} SCB_RegDef_t;
 
 /***********************************************************************************************************/
 /*                          Peripheral Register Definition Structures                                      */
@@ -635,6 +666,12 @@ typedef struct
 #define FLASH_OPTCR_NWRP        16 /**< @brief Not write protect offset */
 #define FLASH_OPTCR_SPRMOD      31 /**< @brief Selection of Protection Mode of nWRPi bits offset */
 /** @} */
+
+/***********************************************************************************************************/
+/*         CPU definitions (CPU base addresses typecasted to xxx_RegDef_t)                                 */
+/***********************************************************************************************************/
+
+#define SCB         ((SCB_RegDef_t*)SCB_BASEADDR)           /**< @brief SCB base addr reg definition */
 
 /***********************************************************************************************************/
 /*          Peripheral definitions (peripheral base addresses typecasted to xxx_RegDef_t)                  */
